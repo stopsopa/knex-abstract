@@ -128,7 +128,7 @@ if [ "$DIFF" != "" ] || [ "$1" = "force" ]; then
     #mv dist/test.js dist/spvalidation.min.js
 
                             #node update-badge.js
-                            git add README.md
+                            #git add README.md
 
                             #git add dist
                             #git add examples.es5.js
