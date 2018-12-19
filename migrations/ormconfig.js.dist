@@ -1,0 +1,33 @@
+
+require('@stopsopa/dotenv-up')(3, false, 'ormconfig.js');
+
+const config = {
+   "type": "mysql",
+   "host": process.env.PROTECTED_MYSQL_HOST,
+   "port": 3306,
+   "username": process.env.PROTECTED_MYSQL_USER,
+   "password": process.env.PROTECTED_MYSQL_PASS,
+   "database": process.env.PROTECTED_MYSQL_DB,
+   "synchronize": false,
+   "logging": false,
+   "exclude": [
+      "node_modules"
+   ],
+   // "migrationsTableName": "migration_versions",
+   "entities": [
+      "src/entity/**/*.ts"
+   ],
+   "migrations": [
+      "src/migration/**/*.ts"
+   ],
+   "subscribers": [
+      "src/subscriber/**/*.ts"
+   ],
+   "cli": {
+      "entitiesDir": "src/entity",
+      "migrationsDir": "src/migration",
+      "subscribersDir": "src/subscriber"
+   }
+}
+
+module.exports = config;

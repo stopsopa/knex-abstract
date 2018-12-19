@@ -1,0 +1,34 @@
+{
+  "name": "@stopsopa/knex-abstract",
+  "version": "0.0.0",
+  "description": "",
+  "main": "src",
+  "scripts": {
+    "test": "/bin/bash test.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stopsopa/knex-abstract.git"
+  },
+  "keywords": [
+    "knex"
+  ],
+  "author": "Szymon Działowski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stopsopa/knex-abstract/issues"
+  },
+  "homepage": "https://github.com/stopsopa/knex-abstract#readme",
+  "jest": {
+    "verbose": true,
+    "bail": true,
+    "collectCoverage": true,
+    "coverageReporters": [
+      "html",
+      "lcov"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}"
+    ]
+  }
+}

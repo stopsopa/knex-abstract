@@ -1,0 +1,8 @@
+node_modules
+yarn-error*
+/.idea/
+/local.txt
+/coverage/
+/stopsopa-validator*
+/karma_build/
+*.tgz
