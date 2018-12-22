@@ -10,10 +10,10 @@
     core-js "^2.5.7"
     regenerator-runtime "^0.11.1"
 
-"@stopsopa/dotenv-up@^1.0.16":
-  version "1.0.16"
-  resolved "https://registry.yarnpkg.com/@stopsopa/dotenv-up/-/dotenv-up-1.0.16.tgz#ab30f4b20fc3cd57604ac74cdb45109e7e268a43"
-  integrity sha512-inH3LkekwvoKD+MmPupb87jk7/Pzk8O0HhlNpIvujBA8I3lEIMHGkTEuQw9ZUBfeCyBoEqb3SxW1JbF6knHURA==
+"@stopsopa/dotenv-up@^1.0.17":
+  version "1.0.17"
+  resolved "https://registry.yarnpkg.com/@stopsopa/dotenv-up/-/dotenv-up-1.0.17.tgz#42f4202131a8e3ec49deedc5f0d37ffbb356ba59"
+  integrity sha512-4TPUlhK6sFYRmSPhe0fKkZ4QovCVRRxFxpigD0wHCd+i6HONEvbNm/0V2iu9m2reD8Rb7hurzlUdlQIRupBpcA==
 
 "@types/node@*":
   version "10.12.12"

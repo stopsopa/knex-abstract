@@ -1,23 +1,13 @@
 
-const extend = require('../extend');
+const abstract          = require('@stopsopa/knex-abstract');
 
-const prototype = require('./prototype');
+const extend            = abstract.extend;
 
-const a = prototype.a;
+const prototype         = abstract.prototype;
 
-const validator = eval('require')('@stopsopa/validator');
+const log               = require('../../../log/logn');
 
-const {
-    Optional,
-    Required,
-    Collection,
-    All,
-    Length,
-    NotBlank,
-    Type,
-    Email,
-    Count,
-} = validator;
+const a                 = prototype.a;
 
 module.exports = knex => extend(knex, prototype, {
     initial: async function () {
@@ -239,29 +229,5 @@ ORDER BY        id desc
         }
 
         return data;
-    },
-    getValidators: function (mode = null, id) {
-        return new Collection({
-            id: new Optional(),
-            firstName: new Required([
-                new NotBlank(),
-                new Length({max: 50}),
-            ]),
-            lastName: new Required([
-                new NotBlank(),
-                new Length({max: 50}),
-            ]),
-            email: new Required(new Email()),
-            password: new Required([
-                new NotBlank(),
-                new Length({min: 8 ,max: 50}),
-            ]),
-            enabled: new Required(new Type('boolean')),
-            roles: new Required([
-                new Count({min: 1}),
-                new All(new Type('integer'))
-            ]),
-            config: new Optional(),
-        });
     },
 }, 'users', 'id');

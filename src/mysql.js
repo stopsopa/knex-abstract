@@ -1,4 +1,6 @@
 
+const log = require('../log/logn');
+
 function isObject(a) {
     return (!!a) && (a.constructor === Object);
 };
@@ -111,7 +113,6 @@ prototype.prototype.raw = function (...args) {
         return (trx || this.knex).raw(query, params).catch(e => Promise.reject(JSON.stringify({
             query,
             params,
-            queryParams,
             e: (e + ''),
             stack: (e.stack + '').split("\n")
         }, null, 4)));
@@ -434,6 +435,13 @@ prototype.prototype.delete = async function (...args) {
                 throw `prototype.js insert() error: Malformed response: ` + JSON.stringify(result, null, 4)
             }
         });
+}
+
+prototype.prototype.destroy = function () {
+
+    this.knex.destroy();
+
+    return this;
 }
 
 prototype.a = a;

@@ -2,11 +2,18 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
 require("@babel/polyfill");
-require('@stopsopa/dotenv-up')(5, false, 'migration-users');
+
+require('@stopsopa/dotenv-up')(5, true, 'migration-users');
+
 import debug from '../../CI/debug';
+
 const log = require('../../CI/log/logn');
-const knex = require('../../../app/console/webpack/knex').default;
-require('../../../app/console/webpack/knex').init();
+
+const knex              = require('@stopsopa/knex-abstract');
+
+const config            = require('../../../example/models/config');
+
+knex.init(config);
 
 const users = [
     {
@@ -64,37 +71,37 @@ export class auto1545125154513 implements MigrationInterface {
                     id = await model.users.insert(trx, user);
                 }
 
-                for (var i = 0, l = roles.length ; i < l ; i += 1 ) {
-
-                    const role = roles[i];
-
-                    const count = await model.user_role.queryColumn(trx, `
-select            count(*) c 
-from              users u
-       inner join user_role ur
-               on ur.user_id = u.id
-       inner join roles r
-               on r.id = ur.role_id
-where             u.email = :email 
-              and r.name = :role                    
-`, {
-                        email   : user.email,
-                        role,
-                    });
-
-                    if ( count ) {
-
-                        log(`\n\nuser '${user.email}' has role '${role}'\n`)
-                    }
-                    else {
-
-                        log(`\n\nadding role '${role}' to user '${user.email}'\n`);
-
-                        const roleId = await model.user_role.queryColumn(trx, `SELECT id from roles where name = ?`, [role]);
-
-                        await model.user_role.query(trx, `insert into user_role (user_id, role_id) values (?, ?)`, [id, roleId]);
-                    }
-                }
+//                 for (var i = 0, l = roles.length ; i < l ; i += 1 ) {
+//
+//                     const role = roles[i];
+//
+//                     const count = await model.user_role.queryColumn(trx, `
+// select            count(*) c
+// from              users u
+//        inner join user_role ur
+//                on ur.user_id = u.id
+//        inner join roles r
+//                on r.id = ur.role_id
+// where             u.email = :email
+//               and r.name = :role
+// `, {
+//                         email   : user.email,
+//                         role,
+//                     });
+//
+//                     if ( count ) {
+//
+//                         log(`\n\nuser '${user.email}' has role '${role}'\n`)
+//                     }
+//                     else {
+//
+//                         log(`\n\nadding role '${role}' to user '${user.email}'\n`);
+//
+//                         const roleId = await model.user_role.queryColumn(trx, `SELECT id from roles where name = ?`, [role]);
+//
+//                         await model.user_role.query(trx, `insert into user_role (user_id, role_id) values (?, ?)`, [id, roleId]);
+//                     }
+//                 }
             }
         }).then(() => {
 
@@ -117,42 +124,42 @@ where             u.email = :email
 
             const u = users.map(u => u.email);
 
-            const r = users.reduce((acc, user) => {
+            // const r = users.reduce((acc, user) => {
+            //
+            //     if (Array.isArray(user.roles)) {
+            //
+            //         user.roles.forEach(role => {
+            //             if (acc.indexOf(role) === -1) {
+            //
+            //                 acc.push(role);
+            //             }
+            //         })
+            //     }
+            //
+            //     return acc;
+            // }, []);
 
-                if (Array.isArray(user.roles)) {
-
-                    user.roles.forEach(role => {
-                        if (acc.indexOf(role) === -1) {
-
-                            acc.push(role);
-                        }
-                    })
-                }
-
-                return acc;
-            }, []);
-
-            const list = await model.common.query(trx, `
-select          ur.*
-from            users u
-     inner join user_role ur
-             on u.id = ur.user_id
-     inner join roles r
-             on r.id = ur.role_id
-where           u.email in (:u) and r.name in (:r)
-`, {
-                u,
-                r,
-            });
-
-            for (let i = 0, l = list.length ; i < l ; i += 1 ) {
-
-                const p = list[i];
-
-                // log.dump(p);
-
-                await model.user_role.query(`delete from user_role where user_id = :user_id and role_id = :role_id`, list[i]);
-            }
+//             const list = await model.common.query(trx, `
+// select          ur.*
+// from            users u
+//      inner join user_role ur
+//              on u.id = ur.user_id
+//      inner join roles r
+//              on r.id = ur.role_id
+// where           u.email in (:u) and r.name in (:r)
+// `, {
+//                 u,
+//                 r,
+//             });
+//
+//             for (let i = 0, l = list.length ; i < l ; i += 1 ) {
+//
+//                 const p = list[i];
+//
+//                 // log.dump(p);
+//
+//                 await model.user_role.query(`delete from user_role where user_id = :user_id and role_id = :role_id`, list[i]);
+//             }
 
             await model.common.query(`delete from users where email in (:emails)`, {
                 emails: u

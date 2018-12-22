@@ -1,0 +1,35 @@
+# this needs to be simplified format starting from slash and entire path prefix
+# (this file syntax is not fully compatibile with .gitignore or .npmignore)
+
+/logs/
+node_modules
+/make/tmp.counter
+/.idea/
+/.travis.yml
+/.travis.sh
+/Dockerfile
+/README.md
+/test/
+/update.sh
+/.check-npm-version.sh
+
+/.installgnore
+/README.md
+/install
+/libs
+/app
+/puppeteer
+/.git
+/webpack
+/problems.txt
+/todo.txt
+/update.sh
+/yarn-error.log
+/link.sh
+/version-dep.js
+/public/sandbox/
+/app/sandbox/
+/dev/
+.env
+.env.dist
+

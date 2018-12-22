@@ -3,15 +3,15 @@ b:
 t:
 	/bin/bash test.sh
 u:
-	cd lib-npm-link && /bin/bash update.sh
+	cd github && /bin/bash update.sh
 uf:
-	cd lib-npm-link && /bin/bash update.sh force
+	cd github && /bin/bash update.sh force
 c:
-	ls -la roderic-project/react/node_modules/ | grep roderic
+	ls -la knex-abstract/node_modules/ | grep knex-abstract
 h:
-	@echo https://github.com/stopsopa/roderic
+	@echo https://github.com/stopsopa/knex-abstract
 islinked:
-	@ls -la roderic-project/react/node_modules/ | grep roderic
+	@ls -la knex-abstract/node_modules/ | grep knex-abstract
 unlink:
-	/bin/bash lib-npm-link/install/unlink.sh
+	/bin/bash github/dev/unlink.sh
 

@@ -1,0 +1,33 @@
+'use strict';
+
+const log               = require('../../../log/logn');
+
+const knex              = require('@stopsopa/knex-abstract');
+
+require('@stopsopa/dotenv-up')(3, false, 'tests');
+
+const config            = require('../../../example/models/config');
+
+knex.init(config);
+
+it('knex - db exist', async done => {
+
+    const users = knex().model.users;
+
+    const list = await users.query('show databases');
+
+    let tmp = list.map(x => Object.values(x)[0]);
+
+    const db = process.env.PROTECTED_MYSQL_DB;
+
+    if (db) {
+
+        const found = tmp.find(x => x === db);
+
+        expect(found).toEqual(db);
+
+        users.destroy();
+
+        done();
+    }
+});

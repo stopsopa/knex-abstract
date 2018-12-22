@@ -7,6 +7,43 @@ function green {
     printf "\e[32m$1\e[0m\n"
 }
 
+
+
+        # to make sure that knex-abstract is linked -
+        # it is reaquired for testing due to require('@stopsopa/knex-abstract') in tests
+
+        LOCVER="$(node install/install.js --is-linked)";
+
+        echo "LOCVER: >>>$LOCVER<<<"
+
+        if [ ! -e node_modules ]; then
+
+            yarn
+        fi
+
+        if [[ "$(node node_modules/\@stopsopa/knex-abstract/install/install.js --is-linked)" = "$LOCVER" ]]; then
+
+            echo "knex-abstract is linked in main target directory"
+
+        else
+
+            npm link @stopsopa/knex-abstract
+
+            if [[ "$(node node_modules/\@stopsopa/knex-abstract/install/install.js --is-linked)" != "$LOCVER" ]]; then
+
+                echo "can't link knex-abstract in main target directory"
+
+                exit 1
+            fi
+        fi
+
+        if [ ! -e node_modules/.bin/jest ]; then
+
+            yarn add jest --dev
+        fi
+
+
+
 if [ "$1" = "--help" ]; then
 
 cat << EOF
@@ -20,6 +57,9 @@ EOF
 fi
 
 JEST=""
+
+set -e
+set -x
 
 if [ -f node_modules/.bin/jest ]; then  # exist
 
@@ -57,14 +97,26 @@ else
     green "local jest - found"
 fi
 
+if [[ "$(ls -la node_modules/@stopsopa | grep knex-abstract)" = *"->"* ]]; then
+
+    echo "knex-abstract is linked"
+
+else
+
+    #(cd github && yarn)
+
+    npm link
+    (cd test && npm link @stopsopa/knex-abstract)
+fi
+
+# --bail \
 
 TEST="$(cat <<END
 $JEST \
 $@ \
---bail \
 --verbose \
 --runInBand \
---modulePathIgnorePatterns test/examples test/minefield test/project test/puppeteer karma_build
+--modulePathIgnorePatterns test/examples test/jest test/minefield test/project test/puppeteer karma_build
 END
 )";
 

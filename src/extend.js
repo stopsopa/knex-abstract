@@ -3,7 +3,7 @@ module.exports = function extend(knex, prototype, more = {}, ...rest) {
 
     if (typeof prototype !== 'function') {
 
-        throw `extend: protptype is not a function`;
+        throw `extend: protptype is not a function, it is: ` + (typeof prototype);
     }
 
     function cache() {

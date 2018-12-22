@@ -18,6 +18,9 @@
   "bugs": {
     "url": "https://github.com/stopsopa/knex-abstract/issues"
   },
+  "bin": {
+    "knex-abstract": "./install/install.js"
+  },
   "homepage": "https://github.com/stopsopa/knex-abstract#readme",
   "jest": {
     "verbose": true,
@@ -30,5 +33,9 @@
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}"
     ]
+  },
+  "dependencies": {
+    "knex": "^0.16.2",
+    "mysql": "^2.16.0"
   }
 }

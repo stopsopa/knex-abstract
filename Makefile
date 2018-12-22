@@ -40,6 +40,10 @@ doc: docs
 docs:
 	cd docker && docker-compose stop
 
+fixtures:
+	node test/recreate-db.js
+	(cd migrations && make mrun)
+
 karma: # run karma test
 	@/bin/bash karma.sh
 	# /bin/bash karma.sh test/../file.test.js

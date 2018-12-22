@@ -17,46 +17,48 @@ set -x
 sudo id
 
 
-if [[ "$(ls -la roderic-project/react/node_modules/ | grep roderic)" = *"->"* ]]; then
+if [[ "$(ls -la knex-abstract/node_modules/ | grep knex-abstract)" = *"->"* ]]; then
 
-    echo "roderic is linked"
+    echo "knex-abstract is linked"
 
 else
 
-    (cd lib-npm-link && yarn)
+    #(cd github && yarn)
 
-    (cd lib-npm-link && npm link)
+    (cd github && npm link)
 fi
 
 sudo rm -rf node_modules
 
-mv roderic-project/react/node_modules . || true
+mv knex-abstract/node_modules . || true
 
-    sudo rm -rf node_modules_puppeteer
+    #sudo rm -rf node_modules_puppeteer
 
-    mv roderic-project/puppeteer/node_modules node_modules_puppeteer || true
+    #mv knex-abstract/puppeteer/node_modules node_modules_puppeteer || true
 
-sudo rm -rf roderic-project
+sudo rm -rf knex-abstract
 
-roderic
+# knex-abstract
+mkdir knex-abstract
+cp -R github/example/* ./knex-abstract/
 
-mv node_modules roderic-project/react/node_modules || true
+#mv node_modules knex-abstract/node_modules || true
 
-    mv node_modules_puppeteer roderic-project/puppeteer/node_modules || true
+    #mv node_modules_puppeteer knex-abstract/puppeteer/node_modules || true
 
-if [ ! -e roderic-project/react/node_modules/react ]; then
+#if [ ! -e knex-abstract/node_modules/knex-abstract ]; then
 
-    (cd roderic-project/react && yarn)
-fi
+    (cd knex-abstract && yarn)
+#fi
 
-    if [ ! -e roderic-project/puppeteer/node_modules/puppeteer ]; then
+    #if [ ! -e knex-abstract/puppeteer/node_modules/puppeteer ]; then
 
-        (cd roderic-project/puppeteer && yarn)
-    fi
+    #    (cd knex-abstract/puppeteer && yarn)
+    #fi
 
-(cd roderic-project/react && npm link roderic)
+(cd knex-abstract && npm link @stopsopa/knex-abstract)
 
 echo 'Should be symlink not real directory:';
-(cd roderic-project/react && ls -la node_modules | grep roderic)
+(cd knex-abstract && ls -la node_modules | grep knex-abstract)
 
-(cd roderic-project/react && sudo yarn dev)
+#(cd knex-abstract && sudo yarn dev)
