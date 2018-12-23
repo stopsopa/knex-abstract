@@ -1,7 +1,6 @@
 # this needs to be simplified format starting from slash and entire path prefix
 # (this file syntax is not fully compatibile with .gitignore or .npmignore)
 
-/logs/
 node_modules
 /make/tmp.counter
 /.idea/
