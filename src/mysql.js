@@ -2,7 +2,8 @@
 const log = require('../log/logn');
 
 function isObject(a) {
-    return (!!a) && (a.constructor === Object);
+    // return (!!a) && (a.constructor === Object);
+    return Object.prototype.toString.call(a) === "[object Object]";
 };
 
 function a(args, noSingle = true) {
@@ -290,7 +291,7 @@ prototype.prototype.insert = function (...args) {
 
     let [debug, trx, entity] = a(args);
 
-    entity = this.toDb(Object.assign({}, entity));
+    entity = this.toDb(entity);
 
     var query = 'INSERT INTO :table: ';
 
@@ -311,16 +312,7 @@ prototype.prototype.insert = function (...args) {
     query += '(' + columns.join(', ') + ') values (' + marks.join(', ') + ')';
 
     return this.query(debug, trx, query, values)
-        .then(result => {
-            try {
-
-                return result.insertId;
-            }
-            catch (e) {
-
-                throw `prototype.js insert() error: Malformed response: ` + JSON.stringify(result, null, 4)
-            }
-        });
+        .then(result => result.insertId);
 }
 
 /**
@@ -331,7 +323,7 @@ prototype.prototype.update = function (...args) {
 
     let [debug, trx, entity, id] = a(args);
 
-    entity = this.toDb(Object.assign({}, entity));
+    entity = this.toDb(entity);
 
     if ( ! id ) {
 
@@ -380,16 +372,7 @@ prototype.prototype.update = function (...args) {
     }
 
     return this.query(debug, trx, query, values)
-        .then(result => {
-            try {
-
-                return result.affectedRows;
-            }
-            catch (e) {
-
-                throw `prototype.js insert() error: Malformed response: ` + JSON.stringify(result, null, 4)
-            }
-        });
+        .then(result => result.affectedRows);
 }
 
 prototype.prototype.delete = async function (...args) {
@@ -410,16 +393,8 @@ prototype.prototype.delete = async function (...args) {
     return await this.query(debug, trx, `delete from :table: where ` + where, {
         id,
     })
-        .then(result => {
-            try {
-
-                return result.affectedRows;
-            }
-            catch (e) {
-
-                throw `prototype.js insert() error: Malformed response: ` + JSON.stringify(result, null, 4)
-            }
-        });
+        .then(result => result.affectedRows)
+    ;
 }
 
 prototype.prototype.destroy = function () {
