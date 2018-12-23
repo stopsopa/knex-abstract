@@ -27,62 +27,60 @@ function green {
 }
 
 
-    #if [ "$1" = "--karma" ]; then
+    if [ "$1" = "--travis" ]; then
 
-    #    if [ ! -f package_karma.json ]; then red "package_karma.json does not exist - stop"; exit 1; fi
+        if [ ! -f package_travis.json ]; then red "package_travis.json does not exist - stop"; exit 1; fi
 
-    #    if [ ! -f package.json ]; then red "package.json does not exist - stop"; exit 1; fi
+        if [ ! -f package.json ]; then red "package.json does not exist - stop"; exit 1; fi
 
-    #    if [ -f package_prod.json ]; then red "package_prod.json does exist - stop"; exit 1; fi
+        if [ -f package_prod.json ]; then red "package_prod.json does exist - stop"; exit 1; fi
 
-    #    mv package.json package_prod.json
+        mv package.json package_prod.json
 
-    #    if [ ! -f package_prod.json ]; then red "package_prod.json does not exist - stop"; exit 1; fi
+        if [ ! -f package_prod.json ]; then red "package_prod.json does not exist - stop"; exit 1; fi
 
-    #    mv package_karma.json package.json
+        mv package_travis.json package.json
 
-    #    if [ -f package_karma.json ]; then red "package_karma.json does exist - stop"; exit 1; fi
+        if [ -f package_travis.json ]; then red "package_travis.json does exist - stop"; exit 1; fi
 
-    #    if [ ! -f package.json ]; then red "package.json does not exist - stop 2"; exit 1; fi
+        if [ ! -f package.json ]; then red "package.json does not exist - stop 2"; exit 1; fi
 
-    #    green "package.json -> package_prod.json  and  package_karma.json -> package.json [done]"
+        green "package.json -> package_prod.json  and  package_travis.json -> package.json [done]"
 
-    #    exit 0
-    #fi
+        exit 0
+    fi
 
-    #if [ "$1" = "--prod" ]; then
+    if [ "$1" = "--prod" ]; then
 
-    #    if [ ! -f package_prod.json ]; then red "package_prod.json does not exist - stop"; exit 1; fi
+        if [ ! -f package_prod.json ]; then red "package_prod.json does not exist - stop"; exit 1; fi
 
-    #    if [ ! -f package.json ]; then red "package.json does not exist - stop"; exit 1; fi
+        if [ ! -f package.json ]; then red "package.json does not exist - stop"; exit 1; fi
 
-    #    if [ -f package_karma.json ]; then red "package_karma.json does exist - stop"; exit 1; fi
+        if [ -f package_travis.json ]; then red "package_travis.json does exist - stop"; exit 1; fi
 
-    #    mv package.json package_karma.json
+        mv package.json package_travis.json
 
-    #    if [ ! -f package_karma.json ]; then red "package_karma.json does not exist - stop"; exit 1; fi
+        if [ ! -f package_travis.json ]; then red "package_travis.json does not exist - stop"; exit 1; fi
 
-    #    mv package_prod.json package.json
+        mv package_prod.json package.json
 
-    #    if [ -f package_prod.json ]; then red "package_prod.json does exist - stop"; exit 1; fi
+        if [ -f package_prod.json ]; then red "package_prod.json does exist - stop"; exit 1; fi
 
-    #    if [ ! -f package.json ]; then red "package.json does not exist - stop 2"; exit 1; fi
+        if [ ! -f package.json ]; then red "package.json does not exist - stop 2"; exit 1; fi
 
-    #    green "package.json -> package_karma.json  and  package_prod.json -> package.json [done]"
+        green "package.json -> package_travis.json  and  package_prod.json -> package.json [done]"
 
-    #    exit 0
-    #fi
+        exit 0
+    fi
 
-    #if [ -f package_prod.json ]; then
+    if [ -f package_prod.json ]; then
 
-    #    red "package_prod.json exist, before update run\n    /bin/bash update.sh --prod"
+        red "package_prod.json exist, before update run\n    /bin/bash update.sh --prod"
 
-    #    exit 1;
-    #fi
+        exit 1;
+    fi
 
-                                            #make t
-
-                                            #make examples
+make t
 
 if [ "$(git rev-parse --abbrev-ref HEAD)" != $LOCALBRANCH ]; then
 
@@ -121,17 +119,17 @@ if [ "$DIFF" != "" ] || [ "$1" = "force" ]; then
 
     npm version patch
 
-    #make umd
-    #cat comment.txt dist/spvalidation.js > dist/test.js
-    #mv dist/test.js dist/spvalidation.js
-    #cat comment.txt dist/spvalidation.min.js > dist/test.js
-    #mv dist/test.js dist/spvalidation.min.js
+    # make umd
+    # cat comment.txt dist/spvalidation.js > dist/test.js
+    # mv dist/test.js dist/spvalidation.js
+    # cat comment.txt dist/spvalidation.min.js > dist/test.js
+    # mv dist/test.js dist/spvalidation.min.js
 
-                            #node update-badge.js
-                            #git add README.md
+                            node update-badge.js
+                            git add README.md
 
-                            #git add dist
-                            #git add examples.es5.js
+                            # git add dist
+                            # git add examples.es5.js
                             git commit --amend --no-edit
 
     git push $ORIGIN $REMOTEBRANCH

@@ -27,10 +27,10 @@ c: # run local server to browse coverage
 nt: # test .npmignore
 	@npm pack
 
-ck: # karma parameters.json
-	@/bin/bash update.sh --karma
+ct: # travis parameters.json
+	@/bin/bash update.sh --travis
 
-cj: # jest parameters.json
+cp: # jest parameters.json
 	@/bin/bash update.sh --prod
 
 doc: docs
@@ -50,9 +50,3 @@ karma: # run karma test
 
 umd: # build browser UMD versions
 	@node node_modules/.bin/webpack --config webpack-UMD.config.js
-
-examples:
-	rm -rf examples.es5.js
-	node node_modules/.bin/webpack --config webpack-EXAMPLES.config.js
-	node examples.es5.js
-
