@@ -10,6 +10,10 @@ node_modules
 /Dockerfile
 /README.md
 /test/
+/.env
+/package_travis.json
+/install/unlink.sh
+/.env.travis
 /update.sh
 /.check-npm-version.sh
 
