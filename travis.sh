@@ -15,7 +15,7 @@ make ct
 
 yarn
 
-npm link knex-abstract
+npm link @stopsopa/knex-abstract
 
 cp .env.travis .env
 
