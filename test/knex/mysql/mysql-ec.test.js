@@ -209,3 +209,38 @@ it(`knex - mysql - queryOne, missing param`, async done => {
     }
 });
 
+it(`knex - mysql - find, error - not string select`, async done => {
+
+    try {
+
+        await man.find(1, 56);
+    }
+    catch (e) {
+
+        expect(e).toEqual("second argument of find method should be string");
+
+        done();
+
+    }
+});
+
+it('knex - mysql, log.dump but in array params case', async done => {
+
+    const list = await man.query(true, 'show databases', []);
+
+    let tmp = list.map(x => Object.values(x)[0]);
+
+    const db = process.env.PROTECTED_MYSQL_DB;
+
+    if (db) {
+
+        const found = tmp.find(x => x === db);
+
+        // man.destroy();
+
+        expect(found).toEqual(db);
+
+        done();
+    }
+});
+

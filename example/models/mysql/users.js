@@ -160,50 +160,50 @@ select r.id from roles r where r.name = ?
     clearRoles: async function(userId) {
         return await this.query(`delete from user_role where user_id = :id`, userId);
     },
-    find: function (...args) {
-
-        let [debug, trx, id] = a(args);
-
-        if ( ! id ) {
-
-            throw `user.js::find(): id not specified or invalid`;
-        }
-
-        const data = this.raw(debug, trx, `
-SELECT          u.*, GROUP_CONCAT(r.id) roles
-FROM            users u 
-LEFT JOIN       user_role ur
-		     ON ur.user_id = u.id
-LEFT JOIN       roles r
-		     ON ur.role_id = r.id
-WHERE           u.id = ?		  
-GROUP BY        u.id  
-ORDER BY        id desc        
-        `, [id]).then(data => {
-            return data[0][0];
-        }).then(this.fromDb);
-
-        return data;
-    },
-    findAll: function (...args) {
-
-        let [debug, trx] = a(args);
-
-        const data = this.raw(debug, trx, `
-SELECT          u.*, GROUP_CONCAT(r.name) roles
-FROM            users u 
-LEFT JOIN       user_role ur
-		     ON ur.user_id = u.id
-LEFT JOIN       roles r
-		     ON ur.role_id = r.id
-GROUP BY        u.id  
-ORDER BY        id desc        
-        `).then(data => {
-            return data[0];
-        }).then(list => list.map(this.fromDb));
-
-        return data;
-    },
+//     find: function (...args) {
+//
+//         let [debug, trx, id] = a(args);
+//
+//         if ( ! id ) {
+//
+//             throw `user.js::find(): id not specified or invalid`;
+//         }
+//
+//         const data = this.raw(debug, trx, `
+// SELECT          u.*, GROUP_CONCAT(r.id) roles
+// FROM            users u
+// LEFT JOIN       user_role ur
+// 		     ON ur.user_id = u.id
+// LEFT JOIN       roles r
+// 		     ON ur.role_id = r.id
+// WHERE           u.id = ?
+// GROUP BY        u.id
+// ORDER BY        id desc
+//         `, [id]).then(data => {
+//             return data[0][0];
+//         }).then(this.fromDb);
+//
+//         return data;
+//     },
+//     findAll: function (...args) {
+//
+//         let [debug, trx] = a(args);
+//
+//         const data = this.raw(debug, trx, `
+// SELECT          u.*, GROUP_CONCAT(r.name) roles
+// FROM            users u
+// LEFT JOIN       user_role ur
+// 		     ON ur.user_id = u.id
+// LEFT JOIN       roles r
+// 		     ON ur.role_id = r.id
+// GROUP BY        u.id
+// ORDER BY        id desc
+//         `).then(data => {
+//             return data[0];
+//         }).then(list => list.map(this.fromDb));
+//
+//         return data;
+//     },
     prepareToValidate: function (data = {}, mode) {
 
         if (typeof data.id !== 'undefined') {

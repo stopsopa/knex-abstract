@@ -254,23 +254,11 @@ prototype.prototype.queryColumn = function (...args) {
     ;
 };
 
-prototype.prototype.count = function (debug, trx) {
+prototype.prototype.count = function (...args) {
 
     const query = 'SELECT COUNT(*) AS c FROM :table:';
 
-    return this.query(debug, trx, query)
-        .then(function (rows) {
-
-            if (rows.length > 0 && rows[0].c) {
-
-                return rows[0].c;
-            }
-
-            return Promise.reject({
-                message:'queryOne error',
-                error:"Count(*) not work for query: '" + query + "'"
-            });
-        });
+    return this.queryColumn(...args, query);
 }
 
 prototype.prototype.find = function (...args) {
@@ -285,12 +273,6 @@ prototype.prototype.find = function (...args) {
     return this.queryOne(debug, trx, `SELECT ${select} FROM :table: WHERE :id: = :id`, {
         id,
     })
-        .catch(e => Promise.reject(JSON.stringify({
-            query,
-            params,
-            queryParams,
-            e
-        }, null, 4)))
         .then(this.fromDb)
     ;
 };

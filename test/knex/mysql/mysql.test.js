@@ -89,7 +89,7 @@ it(`knex - mysql - toDb`, async done => {
 
 it(`knex - mysql - queryColumn, array params`, async done => {
 
-    const lastName = await man.queryColumn(true, 'select lastName from :table: u where u.:id: = ?', [1]);
+    const lastName = await man.queryColumn('select lastName from :table: u where u.:id: = ?', [1]);
 
     expect(lastName).toEqual('admin');
 
@@ -98,7 +98,7 @@ it(`knex - mysql - queryColumn, array params`, async done => {
 
 it(`knex - mysql - queryColumn, array params, one param is also array`, async done => {
 
-    const data = await man.query(true, 'select lastName from :table: u where u.:id: in (?)', [[1, 2]]);
+    const data = await man.query('select lastName from :table: u where u.:id: in (?)', [[1, 2]]);
 
     expect(data).toEqual([
         {"lastName": "admin"},
@@ -108,12 +108,59 @@ it(`knex - mysql - queryColumn, array params, one param is also array`, async do
     done();
 });
 
+it(`knex - mysql - count`, async done => {
 
-// it(`knex - mysql - queryColumn, array params, params is not array nor object`, async done => {
-//
-//     const lastName = await man.queryColumn(true, 'select lastName from :table: u where u.:id: = ?', 1);
-//
-//     expect(lastName).toEqual('ddd');
-//
-//     done();
-// });
+    const data = await man.count();
+
+    expect(data).toEqual(2);
+
+    done();
+});
+
+it(`knex - mysql - find`, async done => {
+
+    const {created, updated, roles, config, ...rest} = await man.find(1);
+
+    expect(rest).toEqual({
+        "email": "admin@gmail.com",
+        "enabled": true,
+        "firstName": "admin",
+        "id": 1,
+        "lastName": "admin",
+        "password": "adminpass"
+    });
+
+    done();
+});
+
+it(`knex - mysql - find with custom select`, async done => {
+
+    const data = await man.find(1, 'lastName, firstName');
+
+    expect(data).toEqual({
+        "lastName": "admin",
+        "firstName": "admin",
+        "roles": [], // still output data are warmed up by fromDb()
+    });
+
+    done();
+});
+
+it(`knex - mysql - findAll`, async done => {
+
+    const data = await man.findAll();
+
+    const map = data.map(a => {
+
+        const {created, updated, roles, config, enabled, id, firstName, lastName, ...rest} = a;
+
+        return rest;
+    });
+
+    expect(map).toEqual([
+        {"email": "admin@gmail.com", "password": "adminpass"},
+        {"email": "user@gmail.com", "password": "password1234"},
+    ]);
+
+    done();
+});
