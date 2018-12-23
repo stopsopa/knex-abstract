@@ -2,6 +2,17 @@
 set -e
 set -x
 
+function red {
+    printf "\e[91m$1\e[0m\n"
+}
+
+if [ ! -e ../ormconfig.js ]; then
+
+    red "ormconfig.js doesn't exist, use template file ormconfig.js.dist"
+
+    exit 1;
+fi
+
 if [ ! -e ../node_modules ]; then
     (cd ../ && yarn)
 fi
