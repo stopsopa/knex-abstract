@@ -13,6 +13,8 @@ make ct
 
 yarn
 
+cp .env.travis .env
+
 # yarn add codecov "jest"@"^23.6.0" --dev
 
 EXECUTE="/bin/bash test.sh"
