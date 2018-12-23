@@ -2,6 +2,10 @@
 set -e
 set -x
 
+if [ ! -e ../node_modules ]; then
+    (cd ../ && yarn)
+fi
+
 TORUN="$(/bin/bash torun.sh)"
 
 # don't stop if something goes wrong from now on - I can handle it
