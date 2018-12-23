@@ -12,6 +12,9 @@
 /stopsopa-validator*
 /local.txt
 /.idea/
+/.env
+/.env.travis
+/package_travis.json
 /server.js
 /yarn.lock
 node_modules
