@@ -9,9 +9,13 @@ function green {
     printf "\e[32m$1\e[0m\n"
 }
 
+npm link
+
 make ct
 
 yarn
+
+npm link knex-abstract
 
 cp .env.travis .env
 

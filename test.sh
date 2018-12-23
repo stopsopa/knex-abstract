@@ -31,7 +31,7 @@ function green {
 
             if [[ "$(node node_modules/\@stopsopa/knex-abstract/install/install.js --is-linked)" != "$LOCVER" ]]; then
 
-                echo "can't link knex-abstract in main target directory"
+                echo "can't link knex-abstract in main target directory."
 
                 exit 1
             fi
