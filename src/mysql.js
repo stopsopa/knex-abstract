@@ -61,9 +61,9 @@ prototype.prototype.raw = function (...args) {
 
         let i = 0;
 
-        query = query.replace(/(?:(?::([0-9a-z_]+)(:?))|(?:\?+))/ig, (all, name, semi) => {
+        query = query.replace(/(?:(?::([0-9a-z_]+)(:?))|(?:\?+))/ig, (all, name) => {
 
-            if (name === undefined && semi === undefined) {
+            if (name === undefined) {
 
                 if (Array.isArray(params[i])) {
 
@@ -87,7 +87,7 @@ prototype.prototype.raw = function (...args) {
                 return all;
             }
 
-            if (semi && name && (name === 'id' || name === 'table')) {
+            if (name && (name === 'id' || name === 'table')) {
 
                 name = '__' + name;
             }
@@ -102,7 +102,7 @@ prototype.prototype.raw = function (...args) {
 
             // log(all, i, JSON.stringify(params));
 
-            return semi ? '??' : '?';
+            return '??';
         });
 
         debug && log.dump({
@@ -110,32 +110,28 @@ prototype.prototype.raw = function (...args) {
             params,
         });
 
-        return (trx || this.knex).raw(query, params).catch(e => Promise.reject(JSON.stringify({
-            query,
-            params,
-            e: (e + ''),
-            stack: (e.stack + '').split("\n")
-        }, null, 4)));
-    }
+        return (trx || this.knex).raw(query, params).catch(e => {
 
-    if ( typeof params === 'number' || typeof params === 'string') {
+            const error = {
+                query,
+                params,
+                e: (e + ''),
+                stack: (e.stack + '').split("\n")
+            };
 
-        params = {[this.__id]: params};
+            error.toString = function () {
+                return JSON.stringify(this, null, 4);
+            };
+
+            return Promise.reject(error);
+        });
     }
 
     if (query.indexOf(':table:') > -1) {
 
         if ( params && typeof params.__table !== 'undefined' ) {
 
-            throw `Binding name ':table:' is reserved, if you are using it then you shouldn't specify parameter 'table' manually, use different binding name like for example :_table: or remove 'table' parameter from parameters object because it will be assigne implicitly internally by library. You might use also raw knex interface 
-
-const knex = require('roderic/libs/knex'); // or const knex = require('../webpack/knex').default;
-
-let result = await knex().raw('select * from :table:', {
-    table: 'users'
-});
-
-`;
+            throw `Binding name ':table:' is reserved, if you are using it then you shouldn't specify parameter '__table' manually`;
         }
 
         if ( ! isObject(params) ) {
@@ -155,15 +151,7 @@ let result = await knex().raw('select * from :table:', {
 
         if ( params && typeof params.__id !== 'undefined' ) {
 
-            throw `Binding name ':id:' is reserved, if you are using it then you shouldn't specify parameter 'id' manually, use different binding name like for example :_id: or remove 'id' parameter from parameters object because it will be assigne implicitly by library. You might use also raw knex interface 
-
-const knex = require('roderic/libs/knex'); // or const knex = require('../webpack/knex').default;
-
-let result = await knex().raw('select * from users where id = :id:', {
-    id: 2
-});
-
-`;
+            throw `Binding name ':id:' is reserved, if you are using it then you shouldn't specify parameter '__id' manually`;
         }
 
         if ( ! isObject(params) ) {
@@ -190,7 +178,7 @@ let result = await knex().raw('select * from users where id = :id:', {
 
         if ( typeof params[name] === 'undefined') {
 
-            throw `Query: '${query}' error: value for parameter '${name}' is missing on the list of given parameter: ` + JSON.stringify(params, null, 4);
+            throw `Query: '${query}' error: value for parameter '${name}' is missing on the list of given parameter: ` + JSON.stringify(params);
         }
 
         const placeholder = semi ? '??' : '?';
@@ -215,13 +203,22 @@ let result = await knex().raw('select * from users where id = :id:', {
         queryParams,
     });
 
-    return this.knex.raw(query, queryParams).catch(e => Promise.reject({
-        query,
-        params,
-        queryParams,
-        e: (e + ''),
-        stack: (e.stack + '').split("\n")
-    }));
+    return this.knex.raw(query, queryParams).catch(e => {
+
+        const error = {
+            query,
+            params,
+            queryParams,
+            e: (e + ''),
+            stack: (e.stack + '').split("\n")
+        };
+
+        error.toString = function () {
+            return JSON.stringify(this, null, 4);
+        };
+
+        return Promise.reject(error);
+    });
 }
 
 prototype.prototype.query = function (...args) {
@@ -237,10 +234,16 @@ prototype.prototype.queryOne = function (...args) {
                 return rows.pop();
             }
 
-            return Promise.reject(JSON.stringify({
+            const error = {
                 message: 'queryOne error',
                 error: 'found ' + rows.length + ' rows, queryOne is designed to fetch first from only one row'
-            }, null, 4));
+            };
+
+            error.toString = function () {
+                return JSON.stringify(this, null, 4);
+            }
+
+            return Promise.reject(error);
         })
             .then(this.fromDb)
         ;

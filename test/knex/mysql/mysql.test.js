@@ -10,9 +10,23 @@ const config            = require('../../../example/models/config');
 
 knex.init(config);
 
-it('knex - mysql', async done => {
+let man;
 
-    const man = knex().model.common;
+let manc;
+
+beforeAll(() => {
+
+    manc = knex().model.common;
+
+    man = knex().model.users;
+});
+
+afterAll(() => {
+
+   man.destroy();
+});
+
+it('knex - mysql', async done => {
 
     const list = await man.query(true, 'show databases');
 
@@ -24,7 +38,7 @@ it('knex - mysql', async done => {
 
         const found = tmp.find(x => x === db);
 
-        man.destroy();
+        // man.destroy();
 
         expect(found).toEqual(db);
 
@@ -33,8 +47,6 @@ it('knex - mysql', async done => {
 });
 
 it(`knex - mysql - shouldn't be alone`, async done => {
-
-    const man = knex().model.common;
 
     try {
 
@@ -48,14 +60,60 @@ it(`knex - mysql - shouldn't be alone`, async done => {
     }
 });
 
-
 it(`knex - mysql - init`, async done => {
 
-    const man = knex().model.common;
-
-    const init = await man.initial();
+    const init = await manc.initial();
 
     expect(init).toEqual({prototype:'MYSQL: prototype.initial()'});
 
     done();
 });
+
+it(`knex - mysql - fromDb`, async done => {
+
+    const init = await manc.fromDb({test: true});
+
+    expect(init).toEqual({test: true});
+
+    done();
+});
+
+it(`knex - mysql - toDb`, async done => {
+
+    const init = await manc.toDb({test: true});
+
+    expect(init).toEqual({test: true});
+
+    done();
+});
+
+it(`knex - mysql - queryColumn, array params`, async done => {
+
+    const lastName = await man.queryColumn(true, 'select lastName from :table: u where u.:id: = ?', [1]);
+
+    expect(lastName).toEqual('admin');
+
+    done();
+});
+
+it(`knex - mysql - queryColumn, array params, one param is also array`, async done => {
+
+    const data = await man.query(true, 'select lastName from :table: u where u.:id: in (?)', [[1, 2]]);
+
+    expect(data).toEqual([
+        {"lastName": "admin"},
+        {"lastName": "user"}
+    ]);
+
+    done();
+});
+
+
+// it(`knex - mysql - queryColumn, array params, params is not array nor object`, async done => {
+//
+//     const lastName = await man.queryColumn(true, 'select lastName from :table: u where u.:id: = ?', 1);
+//
+//     expect(lastName).toEqual('ddd');
+//
+//     done();
+// });
