@@ -4,7 +4,7 @@ COMPOSE_PROJECT_NAME:="$(shell cat docker/name.conf)"
 export COMPOSE_PROJECT_NAME
 
 fixtures:
-	node test/recreate-db.js
+	node migrations/recreate-db.js
 	(cd migrations && make mrun)
 
 islinked:
