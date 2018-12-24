@@ -510,6 +510,8 @@ const installTool = (source, target, filter) => new Promise((resolve, reject) =>
         ...chain,
         () => installTool(path.resolve(source, '.env.dist'), path.resolve(project, '.env'), () => true),
         () => installTool(path.resolve(source, 'migrations', 'ormconfig.js.dist'), path.resolve(project, 'migrations', 'ormconfig.js'), () => true),
+        () => installTool(path.resolve(source, 'package.json'), path.resolve(project, 'package.json'), () => true),
+        () => installTool(path.resolve(source, 'package.json'), path.resolve(project, 'package.json'), () => true),
         // () => new Promise(res => {
         //
         //     let sourceJson      = require(path.resolve(source, 'package.json'));
@@ -536,10 +538,11 @@ Now run:
 
     cd "${project}"
     yarn
+    yarn add @stopsopa/knex-abstract
     
     .. and then:
     
-    see Makefile    
+    cat Makefile    
                
 
 `);

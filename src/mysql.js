@@ -1,5 +1,5 @@
 
-const log = require('../src/log/logn');
+const log = require('@stopsopa/knex-abstract/log/logn');
 
 function isObject(a) {
     // return (!!a) && (a.constructor === Object);

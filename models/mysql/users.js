@@ -5,7 +5,7 @@ const extend            = abstract.extend;
 
 const prototype         = abstract.prototype;
 
-const log               = require('../../src/log/logn');
+const log               = require('@stopsopa/knex-abstract/log/logn');
 
 const a                 = prototype.a;
 

@@ -13,7 +13,7 @@ knex.init(config);
 
 const man = knex().model.common;
 
-const log               = require('../src/log/logn');
+const log               = require('@stopsopa/knex-abstract/log/logn');
 
 (async function () {
 
