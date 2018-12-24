@@ -1,6 +1,6 @@
 {
   "name": "@stopsopa/knex-abstract",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "",
   "main": "src",
   "scripts": {
@@ -30,7 +30,6 @@
       "test"
     ],
     "coverageReporters": [
-      
       "html",
       "lcov"
     ],
