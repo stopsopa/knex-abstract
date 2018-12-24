@@ -3,9 +3,19 @@ COMPOSE_PROJECT_NAME:="$(shell cat docker/name.conf)"
 
 export COMPOSE_PROJECT_NAME
 
+h:
+	@echo "see migrations/Makefile"
+
 fixtures:
 	node migrations/recreate-db.js
 	(cd migrations && make mrun)
+
+doc: docs
+	(cd docker && docker-compose build)
+	(cd docker && docker-compose up -d --build)
+
+docs:
+	cd docker && docker-compose stop
 
 islinked:
 	@cd dev && /bin/bash islinked.sh

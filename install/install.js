@@ -488,6 +488,10 @@ const installTool = (source, target, filter) => new Promise((resolve, reject) =>
             source: path.resolve(source, 'migrations'),
             target: path.resolve(target, 'migrations'),
         },
+        {
+            source: path.resolve(source, 'docker'),
+            target: path.resolve(target, 'docker'),
+        },
         // {
         //     source: path.resolve(__dirname, '..', 'public'),
         //     target: path.resolve(project, 'public'),
