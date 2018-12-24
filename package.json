@@ -26,6 +26,7 @@
     "verbose": true,
     "bail": true,
     "collectCoverage": true,
+    "roots": ["test"],
     "coverageReporters": [
       "html",
       "lcov"
