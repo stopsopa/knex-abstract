@@ -7,7 +7,7 @@ require('@stopsopa/dotenv-up')(5, true, 'migration-users');
 
 import debug from '../../CI/debug';
 
-const log               = require('@stopsopa/knex-abstract/src/log/logn');
+const log               = require('@stopsopa/knex-abstract/log/logn');
 
 const knex              = require('@stopsopa/knex-abstract');
 
