@@ -32,16 +32,22 @@ function green {
 
         else
 
+            set -e
+            set -x
+
             yarn
 
             npm link
 
-            if [[ "$(knex-abstract --is-linked)" = "$LOCVER" ]]; then
+            if [[ "$(knex-abstract --is-linked)" != "$LOCVER" ]]; then
 
-                echo "can't link knex-abstract"
+                printf "\n\n    can't link knex-abstract\n\n"
 
                 exit 1
             fi
+
+            set +e
+            set +x
         fi
 
 

@@ -11,20 +11,20 @@ PATH="$(npm root -g)"
 
 echo "npm global node_module: '$PATH'";
 
-RODERIC="${PATH}/knex-abstract";
+LIB="${PATH}/@stopsopa/knex-abstract";
 
-if [ -e "$RODERIC" ]; then
+if [ -e "$LIB" ]; then
 
-    unlink $RODERIC;
+    unlink "$LIB" || true;
 
-    if [ -e "$RODERIC" ]; then
+    if [ -e "$LIB" ]; then
 
-        echo "Can't remove 'knex-abstract' symlink from global node_module: '$RODERIC'"
+        printf "\n\nCan't remove 'knex-abstract' symlink from global node_module: '$LIB', try to run manually:\n\n    unlink \"$LIB\"\n    make islinked\n\n"
 
         exit 1;
     fi
 else
 
-    echo "'knex-abstract' symlink doesn't exist in global node_module: '$RODERIC'"
+    printf "\n\n    'knex-abstract' symlink doesn't exist in global node_module: '$LIB'\n\n"
 fi
 

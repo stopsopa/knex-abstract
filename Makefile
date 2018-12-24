@@ -11,6 +11,7 @@ uf: # update even if there is nothing new committed
 
 h: # show any help that is available
 	@/bin/bash test.sh --help
+	@echo https://github.com/stopsopa/knex-abstract
 
 t: # just run tests once
 	@/bin/bash test.sh
@@ -43,4 +44,13 @@ docs:
 fixtures:
 	node test/recreate-db.js
 	(cd migrations && make mrun)
+
+islinked:
+	@cd dev && /bin/bash islinked.sh
+
+link:
+	npm link
+
+unlink:
+	@cd dev && /bin/bash unlink.sh
 

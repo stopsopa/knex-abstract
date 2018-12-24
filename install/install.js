@@ -405,7 +405,7 @@ if (process.argv[2] === '--is-linked') {
 
     const pck   = require(file);
 
-    const st    = fs.statSync(file);
+    const st    = fs.statSync(__filename);
 
     process.stdout.write(pck.version + ' - ' + st.mtime);
 
