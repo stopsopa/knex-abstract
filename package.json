@@ -1,6 +1,6 @@
 {
   "name": "@stopsopa/knex-abstract",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "",
   "main": "src",
   "scripts": {
