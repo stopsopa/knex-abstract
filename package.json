@@ -27,7 +27,7 @@
     "bail": true,
     "collectCoverage": true,
     "roots": [
-      "test"
+      "<rootDir>/test/"
     ],
     "coverageReporters": [
       "html",
