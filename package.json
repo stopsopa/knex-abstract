@@ -30,6 +30,7 @@
       "test"
     ],
     "coverageReporters": [
+      
       "html",
       "lcov"
     ],
