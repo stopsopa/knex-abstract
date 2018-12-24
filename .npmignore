@@ -36,7 +36,6 @@ yarn-error*
 /examples.es5.js
 /examples.es6.js
 /webpack-EXAMPLES.config.js
-/migrations/
 
 
 
