@@ -11,7 +11,7 @@ const log = require('../../CI/log/logn');
 
 const knex              = require('@stopsopa/knex-abstract');
 
-const config            = require('../../../example/models/config');
+const config            = require('../../../models/config');
 
 knex.init(config);
 

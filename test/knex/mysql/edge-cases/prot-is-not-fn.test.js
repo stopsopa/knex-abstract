@@ -10,7 +10,7 @@ const prototype         = knex.prototype;
 
 require('@stopsopa/dotenv-up')(3, false, 'tests');
 
-const config            = require('../../../../example/models/config');
+const config            = require('../../../../models/config');
 
 it('knex - prototype is not a function', async done => {
 

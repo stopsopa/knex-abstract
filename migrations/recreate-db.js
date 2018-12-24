@@ -3,7 +3,7 @@
 
 const knex              = require('@stopsopa/knex-abstract');
 
-const config            = require('../example/models/config');
+const config            = require('../models/config');
 
 const db = config.mysql.connection.database;
 

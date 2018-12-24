@@ -6,7 +6,7 @@ const knex              = require('@stopsopa/knex-abstract');
 
 require('@stopsopa/dotenv-up')(3, false, 'tests');
 
-const config            = require('../../../../example/models/config');
+const config            = require('../../../../models/config');
 
 knex.init(config);
 
