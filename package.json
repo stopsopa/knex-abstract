@@ -26,18 +26,12 @@
     "verbose": true,
     "bail": true,
     "collectCoverage": true,
-    "roots": [
-      "<rootDir>/test/"
-    ],
     "coverageReporters": [
       "html",
       "lcov"
     ],
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}"
-    ],
-    "coveragePathIgnorePatterns": [
-      "src/log"
     ]
   },
   "dependencies": {
