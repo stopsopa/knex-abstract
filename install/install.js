@@ -477,12 +477,12 @@ const installTool = (source, target, filter) => new Promise((resolve, reject) =>
         //     target: path.resolve(project, 'app'),
         // },
         {
-            source: path.join(source, 'example'),
+            source: path.resolve(source, 'example'),
             target: target,
         },
         {
-            source: path.join(source, 'models'),
-            target: target,
+            source: path.resolve(source, 'models'),
+            target: path.resolve(target, 'models'),
         },
         {
             source: path.resolve(source, 'migrations'),
