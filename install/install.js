@@ -535,23 +535,12 @@ Project was initialized in directory '${project}', enjoy 🍺
 Now run:
 
     cd "${project}"
-    cd react
     yarn
     
     .. and then:
     
-    DEV MODE:
-        (cd react && sudo yarn dev)
-        
-    PROD MODE:
-        (cd react && sudo yarn prod && node servers/index.js)        
-        
-    and optionally tests:    
-        (cd puppeteer && /bin/bash test.sh)
-        
-    
-        
-    
+    see Makefile    
+               
 
 `);
 
