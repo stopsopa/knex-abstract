@@ -14,6 +14,7 @@ if [ ! -e ../ormconfig.js ]; then
 fi
 
 if [ ! -e ../node_modules ]; then
+
     (cd ../ && yarn)
 fi
 
