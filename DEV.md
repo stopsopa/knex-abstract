@@ -24,7 +24,7 @@
 
     make t
     
-# test locally installer
+# test installer locally
 
     # go to main directory of the project, (in this example to 'knex' directory)
     # and run:
