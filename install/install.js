@@ -542,8 +542,11 @@ Now run:
     
     .. and then:
     
-    cat Makefile    
-               
+        cat Makefile    
+    
+    setup correct credentials for mysql in .env and run:
+    
+        node test.js               
 
 `);
 

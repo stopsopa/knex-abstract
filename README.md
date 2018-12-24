@@ -3,3 +3,16 @@
 [![codecov](https://codecov.io/gh/stopsopa/knex-abstract/branch/v0.0.19/graph/badge.svg)](https://codecov.io/gh/stopsopa/knex-abstract/tree/v0.0.19)
 [![NpmLicense](https://img.shields.io/npm/l/@stopsopa/knex-abstract.svg)](https://github.com/stopsopa/knex-abstract/blob/master/LICENSE)
 
+# Installation:
+
+    npx @stopsopa/knex-abstract
+    cd knex-project
+    cat test.js
+    # and see Makefile
+    
+# usege: 
+
+Follow:
+
+ - [test cases](https://github.com/stopsopa/knex-abstract/blob/master/test/knex/mysql/mysql-insert.test.js)
+ - [test script](https://github.com/stopsopa/knex-abstract/blob/master/example/test.js)
