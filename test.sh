@@ -67,6 +67,11 @@ function green {
             fi
         fi
 
+        if [ ! -e .env ]; then
+
+            cp .env.dist .env
+        fi
+
 
 
 if [ "$1" = "--help" ]; then
