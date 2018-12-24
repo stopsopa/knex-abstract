@@ -145,6 +145,7 @@ $@ \
 --verbose \
 --runInBand \
 --modulePathIgnorePatterns test/examples test/jest test/minefield test/project test/puppeteer karma_build
+--roots "<rootDir>/test/"
 END
 )";
 
