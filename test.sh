@@ -1,5 +1,6 @@
 
 
+exec 3<> /dev/null
 function red {
     printf "\e[91m$1\e[0m\n"
 }
@@ -14,7 +15,7 @@ function green {
 
         LOCVER="$(node install/install.js --is-linked)";
 
-        echo "LOCVER: >>>$LOCVER<<<"
+        { green "LOCVER: >>>$LOCVER<<<"; } 2>&3
 
         if [ ! -e node_modules ]; then
 
@@ -28,7 +29,7 @@ function green {
 
         if [[ "$(knex-abstract --is-linked)" = "$LOCVER" ]]; then
 
-            echo "knex-abstract is linked"
+            { green "knex-abstract is linked globally"; } 2>&3
 
         else
 
@@ -41,7 +42,7 @@ function green {
 
             if [[ "$(knex-abstract --is-linked)" != "$LOCVER" ]]; then
 
-                printf "\n\n    can't link knex-abstract\n\n"
+                { error "\n\n    can't link knex-abstract\n\n"; } 2>&3
 
                 exit 1
             fi
@@ -53,7 +54,7 @@ function green {
 
         if [[ "$(node node_modules/\@stopsopa/knex-abstract/install/install.js --is-linked)" = "$LOCVER" ]]; then
 
-            echo "knex-abstract is linked in main target directory"
+            { green "knex-abstract is linked in main target directory"; } 2>&3
 
         else
 
@@ -61,7 +62,7 @@ function green {
 
             if [[ "$(node node_modules/\@stopsopa/knex-abstract/install/install.js --is-linked)" != "$LOCVER" ]]; then
 
-                echo "can't link knex-abstract in main target directory."
+                { red "can't link knex-abstract in main target directory."; } 2>&3
 
                 exit 1
             fi
@@ -93,43 +94,43 @@ set -x
 
 if [ -f node_modules/.bin/jest ]; then  # exist
 
-    green "node_modules/.bin/jest - exists"
+    { green "node_modules/.bin/jest - exists"; } 2>&3
 
     JEST="node node_modules/.bin/jest"
 else
 
-    green "node_modules/.bin/jest - doesn't exist"
+    { green "node_modules/.bin/jest - doesn't exist"; } 2>&3
 fi
 
 if [ "$JEST" = "" ]; then
 
-    green "local jest - not found"
+    { green "local jest - not found"; } 2>&3
 
     jest -v > /dev/null
 
     STAT="$?"
 
-    green "(jest -v) status: $STAT";
+    { green "(jest -v) status: $STAT"; } 2>&3
 
     if [ "$STAT" = "0" ]; then
 
-        green "global jest - found"
+        { green "global jest - found"; } 2>&3
 
         JEST="jest"
     else
 
-        red "\n    Can't detect jest, install globally: \n   npm install jest -g\n\n";
+        { red "\n    Can't detect jest, install globally: \n   npm install jest -g\n\n"; } 2>&3
 
         exit 1;
     fi
 else
 
-    green "local jest - found"
+    { green "local jest - found"; } 2>&3
 fi
 
 if [[ "$(ls -la node_modules/@stopsopa | grep knex-abstract)" = *"->"* ]]; then
 
-    echo "knex-abstract is linked"
+    { green "knex-abstract is linked"; } 2>&3
 
 else
 
@@ -150,7 +151,7 @@ END
 )";
 
 
-green "\n\n    executing tests:\n        $TEST\n\n"
+{ green "\n\n    executing tests:\n        $TEST\n\n"; } 2>&3
 
 $TEST
 
@@ -158,10 +159,10 @@ STATUS=$?
 
 if [ "$STATUS" = "0" ]; then
 
-    green "\n    Tests passed\n";
+    { green "\n    Tests passed\n"; } 2>&3
 else
 
-    red "\n    Tests crashed\n";
+    { red "\n    Tests crashed\n"; } 2>&3
 
     exit $STATUS
 fi

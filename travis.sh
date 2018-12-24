@@ -1,13 +1,13 @@
 
-set -e
-set -x
-
+exec 3<> /dev/null
 function red {
     printf "\e[91m$1\e[0m\n"
 }
 function green {
     printf "\e[32m$1\e[0m\n"
 }
+set -e
+set -x
 
 npm link
 
@@ -25,7 +25,7 @@ make fixtures
 
 EXECUTE="/bin/bash test.sh"
 
-green "\n\n    executing tests:\n        $EXECUTE\n\n"
+{ green "\n\n    executing tests:\n        $EXECUTE\n\n"; } 2>&3
 
 $EXECUTE
 

@@ -1,5 +1,13 @@
 #!/bin/bash
 
+
+exec 3<> /dev/null
+function red {
+    printf "\e[91m$1\e[0m\n"
+}
+function green {
+    printf "\e[32m$1\e[0m\n"
+}
 set -e
 
 ##
@@ -33,7 +41,7 @@ DIFF="$(($MIGRATIONFILES - $MIGRATIONSINDB))"
 
 if [ "$DIFF" -lt "0" ]; then
 
-    echo "DIFF ($DIFF) can't be smaller than 0"
+    { red "DIFF ($DIFF) can't be smaller than 0"; } 2>&3
 
     exit 1;
 fi

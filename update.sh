@@ -1,6 +1,13 @@
 
 #!/bin/bash
 
+exec 3<> /dev/null
+function red {
+    printf "\e[91m$1\e[0m\n"
+}
+function green {
+    printf "\e[32m$1\e[0m\n"
+}
 set -e
 
 set -x
@@ -16,14 +23,6 @@ trim() {
     # remove trailing whitespace characters
     var="${var%"${var##*[![:space:]]}"}"
     echo -n "$var"
-}
-
-function red {
-    printf "\e[31m$1\e[0m\n"
-}
-
-function green {
-    printf "\e[32m$1\e[0m\n"
 }
 
 
@@ -75,7 +74,7 @@ function green {
 
     if [ -f package_prod.json ]; then
 
-        red "package_prod.json exist, before update run\n    /bin/bash update.sh --prod"
+        { red "package_prod.json exist, before update run\n    /bin/bash update.sh --prod"; } 2>&3
 
         exit 1;
     fi
@@ -84,12 +83,12 @@ make t
 
 if [ "$(git rev-parse --abbrev-ref HEAD)" != $LOCALBRANCH ]; then
 
-    red "switch first branch to <$LOCALBRANCH>"
+    { red "switch first branch to <$LOCALBRANCH>"; } 2>&3
 
     exit 1;
 fi
 
-green "\ncurrent branch: $LOCALBRANCH";
+{ green "\ncurrent branch: $LOCALBRANCH"; } 2>&3
 
 DIFF="$(git diff --numstat)"
 
@@ -97,7 +96,7 @@ DIFF="$(trim "$DIFF")"
 
 if [ "$DIFF" != "" ]; then
 
-    red "\n\n    Error: First commit changes ...\n\n";
+    { red "\n\n    Error: First commit changes ...\n\n"; } 2>&3
 
     exit 2;
 fi
@@ -112,7 +111,7 @@ if [ "$DIFF" != "" ] || [ "$1" = "force" ]; then
 
     if [ "$?" != "0" ]; then
 
-        red "\n\nCan't git push - stop bumping version\n"
+        { red "\n\nCan't git push - stop bumping version\n"; } 2>&3
 
         exit 3;
     fi
@@ -140,7 +139,7 @@ if [ "$DIFF" != "" ] || [ "$1" = "force" ]; then
 
         if [ "$?" != "0" ]; then
 
-            red "\n\nCan't npm publish\n    try to run 'npm login'\n"
+            { red "\n\nCan't npm publish\n    try to run 'npm login'\n"; } 2>&3
 
             exit 4;
         fi
@@ -151,12 +150,12 @@ if [ "$DIFF" != "" ] || [ "$1" = "force" ]; then
 
     else
 
-        red "\n\nCan't git push\n"
+        { red "\n\nCan't git push\n"; } 2>&3
 
         exit 5
     fi
 
 else
 
-    red "\n\n    Nothing new to publish, \n        run 'make uf' if you're sure that there is still something that should be published\n\n";
+    { red "\n\n    Nothing new to publish, \n        run 'make uf' if you're sure that there is still something that should be published\n\n"; } 2>&3
 fi
