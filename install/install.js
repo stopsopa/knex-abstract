@@ -481,10 +481,6 @@ const installTool = (source, target, filter) => new Promise((resolve, reject) =>
             target: target,
         },
         {
-            source: path.resolve(source, 'test'),
-            target: path.resolve(target, 'test'),
-        },
-        {
             source: path.resolve(source, 'migrations'),
             target: path.resolve(target, 'migrations'),
         },
@@ -509,6 +505,7 @@ const installTool = (source, target, filter) => new Promise((resolve, reject) =>
     allChain([
         ...chain,
         () => installTool(path.resolve(source, '.env.dist'), path.resolve(project, '.env'), () => true),
+        () => installTool(path.resolve(source, 'migrations', 'ormconfig.js.dist'), path.resolve(project, 'migrations', 'ormconfig.js'), () => true),
         // () => new Promise(res => {
         //
         //     let sourceJson      = require(path.resolve(source, 'package.json'));

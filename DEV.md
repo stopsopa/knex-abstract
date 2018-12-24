@@ -24,6 +24,14 @@
 
     make t
     
+# test locally installer
+
+    # go to main directory of the project, (in this example to 'knex' directory)
+    # and run:
+    npm link
+    # go to another directory and simply run:
+    knex-abstract
+    
 # inspect coverage
 
 run local server

@@ -5,7 +5,7 @@
 
 //import configServer from 'server.config';
 
-const log = require('../log/logn');
+const log = require('../src/log/logn');
 
 let connections = false;
 

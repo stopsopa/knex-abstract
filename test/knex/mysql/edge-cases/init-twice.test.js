@@ -1,6 +1,6 @@
 'use strict';
 
-const log               = require('../../../../log/logn');
+const log               = require('../../../../src/log/logn');
 
 const knex              = require('@stopsopa/knex-abstract');
 

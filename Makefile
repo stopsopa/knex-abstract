@@ -42,7 +42,7 @@ docs:
 	cd docker && docker-compose stop
 
 fixtures:
-	node test/recreate-db.js
+	node migrations/recreate-db.js
 	(cd migrations && make mrun)
 
 islinked:

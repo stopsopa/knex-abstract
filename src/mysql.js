@@ -1,5 +1,5 @@
 
-const log = require('../log/logn');
+const log = require('../src/log/logn');
 
 function isObject(a) {
     // return (!!a) && (a.constructor === Object);
