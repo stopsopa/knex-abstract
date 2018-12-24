@@ -44,9 +44,3 @@ fixtures:
 	node test/recreate-db.js
 	(cd migrations && make mrun)
 
-karma: # run karma test
-	@/bin/bash karma.sh
-	# /bin/bash karma.sh test/../file.test.js
-
-umd: # build browser UMD versions
-	@node node_modules/.bin/webpack --config webpack-UMD.config.js

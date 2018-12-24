@@ -24,8 +24,8 @@ yarn-error*
 /dev/
 /webpack/
 /webpack-KARMA.config.js
-/example/
 *.tgz
+/DEV.md
 
 /karma.conf.js
 /karma.sh

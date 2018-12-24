@@ -21,6 +21,30 @@ function green {
             yarn
         fi
 
+        if [ ! -e node_modules/.bin/jest ]; then
+
+            yarn add jest --dev
+        fi
+
+        if [[ "$(knex-abstract --is-linked)" = "$LOCVER" ]]; then
+
+            echo "knex-abstract is linked"
+
+        else
+
+            yarn
+
+            npm link
+
+            if [[ "$(knex-abstract --is-linked)" = "$LOCVER" ]]; then
+
+                echo "can't link knex-abstract"
+
+                exit 1
+            fi
+        fi
+
+
         if [[ "$(node node_modules/\@stopsopa/knex-abstract/install/install.js --is-linked)" = "$LOCVER" ]]; then
 
             echo "knex-abstract is linked in main target directory"
@@ -35,11 +59,6 @@ function green {
 
                 exit 1
             fi
-        fi
-
-        if [ ! -e node_modules/.bin/jest ]; then
-
-            yarn add jest --dev
         fi
 
 
@@ -102,8 +121,6 @@ if [[ "$(ls -la node_modules/@stopsopa | grep knex-abstract)" = *"->"* ]]; then
     echo "knex-abstract is linked"
 
 else
-
-    #(cd github && yarn)
 
     npm link
     (cd test && npm link @stopsopa/knex-abstract)

@@ -4,6 +4,5 @@ yarn-error*
 /local.txt
 /coverage/
 /stopsopa-validator*
-/karma_build/
 *.tgz
 .env
