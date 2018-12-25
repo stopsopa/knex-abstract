@@ -29,9 +29,28 @@ EXECUTE="/bin/bash test.sh"
 
 $EXECUTE
 
-STATUS=$?
+mkdir testinstall
+
+cd testinstall
+
+OUT="$(knex-abstract)"
+
+STATUS="$?";
+
+if [[ "$OUT" = *"count: 5"* ]] && [[ "$OUT" = *"\"Database\": \"knex\""* ]]; then
+
+    echo 'output is good'
+else
+
+    echo 'output is NOT good'
+
+    echo "stdout: >>$OUT<<"
+    
+    exit 1
+fi
+
 
 # cat ./coverage/lcov.info | node node_modules/coveralls/bin/coveralls.js -v | grep -v "@"
 node node_modules/.bin/codecov
 
-exit $?
+
