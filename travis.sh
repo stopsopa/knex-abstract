@@ -29,11 +29,11 @@ EXECUTE="/bin/bash test.sh"
 
 $EXECUTE
 
-mkdir testinstall
+knex-abstract
 
-cd testinstall
+cd knex-project
 
-OUT="$(knex-abstract)"
+OUT="$(node test.js)"
 
 STATUS="$?";
 
@@ -45,7 +45,7 @@ else
     echo 'output is NOT good'
 
     echo "stdout: >>$OUT<<"
-    
+
     exit 1
 fi
 
