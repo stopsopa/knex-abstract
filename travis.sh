@@ -31,6 +31,8 @@ $EXECUTE
 
 knex-abstract
 
+cp .env.travis knex-project/.env
+
 cd knex-project
 
 OUT="$(node test.js)"
