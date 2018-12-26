@@ -543,6 +543,7 @@ Now run:
     cd "${project}"
     yarn
     yarn add @stopsopa/knex-abstract
+    (cd migrations && yarn add @stopsopa/knex-abstract)
     
     .. and then:
     
