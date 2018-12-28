@@ -12,6 +12,25 @@
     
 # usege: 
 
+    require('@stopsopa/dotenv-up')(3, false, '.env');
+    
+    const knex              = require('@stopsopa/knex-abstract');
+    
+    const config      = require('config');
+    
+    knex.init(config);
+    
+    (async function(){
+    
+        const list = await knex().model.common.raw('show tables');
+        
+        // ...
+    
+        knex().destroy();
+    })();
+
+See example of [config](/stopsopa/knex-abstract/blob/master/models/config.js)
+
 Follow:
 
  - [test cases](https://github.com/stopsopa/knex-abstract/blob/master/test/knex/mysql/mysql-insert.test.js)
