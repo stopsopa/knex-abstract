@@ -15,22 +15,36 @@ const man = knex().model.common;
 
 const log               = require('@stopsopa/knex-abstract/log/logn');
 
+const mode = process.argv[2];
+
+if ( ! ( mode === 'safe' || mode === 'dangerous' ) ) {
+
+    console.log(`run: node ${__filename} safe|dangerous`);
+
+    process.exit(1);
+}
+
+const dangerous = (mode === 'dangerous');
+
 (async function () {
 
-    try {
+    if (dangerous) {
 
-        await man.query(`DROP DATABASE IF EXISTS :db:`, {db});
-    }
-    catch (e) {
+        try {
 
-        log.dump(e + '');
+            await man.query(`DROP DATABASE IF EXISTS :db:`, {db});
+        }
+        catch (e) {
+
+            log.dump(e + '');
+        }
     }
 
     try {
 
         await man.query(`CREATE DATABASE IF NOT EXISTS :db: /*!40100 DEFAULT CHARACTER SET utf8 */`, {db});
 
-        process.stdout.write('recreated');
+        console.log(dangerous ? 'recreated (DANGEROUS)' : 'just created (SAFE)');
     }
     catch (e) {
 

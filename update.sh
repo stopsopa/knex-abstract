@@ -146,6 +146,8 @@ if [ "$DIFF" != "" ] || [ "$1" = "force" ]; then
 
         git push --tags --force
 
+        make h
+
         #git push origin master --tags
 
     else

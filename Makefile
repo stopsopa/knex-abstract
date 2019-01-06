@@ -42,7 +42,7 @@ docs:
 	cd docker && docker-compose stop
 
 fixtures:
-	node migrations/recreate-db.js
+	(cd migrations && node recreate-db.js safe)
 	(cd migrations && make mrun)
 
 islinked:
