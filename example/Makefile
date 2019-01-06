@@ -7,7 +7,7 @@ h:
 	@echo "see migrations/Makefile"
 
 fixtures:
-	(cd migrations && node recreate-db.js)
+	(cd migrations && node recreate-db.js safe)
 	(cd migrations && make mrun)
 
 doc: docs
