@@ -230,7 +230,7 @@ prototype.prototype.queryOne = function (...args) {
     return this.query(...args)
         .then(rows => {
 
-            if (rows.length === 1) {
+            if (rows.length < 2) {
 
                 return rows.pop();
             }

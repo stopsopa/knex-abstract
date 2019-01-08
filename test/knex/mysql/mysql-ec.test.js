@@ -126,16 +126,11 @@ it(`knex - mysql - ER_PARSE_ERROR, array params`, async done => {
 
 it(`knex - mysql - queryOne, error`, async done => {
 
-    try {
+    const one = await man.queryOne('select email from :table: u where lastName = ?', ['xyz']);
 
-        await man.queryOne('select email from :table: u where lastName = ?', ['xyz']);
-    }
-    catch (e) {
+    expect(one).toEqual(undefined);
 
-        expect(e + '').toContain('found 0 rows');
-
-        done();
-    }
+    done();
 });
 
 it(`knex - mysql - queryOne, table reserved`, async done => {

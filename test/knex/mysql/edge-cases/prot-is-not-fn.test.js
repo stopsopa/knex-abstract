@@ -19,7 +19,7 @@ it('knex - prototype is not a function', async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual("extend: protptype is not a function, it is: object");
+        expect(e + '').toEqual("extend: prototype is not a function, it is: object");
 
         done();
     }
