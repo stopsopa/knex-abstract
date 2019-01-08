@@ -31,7 +31,7 @@
     
 # examples:
     
-- [transactions](src/migration/1545125154513-auto.ts)
+- [transactions](migrations/src/migration/1545125154513-auto.ts)
 
 See example of [config](models/config.js)
 
