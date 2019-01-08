@@ -235,16 +235,7 @@ prototype.prototype.queryOne = function (...args) {
                 return rows.pop();
             }
 
-            const error = {
-                message: 'queryOne error',
-                error: 'found ' + rows.length + ' rows, queryOne is designed to fetch first from only one row'
-            };
-
-            error.toString = function () {
-                return JSON.stringify(this, null, 4);
-            }
-
-            return Promise.reject(error);
+            return Promise.reject('found ' + rows.length + ' rows, queryOne is designed to fetch first from only one row');
         })
             .then(this.fromDb)
         ;

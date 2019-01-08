@@ -124,6 +124,29 @@ it(`knex - mysql - ER_PARSE_ERROR, array params`, async done => {
     }
 });
 
+it(`knex - mysql - queryOne - more then one`, async done => {
+
+    try {
+
+        const find = await manc.queryOne('select * from roles where name in (?)', [['admin', 'user']]);
+    }
+    catch (e) {
+
+        expect(e).toEqual("found 2 rows, queryOne is designed to fetch first from only one row");
+
+        done();
+    }
+});
+
+it(`knex - mysql - queryOne, error`, async done => {
+
+    const one = await man.queryOne('select email from :table: u where lastName = ?', ['xyz']);
+
+    expect(one).toEqual(undefined);
+
+    done();
+});
+
 it(`knex - mysql - queryOne, error`, async done => {
 
     const one = await man.queryOne('select email from :table: u where lastName = ?', ['xyz']);
