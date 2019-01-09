@@ -58,6 +58,8 @@ prototype.prototype.raw = function (...args) {
         throw `query '${query}' is not a string`;
     }
 
+    const instance = trx || this.knex;
+
     if (Array.isArray(params)) {
 
         let i = 0;
@@ -111,7 +113,7 @@ prototype.prototype.raw = function (...args) {
             params,
         });
 
-        return (trx || this.knex).raw(query, params).catch(e => {
+        return instance.raw(query, params).catch(e => {
 
             const error = {
                 query,
@@ -204,7 +206,7 @@ prototype.prototype.raw = function (...args) {
         queryParams,
     });
 
-    return this.knex.raw(query, queryParams).catch(e => {
+    return instance.raw(query, queryParams).catch(e => {
 
         const error = {
             query,
