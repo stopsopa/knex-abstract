@@ -12,7 +12,7 @@ import {
 import { Roles } from './Roles';
 
 @Entity('users')
-@Unique(['email'])
+@Unique(['email']) // http://typeorm.io/#/decorator-reference/unique
 export class Users {
 
     @PrimaryGeneratedColumn()
