@@ -4,14 +4,16 @@
 #echo "https://medium.com/@alexishevia/the-magic-behind-npm-link-d94dcb3a81af"
 #echo "to see global node_module: npm root -g"
 
+MODULE="@stopsopa/knex-abstract"
+
 set -e
 set -x
 
-PATH="$(npm root -g)"
+PATH_="$(npm root -g)"
 
-echo "npm global node_module: '$PATH'";
+echo "npm global node_module: '$PATH_'";
 
-LIB="${PATH}/@stopsopa/knex-abstract";
+LIB="$PATH_/$MODULE";
 
 if [ -e "$LIB" ]; then
 
@@ -19,12 +21,12 @@ if [ -e "$LIB" ]; then
 
     if [ -e "$LIB" ]; then
 
-        printf "\n\nCan't remove 'knex-abstract' symlink from global node_module: '$LIB', try to run manually:\n\n    unlink \"$LIB\"\n    make islinked\n\n"
+        printf "\n\nCan't remove '$MODULE' symlink from global node_module: '$LIB', try to run manually:\n\n    unlink \"$LIB\"\n    make islinked\n\n"
 
         exit 1;
     fi
 else
 
-    printf "\n\n    'knex-abstract' symlink doesn't exist in global node_module: '$LIB'\n\n"
+    printf "\n\n    '$MODULE' symlink doesn't exist in global node_module: '$LIB'\n\n"
 fi
 

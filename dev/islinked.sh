@@ -1,10 +1,18 @@
 
+MODULE="@stopsopa/knex-abstract"
+
+
+PATH_="$(npm root -g)"
+
+echo "npm global node_module: '$PATH_'";
+
+LIB="$PATH_/$MODULE";
 
 LOCAL="$(cd .. && node install/install.js --is-linked)"
 
 echo "LOCAL  : >>$LOCAL<<"
 
-GLOBAL="$(knex-abstract --is-linked)"
+GLOBAL="$($LIB/install/install.js --is-linked)"
 
 echo "GLOBAL : >>$GLOBAL<<"
 
