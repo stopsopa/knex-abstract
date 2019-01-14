@@ -19,7 +19,7 @@ it('knex - init twice', async done => {
         second,
     }).toEqual({
         first: 0,
-        second: "knex.js: Connections are already initialized, no need to call init() again",
+        second: "@stopsopa/knex-abstract: Connections are already initialized, no need to call init() again",
     });
 
     done();

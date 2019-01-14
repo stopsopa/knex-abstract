@@ -18,7 +18,7 @@ it('knex - wrong connection name', async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual("knex.js: Connection 'test' is not defined in config.js under 'knex' key");
+        expect(e + '').toEqual("@stopsopa/knex-abstract: Connection 'test' is not defined in config.js under 'knex' key");
 
         done();
     }

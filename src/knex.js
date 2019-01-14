@@ -72,7 +72,7 @@ const tool = name => {
 
     if ( ! config[name]) {
 
-        throw `knex.js: Connection '${name}' is not defined in config.js under 'knex' key`;
+        throw `@stopsopa/knex-abstract: Connection '${name}' is not defined in config.js under 'knex' key`;
     }
 
     return connections[name];
@@ -82,24 +82,24 @@ tool.init = c => {
 
     if (connections !== false) {
 
-        return `knex.js: Connections are already initialized, no need to call init() again`;
+        return `@stopsopa/knex-abstract: Connections are already initialized, no need to call init() again`;
     }
 
     if ( ! c || ! isObject(c) ) {
 
-        throw `knex.js: init(config), config has to be an object`;
+        throw `@stopsopa/knex-abstract: init(config), config has to be an object`;
     }
 
     const keys = Object.keys(c);
 
     if ( ! keys.length ) {
 
-        throw `knex.js: key 'knex' is an object but there is not connections defined in it`;
+        throw `@stopsopa/knex-abstract: key 'knex' is an object but there is not connections defined in it`;
     }
 
     if (typeof c.def !== 'string') {
 
-        throw `knex.js: Not 'def' connection specified: 'config.js' for knex key 'knex.def'`;
+        throw `@stopsopa/knex-abstract: Not 'def' connection specified: 'config.js' for knex key 'knex.def'`;
     }
 
     config = c;
