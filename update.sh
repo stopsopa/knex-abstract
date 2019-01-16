@@ -44,7 +44,7 @@ trim() {
 
         if [ ! -f package.json ]; then red "package.json does not exist - stop 2"; exit 1; fi
 
-        green "package.json -> package_prod.json  and  package_travis.json -> package.json [done]"
+        { green "package.json -> package_prod.json  and  package_travis.json -> package.json [done]"; } 2>&3
 
         exit 0
     fi
@@ -67,7 +67,7 @@ trim() {
 
         if [ ! -f package.json ]; then red "package.json does not exist - stop 2"; exit 1; fi
 
-        green "package.json -> package_travis.json  and  package_prod.json -> package.json [done]"
+        { green "package.json -> package_travis.json  and  package_prod.json -> package.json [done]"; } 2>&3
 
         exit 0
     fi

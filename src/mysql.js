@@ -244,7 +244,13 @@ prototype.prototype.queryOne = function (...args) {
 }
 prototype.prototype.queryColumn = function (...args) {
     return this.queryOne(...args)
-        .then(rows => Object.values(rows)[0])
+        .then(rows => {
+
+            if (isObject(rows)) {
+
+                return Object.values(rows)[0];
+            }
+        })
     ;
 };
 
