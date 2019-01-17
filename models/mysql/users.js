@@ -126,7 +126,7 @@ select r.id from roles r where r.name = ?
             roles = entity.roles;
         }
 
-        entity = this.toDb(Object.assign({}, entity));
+        entity = await this.toDb(Object.assign({}, entity));
 
         const id = await prototype.prototype.insert.call(this, debug, trx, entity);
 

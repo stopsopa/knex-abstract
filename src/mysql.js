@@ -42,10 +42,10 @@ prototype.prototype.initial = function () {
     return {prototype:'MYSQL: prototype.initial()'};
 }
 
-prototype.prototype.fromDb = function (row) {
+prototype.prototype.fromDb = async function (row) {
     return row;
 }
-prototype.prototype.toDb = function (row) {
+prototype.prototype.toDb = async function (row) {
     return row;
 }
 
@@ -279,18 +279,18 @@ prototype.prototype.find = function (...args) {
 
 prototype.prototype.findAll = function (debug, trx) {
     return this.query(debug, trx, `select * from :table: order by :id:`)
-        .then(data => data.map(this.fromDb))
+        .then(data => Promise.all(data.map(this.fromDb)))
     ;
 }
 /**
  * @param entity - object
  * @returns integer - inserted id
  */
-prototype.prototype.insert = function (...args) {
+prototype.prototype.insert = async function (...args) {
 
     let [debug, trx, entity] = a(args);
 
-    entity = this.toDb(entity);
+    entity = await this.toDb(entity);
 
     var query = 'INSERT INTO :table: ';
 
@@ -318,11 +318,11 @@ prototype.prototype.insert = function (...args) {
  * @param entity - object
  * @param id - mixed | object
  */
-prototype.prototype.update = function (...args) {
+prototype.prototype.update = async function (...args) {
 
     let [debug, trx, entity, id] = a(args);
 
-    entity = this.toDb(entity);
+    entity = await this.toDb(entity);
 
     if ( ! id ) {
 
