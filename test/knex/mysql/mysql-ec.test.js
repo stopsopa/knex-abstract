@@ -83,6 +83,17 @@ it(`knex - mysql - exc semi`, async done => {
     done();
 });
 
+it(`knex - mysql - wrong fromDb`, async done => {
+
+    const data = await knex().model.wrongTest.queryColumn('select email from :table: u where lastName = :p1', {
+        p1: 'admin'
+    });
+
+    expect(data).toBeUndefined();
+
+    done();
+});
+
 it(`knex - mysql - exc not semi`, async done => {
 
     const data = await man.queryColumn('select email from :table: u where lastName = :p1', {

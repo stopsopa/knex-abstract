@@ -39,6 +39,20 @@ const clear = async () => {
     await manc.raw(`truncate many`);
 };
 
+it('knex - wrong mana', async done => {
+
+    try {
+
+        knex().model.nonexisting;
+    }
+    catch (e) {
+
+        expect(e.message).toBe("No such model 'nonexisting', registered models are: common, users, many, wrongTest");
+
+        done();
+    }
+});
+
 it('knex - mysql', async done => {
 
     const list = await man.query(true, 'show databases');

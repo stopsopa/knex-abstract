@@ -234,7 +234,7 @@ prototype.prototype.queryOne = function (...args) {
 
             if (rows.length < 2) {
 
-                return rows.pop();
+                return rows.pop(); // return first row from result - but only if there is only one
             }
 
             return Promise.reject('found ' + rows.length + ' rows, queryOne is designed to fetch first from only one row');
@@ -244,11 +244,11 @@ prototype.prototype.queryOne = function (...args) {
 }
 prototype.prototype.queryColumn = function (...args) {
     return this.queryOne(...args)
-        .then(rows => {
+        .then(row => {
 
-            if (isObject(rows)) {
+            if (isObject(row)) {
 
-                return Object.values(rows)[0];
+                return Object.values(row)[0]; // extract value from first column
             }
         })
     ;
