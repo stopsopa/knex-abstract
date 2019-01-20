@@ -43,11 +43,11 @@ it('knex - wrong mana', async done => {
 
     try {
 
-        knex().model.nonexisting;
+        knex().model.nonexisting.test();
     }
     catch (e) {
 
-        expect(e.message).toBe("No such model 'nonexisting', registered models are: common, users, many, wrongTest");
+        expect(e).toBe("No such mysql manager 'nonexisting', registered managers are: common, users, many, wrongTest");
 
         done();
     }
