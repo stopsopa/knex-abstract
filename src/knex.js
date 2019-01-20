@@ -51,7 +51,7 @@ const extend = (knex, name) => {
 
                 const keys = Object.keys(target);
 
-                throw new Error(`No such model '${propKey}', registered models are: ` + keys.join(', '));
+                throw `No such ${name} manager '${propKey}', registered managers are: ` + keys.join(', ');
             }
         });
     }
