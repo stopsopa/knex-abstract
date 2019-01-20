@@ -33,7 +33,7 @@ const extend = (knex, name) => {
 
     if (models[name]) {
 
-        knex.model = Object.keys(models[name]).reduce((a, key) => {
+        const model = Object.keys(models[name]).reduce((a, key) => {
 
             a[key] = models[name][key](knex);
 
@@ -41,7 +41,7 @@ const extend = (knex, name) => {
 
         }, {});
 
-        knex.model = new Proxy(knex.model, {
+        knex.model = new Proxy(model, {
             get(target, propKey, receiver) {
 
                 if (typeof target[propKey] !== 'undefined') {
