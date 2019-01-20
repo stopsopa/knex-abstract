@@ -49,18 +49,11 @@ const extend = (knex, name) => {
                     return target[propKey];
                 }
 
-                const keys = Object.keys(target).filter(a => a !== 'props');
+                const keys = Object.keys(target);
 
                 throw new Error(`No such model '${propKey}', registered models are: ` + keys.join(', '));
             }
         });
-
-        knex.model.props = Object.keys(knex.model).reduce((acc, key) => {
-
-            acc[key] = typeof knex.model[key];
-
-            return acc;
-        }, {});
     }
     else {
 
