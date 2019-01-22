@@ -44,7 +44,7 @@ export class auto1545125154513 implements MigrationInterface {
 
         const model = connection.model;
 
-        return await connection.transaction(async function (trx) {
+        return await connection.transaction(async trx => {
 
             let tmp;
 
@@ -120,7 +120,7 @@ export class auto1545125154513 implements MigrationInterface {
 
         const model = connection.model;
 
-        return await connection.transaction(async function (trx) {
+        return await connection.transaction(async trx => {
 
             const u = users.map(u => u.email);
 

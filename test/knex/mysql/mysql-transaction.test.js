@@ -83,7 +83,7 @@ it(`knex - transaction ON`, async done => {
 
     try {
 
-        await connection.transaction(async function (trx) {
+        await connection.transaction(async trx => {
             await man.insert(trx, {
                 firstName: 'trans f a',
                 lastName: 'trans l a',
