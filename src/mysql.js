@@ -24,11 +24,13 @@ function a(args, noSingle = true) {
 
                 throw `First argument is bool but it shouldn't be the only argument`;
             }
+
+            return;
         }
 
         if (t === 'function') {
 
-            trx = t;
+            trx = a;
         }
     });
 
