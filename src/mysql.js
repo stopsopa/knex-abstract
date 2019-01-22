@@ -8,19 +8,29 @@ function isObject(a) {
 
 function a(args, noSingle = true) {
 
-    let debug = false;
+    let debug   = false;
 
-    if (typeof args[0] === 'boolean') {
+    let trx     = false;
 
-        debug = args[0];
+    args.forEach(a => {
 
-        if (noSingle && args.length === 1) {
+        const t = typeof a;
 
-            throw `First argument is bool but it shouldn't be the only argument`;
+        if (t === 'boolean') {
+
+            debug = a;
+
+            if (noSingle && args.length === 1) {
+
+                throw `First argument is bool but it shouldn't be the only argument`;
+            }
         }
-    }
 
-    const trx = args.find(a => typeof a === 'function') || false;
+        if (t === 'function') {
+
+            trx = t;
+        }
+    });
 
     args = args
         .filter(a => typeof a !== 'function')
