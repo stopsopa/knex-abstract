@@ -4,7 +4,7 @@ const log               = require('inspc');
 
 const knex              = require('@stopsopa/knex-abstract');
 
-require('@stopsopa/dotenv-up')(3, false, 'tests');
+require('@stopsopa/dotenv-up')(4, false, 'tests');
 
 const config            = require('../../../models/config');
 

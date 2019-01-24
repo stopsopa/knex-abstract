@@ -8,7 +8,7 @@ const extend            = knex.extend;
 
 const prototype         = knex.prototype;
 
-require('@stopsopa/dotenv-up')(3, false, 'tests');
+require('@stopsopa/dotenv-up')(5, false, 'tests');
 
 const config            = require('../../../../models/config');
 
