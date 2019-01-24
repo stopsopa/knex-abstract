@@ -1,6 +1,6 @@
 {
   "name": "@stopsopa/knex-abstract",
-  "version": "0.0.53",
+  "version": "0.0.4",
   "description": "",
   "main": "src",
   "scripts": {
@@ -22,9 +22,21 @@
     "knex-abstract": "./install/install.js"
   },
   "homepage": "https://github.com/stopsopa/knex-abstract#readme",
+  "jest": {
+    "verbose": true,
+    "bail": true,
+    "collectCoverage": true,
+    "coverageReporters": [
+      "html",
+      "lcov"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}"
+    ]
+  },
   "dependencies": {
-    "inspc": "^0.0.15",
     "knex": "^0.16.2",
+    "inspc": "^0.0.15",
     "mysql": "^2.16.0"
   }
 }
