@@ -1,7 +1,7 @@
 
 const knex              = require('@stopsopa/knex-abstract');
 
-const log               = require('@stopsopa/knex-abstract/log/logn');
+const log               = require('inspc');
 
 const config            = require('./models/config');
 

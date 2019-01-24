@@ -1,6 +1,6 @@
 'use strict';
 
-const log               = require('@stopsopa/knex-abstract/log/logn');
+const log               = require('inspc');
 
 const knex              = require('@stopsopa/knex-abstract');
 

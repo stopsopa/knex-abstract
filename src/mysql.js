@@ -1,5 +1,5 @@
 
-const log = require('@stopsopa/knex-abstract/log/logn');
+const log = require('inspc');
 
 function isObject(a) {
     // return (!!a) && (a.constructor === Object);
@@ -8,15 +8,17 @@ function isObject(a) {
 
 function a(args, noSingle = true) {
 
-    let debug   = false;
+    let debug       = false;
 
-    let trx     = false;
+    let trx         = false;
 
-    args.forEach(a => {
+    let fntoromove  = false;
+
+    args.forEach((a, i) => {
 
         const t = typeof a;
 
-        if (t === 'boolean') {
+        if (debug === false && t === 'boolean') {
 
             debug = a;
 
@@ -28,14 +30,20 @@ function a(args, noSingle = true) {
             return;
         }
 
-        if (t === 'function') {
+        if (trx === false && t === 'function') {
+
+            fntoromove = i;
 
             trx = a;
         }
     });
 
+    if (fntoromove !== false) {
+
+        args.splice(fntoromove, 1);
+    }
+
     args = args
-        .filter(a => typeof a !== 'function')
         .filter(a => typeof a !== 'boolean')
         .filter(a => a !== null)
         .filter(a => a !== undefined)
@@ -413,6 +421,30 @@ prototype.prototype.destroy = function () {
     this.knex.destroy();
 
     return this;
+}
+
+prototype.prototype.transactify = async function (...args) {
+
+    let [debug, trx, logic, ...rest] = a(args);
+
+    if (typeof logic !== 'function') {
+
+        logic   = trx;
+
+        trx     = false;
+    }
+
+    if (typeof logic !== 'function') {
+
+        throw `transactify: logic function is not a function`;
+    }
+
+    if (trx) {
+
+        return await logic(debug, trx, ...rest);
+    }
+
+    return await this.knex.transaction(trx => logic(debug, trx, ...rest));
 }
 
 prototype.a = a;

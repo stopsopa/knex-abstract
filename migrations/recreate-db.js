@@ -13,7 +13,7 @@ knex.init(config);
 
 const man = knex().model.common;
 
-const log               = require('@stopsopa/knex-abstract/log/logn');
+const log               = require('inspc');
 
 const mode = process.argv[2];
 

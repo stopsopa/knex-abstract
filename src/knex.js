@@ -5,7 +5,7 @@
 
 //import configServer from 'server.config';
 
-const log = require('@stopsopa/knex-abstract/log/logn');
+const log = require('inspc');
 
 let connections = false;
 
