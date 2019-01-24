@@ -37,6 +37,7 @@
   "dependencies": {
     "@stopsopa/dotenv-up": "^1.0.17",
     "knex": "^0.16.2",
+    "inspc": "^0.0.15",
     "mysql": "^2.16.0"
   },
   "devDependencies": {
