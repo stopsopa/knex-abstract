@@ -1,5 +1,5 @@
 
-MODULE="@stopsopa/knex-abstract"
+MODULE="knex-abstract"
 
 
 PATH_="$(npm root -g)"

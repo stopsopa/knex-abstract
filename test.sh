@@ -11,7 +11,7 @@ function green {
 
 
         # to make sure that knex-abstract is linked -
-        # it is reaquired for testing due to require('@stopsopa/knex-abstract') in tests
+        # it is reaquired for testing due to require('knex-abstract') in tests
 
         LOCVER="$(node install/install.js --is-linked)";
 
@@ -52,15 +52,15 @@ function green {
         fi
 
 
-        if [[ "$(node node_modules/\@stopsopa/knex-abstract/install/install.js --is-linked)" = "$LOCVER" ]]; then
+        if [[ "$(node node_modules/knex-abstract/install/install.js --is-linked)" = "$LOCVER" ]]; then
 
             { green "knex-abstract is linked in main target directory"; } 2>&3
 
         else
 
-            npm link @stopsopa/knex-abstract
+            npm link knex-abstract
 
-            if [[ "$(node node_modules/\@stopsopa/knex-abstract/install/install.js --is-linked)" != "$LOCVER" ]]; then
+            if [[ "$(node node_modules/knex-abstract/install/install.js --is-linked)" != "$LOCVER" ]]; then
 
                 { red "can't link knex-abstract in main target directory."; } 2>&3
 
@@ -135,7 +135,7 @@ if [[ "$(ls -la node_modules/@stopsopa | grep knex-abstract)" = *"->"* ]]; then
 else
 
     npm link
-    (cd test && npm link @stopsopa/knex-abstract)
+    (cd test && npm link knex-abstract)
 fi
 
 # --bail \

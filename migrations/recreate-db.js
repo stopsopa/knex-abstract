@@ -1,7 +1,7 @@
 
 'use strict';
 
-const knex              = require('@stopsopa/knex-abstract');
+const knex              = require('knex-abstract');
 
 const config            = require('../models/config');
 

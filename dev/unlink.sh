@@ -4,7 +4,7 @@
 #echo "https://medium.com/@alexishevia/the-magic-behind-npm-link-d94dcb3a81af"
 #echo "to see global node_module: npm root -g"
 
-MODULE="@stopsopa/knex-abstract"
+MODULE="knex-abstract"
 
 set -e
 set -x

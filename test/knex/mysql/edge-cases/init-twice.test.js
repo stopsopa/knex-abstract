@@ -2,7 +2,7 @@
 
 const log               = require('inspc');
 
-const knex              = require('@stopsopa/knex-abstract');
+const knex              = require('knex-abstract');
 
 require('@stopsopa/dotenv-up')(5, false, 'tests');
 
@@ -19,7 +19,7 @@ it('knex - init twice', async done => {
         second,
     }).toEqual({
         first: 0,
-        second: "@stopsopa/knex-abstract: Connections are already initialized, no need to call init() again",
+        second: "knex-abstract: Connections are already initialized, no need to call init() again",
     });
 
     done();

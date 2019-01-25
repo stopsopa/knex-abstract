@@ -541,8 +541,8 @@ Now run:
 
     cd "${project}"
     yarn
-    yarn add @stopsopa/knex-abstract
-    (cd migrations && yarn add @stopsopa/knex-abstract)
+    yarn add knex-abstract
+    (cd migrations && yarn add knex-abstract)
     
     .. and then:
     

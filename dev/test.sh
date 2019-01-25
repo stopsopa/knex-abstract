@@ -56,7 +56,7 @@ cp -R github/example/* ./knex-abstract/
     #    (cd knex-abstract/puppeteer && yarn)
     #fi
 
-(cd knex-abstract && npm link @stopsopa/knex-abstract)
+(cd knex-abstract && npm link knex-abstract)
 
 echo 'Should be symlink not real directory:';
 (cd knex-abstract && ls -la node_modules | grep knex-abstract)

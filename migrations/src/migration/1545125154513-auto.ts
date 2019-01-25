@@ -9,7 +9,7 @@ import debug from '../../CI/debug';
 
 const log               = require('inspc');
 
-const knex              = require('@stopsopa/knex-abstract');
+const knex              = require('knex-abstract');
 
 const config            = require('../../../models/config');
 

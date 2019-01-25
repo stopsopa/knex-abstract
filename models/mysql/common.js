@@ -1,5 +1,5 @@
 
-const abstract          = require('@stopsopa/knex-abstract');
+const abstract          = require('knex-abstract');
 
 const extend            = abstract.extend;
 

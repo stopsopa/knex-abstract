@@ -2,7 +2,7 @@
 
 const log               = require('inspc');
 
-const knex              = require('@stopsopa/knex-abstract');
+const knex              = require('knex-abstract');
 
 require('@stopsopa/dotenv-up')(5, false, 'tests');
 
@@ -18,7 +18,7 @@ it('knex - no def', async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual("@stopsopa/knex-abstract: Not 'def' connection specified: 'config.js' for knex key 'knex.def'");
+        expect(e + '').toEqual("knex-abstract: Not 'def' connection specified: 'config.js' for knex key 'knex.def'");
 
         done();
     }

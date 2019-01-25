@@ -2,7 +2,7 @@
 
 const log               = require('inspc');
 
-const knex              = require('@stopsopa/knex-abstract');
+const knex              = require('knex-abstract');
 
 require('@stopsopa/dotenv-up')(4, false, 'tests');
 

@@ -1,5 +1,5 @@
 
-const knex              = require('@stopsopa/knex-abstract');
+const knex              = require('knex-abstract');
 
 const log               = require('inspc');
 

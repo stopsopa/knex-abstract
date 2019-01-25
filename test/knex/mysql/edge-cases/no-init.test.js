@@ -2,7 +2,7 @@
 
 const log               = require('inspc');
 
-const knex              = require('@stopsopa/knex-abstract');
+const knex              = require('knex-abstract');
 
 require('@stopsopa/dotenv-up')(5, false, 'tests');
 
@@ -18,7 +18,7 @@ it('knex - no init', async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual("Before use require('@stopsopa/knex-abstract')() first use require('@stopsopa/knex-abstract').init(config) and pass config");
+        expect(e + '').toEqual("Before use require('knex-abstract')() first use require('knex-abstract').init(config) and pass config");
 
         done();
     }

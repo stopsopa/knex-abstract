@@ -2,7 +2,7 @@
 
 const log               = require('inspc');
 
-const knex              = require('@stopsopa/knex-abstract');
+const knex              = require('knex-abstract');
 
 require('@stopsopa/dotenv-up')(5, false, 'tests');
 
@@ -18,7 +18,7 @@ it('knex - wrong connection name', async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual("@stopsopa/knex-abstract: Connection 'test' is not defined in config.js under 'knex' key");
+        expect(e + '').toEqual("knex-abstract: Connection 'test' is not defined in config.js under 'knex' key");
 
         done();
     }
