@@ -128,7 +128,7 @@ else
     { green "local jest - found"; } 2>&3
 fi
 
-if [[ "$(ls -la node_modules/@stopsopa | grep knex-abstract)" = *"->"* ]]; then
+if [[ "$(ls -la node_modules/knex-abstract | grep knex-abstract)" = *"->"* ]]; then
 
     { green "knex-abstract is linked"; } 2>&3
 

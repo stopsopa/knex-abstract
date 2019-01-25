@@ -40,8 +40,8 @@
     "mysql": "^2.16.0"
   },
   "devDependencies": {
-    "dotenv-up": "^1.0.28",
     "codecov": "^3.1.0",
+    "dotenv-up": "^1.0.28",
     "jest": "^23.6.0"
   }
 }
