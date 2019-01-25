@@ -12,7 +12,7 @@
     
 # usege: 
 
-    require('@stopsopa/dotenv-up')(4, false, '.env');
+    require('dotenv-up')(4, false, '.env');
     
     const knex              = require('knex-abstract');
     

@@ -10,11 +10,6 @@
     core-js "^2.5.7"
     regenerator-runtime "^0.11.1"
 
-"@stopsopa/dotenv-up@^1.0.17":
-  version "1.0.17"
-  resolved "https://registry.yarnpkg.com/@stopsopa/dotenv-up/-/dotenv-up-1.0.17.tgz#42f4202131a8e3ec49deedc5f0d37ffbb356ba59"
-  integrity sha512-4TPUlhK6sFYRmSPhe0fKkZ4QovCVRRxFxpigD0wHCd+i6HONEvbNm/0V2iu9m2reD8Rb7hurzlUdlQIRupBpcA==
-
 "@types/node@*":
   version "10.12.12"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.12.tgz#e15a9d034d9210f00320ef718a50c4a799417c47"
@@ -202,6 +197,11 @@ diff@^3.1.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.5.0.tgz#800c0dd1e0a8bfbc95835c202ad220fe317e5a12"
   integrity sha512-A46qtFgd+g7pDZinpnwiRJtxbC1hpgf0uzP3iG89scHk0AUC7A1TGxf5OiiOUv/JMZR8GOt8hL900hV0bOy5xA==
+
+dotenv-up@^1.0.28:
+  version "1.0.28"
+  resolved "https://registry.yarnpkg.com/dotenv-up/-/dotenv-up-1.0.28.tgz#bc9616b5811454343597f00456d26b070fef3bf0"
+  integrity sha512-PDaW75EoTSQ7J31xwk2NyfqsT33k1Pz3734cnTvsb8FRl7iCluTx8b6071b3eMdXtZWLcpv5evsKHmD57XAIqQ==
 
 dotenv@^5.0.1:
   version "5.0.1"

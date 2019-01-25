@@ -1,5 +1,5 @@
 
-require('@stopsopa/dotenv-up')(4, false, 'ormconfig.js');
+require('dotenv-up')(4, false, 'ormconfig.js');
 
 const config = {
    "type": "mysql",

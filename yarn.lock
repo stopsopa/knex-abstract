@@ -26,11 +26,6 @@
     core-js "^2.5.7"
     regenerator-runtime "^0.11.1"
 
-"@stopsopa/dotenv-up@^1.0.24":
-  version "1.0.24"
-  resolved "https://registry.yarnpkg.com/@stopsopa/dotenv-up/-/dotenv-up-1.0.24.tgz#4fcc2023a0b6e035d0b190b8901f0be8d8d57edb"
-  integrity sha512-i9zhdVZyTn32tQbpzSVDSSEO1+0ny8yiMEWkFDHPFsoDp1P45AfaSAow5VCN8fAL9zFaBwld4e9gmf6rmtEHcg==
-
 abab@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.0.tgz#aba0ab4c5eee2d4c79d3487d85450fb2376ebb0f"
@@ -857,6 +852,11 @@ domexception@^1.0.1:
   integrity sha512-raigMkn7CJNNo6Ihro1fzG7wr3fHuYVytzquZKX5n0yizGsTcYgzdIUwj1X9pK0VvjeihV+XiclP+DjwbsSKug==
   dependencies:
     webidl-conversions "^4.0.2"
+
+dotenv-up@^1.0.28:
+  version "1.0.28"
+  resolved "https://registry.yarnpkg.com/dotenv-up/-/dotenv-up-1.0.28.tgz#bc9616b5811454343597f00456d26b070fef3bf0"
+  integrity sha512-PDaW75EoTSQ7J31xwk2NyfqsT33k1Pz3734cnTvsb8FRl7iCluTx8b6071b3eMdXtZWLcpv5evsKHmD57XAIqQ==
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"

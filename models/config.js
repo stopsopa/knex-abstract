@@ -1,5 +1,5 @@
 
-require('@stopsopa/dotenv-up')(2, false, 'tests');
+require('dotenv-up')(2, false, 'tests');
 
 const mysql = require('./mysql');
 
