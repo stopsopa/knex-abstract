@@ -181,7 +181,7 @@ select r.id from roles r where r.name = ?
 // ORDER BY        id desc
 //         `, [id]).then(data => {
 //             return data[0][0];
-//         }).then(this.fromDb);
+//         }).then(d => this.fromDb(d));
 //
 //         return data;
 //     },
@@ -200,7 +200,7 @@ select r.id from roles r where r.name = ?
 // ORDER BY        id desc
 //         `).then(data => {
 //             return data[0];
-//         }).then(list => list.map(this.fromDb));
+//         }).then(list => list.map(d => this.fromDb(d)));
 //
 //         return data;
 //     },

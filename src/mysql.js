@@ -259,7 +259,7 @@ prototype.prototype.queryOne = function (...args) {
 
             return Promise.reject('found ' + rows.length + ' rows, queryOne is designed to fetch first from only one row');
         })
-            .then(this.fromDb)
+            .then(d => this.fromDb(d))
         ;
 }
 prototype.prototype.queryColumn = function (...args) {
@@ -293,13 +293,13 @@ prototype.prototype.find = function (...args) {
     return this.queryOne(debug, trx, `SELECT ${select} FROM :table: WHERE :id: = :id`, {
         id,
     })
-        .then(this.fromDb)
+        .then(d => this.fromDb(d))
     ;
 };
 
 prototype.prototype.findAll = function (debug, trx) {
     return this.query(debug, trx, `select * from :table: order by :id:`)
-        .then(data => Promise.all(data.map(this.fromDb)))
+        .then(data => Promise.all(data.map(d => this.fromDb(d))))
     ;
 }
 /**
