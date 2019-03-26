@@ -45,14 +45,20 @@ it(`knex - mysql - findAll`, async done => {
 
     const map = data.map(a => {
 
-        const {created, updated, roles, config, enabled, id, firstName, lastName, ...rest} = a;
+        const {created, updated, roles, config, enabled, id, firstName, lastName, password, ...rest} = a;
 
         return rest;
     });
 
     expect(map).toEqual([
-        {"email": "admin@gmail.com", "password": "adminpass"},
-        {"email": "user@gmail.com", "password": "password1234"},
+        {
+            "email": "admin@gmail.com",
+            // "password": "adminpass"
+        },
+        {
+            "email": "user@gmail.com",
+            // "password": "password1234"
+        },
     ]);
 
     done();
