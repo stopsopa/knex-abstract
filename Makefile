@@ -23,7 +23,7 @@ twa: # run tests in watchAll mode
 	@/bin/bash test.sh --watchAll
 
 c: # run local server to browse coverage
-	@node server.js --log 15 --dir coverage
+	@node server.js --log 15 --port 8081 --dir coverage
 
 cc: # run local server to general testing
 	@nodemon -e js,html server.js --log 15
