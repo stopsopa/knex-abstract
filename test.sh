@@ -139,6 +139,7 @@ else
 fi
 
 # --bail \
+# --detectOpenHandles \
 
 TEST="$(cat <<END
 $JEST \
