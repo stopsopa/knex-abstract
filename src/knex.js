@@ -44,6 +44,11 @@ const extend = (knex, name) => {
         knex.model = new Proxy(model, {
             get(target, propKey, receiver) {
 
+                if (typeof propKey === 'symbol') {
+
+                    return;
+                }
+
                 if (typeof target[propKey] !== 'undefined') {
 
                     return target[propKey];
@@ -51,7 +56,7 @@ const extend = (knex, name) => {
 
                 const keys = Object.keys(target);
 
-                throw `No such ${name} manager '${propKey}', registered managers are: ` + keys.join(', ');
+                throw new Error(`No such ${name} manager '${propKey}', registered managers are: ` + keys.join(', '));
             }
         });
     }

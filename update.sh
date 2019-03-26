@@ -26,9 +26,9 @@ trim() {
 }
 
 
-    if [ "$1" = "--travis" ]; then
+    if [ "$1" = "--dev" ]; then
 
-        if [ ! -f package_travis.json ]; then red "package_travis.json does not exist - stop"; exit 1; fi
+        if [ ! -f package_dev.json ]; then red "package_dev.json does not exist - stop"; exit 1; fi
 
         if [ ! -f package.json ]; then red "package.json does not exist - stop"; exit 1; fi
 
@@ -38,13 +38,13 @@ trim() {
 
         if [ ! -f package_prod.json ]; then red "package_prod.json does not exist - stop"; exit 1; fi
 
-        mv package_travis.json package.json
+        mv package_dev.json package.json
 
-        if [ -f package_travis.json ]; then red "package_travis.json does exist - stop"; exit 1; fi
+        if [ -f package_dev.json ]; then red "package_dev.json does exist - stop"; exit 1; fi
 
         if [ ! -f package.json ]; then red "package.json does not exist - stop 2"; exit 1; fi
 
-        { green "package.json -> package_prod.json  and  package_travis.json -> package.json [done]"; } 2>&3
+        { green "package.json -> package_prod.json  and  package_dev.json -> package.json [done]"; } 2>&3
 
         exit 0
     fi
@@ -55,11 +55,11 @@ trim() {
 
         if [ ! -f package.json ]; then red "package.json does not exist - stop"; exit 1; fi
 
-        if [ -f package_travis.json ]; then red "package_travis.json does exist - stop"; exit 1; fi
+        if [ -f package_dev.json ]; then red "package_dev.json does exist - stop"; exit 1; fi
 
-        mv package.json package_travis.json
+        mv package.json package_dev.json
 
-        if [ ! -f package_travis.json ]; then red "package_travis.json does not exist - stop"; exit 1; fi
+        if [ ! -f package_dev.json ]; then red "package_dev.json does not exist - stop"; exit 1; fi
 
         mv package_prod.json package.json
 
@@ -67,7 +67,7 @@ trim() {
 
         if [ ! -f package.json ]; then red "package.json does not exist - stop 2"; exit 1; fi
 
-        { green "package.json -> package_travis.json  and  package_prod.json -> package.json [done]"; } 2>&3
+        { green "package.json -> package_dev.json  and  package_prod.json -> package.json [done]"; } 2>&3
 
         exit 0
     fi

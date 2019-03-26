@@ -1,0 +1,16 @@
+root:
+    title: main # 1,12
+    children:
+        -
+            title: root1 # 2,5
+            children:
+                -
+                    title: r1 a1 # 3,4
+        -
+            title: root2 # 6,11
+            children:
+                -
+                    title: r2 a1 # 7,10
+                    children:
+                        -
+                            title: r2 a1 b1 # 8,9

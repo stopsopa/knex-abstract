@@ -25,11 +25,14 @@ twa: # run tests in watchAll mode
 c: # run local server to browse coverage
 	@node server.js --log 15 --dir coverage
 
+cc: # run local server to general testing
+	@nodemon -e js,html server.js --log 15
+
 nt: # test .npmignore
 	@npm pack
 
 ct: # travis parameters.json
-	@/bin/bash update.sh --travis
+	@/bin/bash update.sh --dev
 
 cp: # jest parameters.json
 	@/bin/bash update.sh --prod
@@ -41,16 +44,38 @@ doc: docs
 docs:
 	cd docker && docker-compose stop
 
-fixtures:
-	(cd migrations && node recreate-db.js safe)
-	(cd migrations && make mrun)
-
 islinked:
 	@cd dev && /bin/bash islinked.sh
 
 link:
 	npm link
+	npm link knex-abstract
 
 unlink:
 	@cd dev && /bin/bash unlink.sh
+
+manual:
+	nodemon -e js,html manual.js
+
+
+
+
+fixtures:
+	(cd migrations && node recreate-db.js safe)
+	(cd migrations && make mrun)
+
+diff:
+	(cd migrations && make diff)
+
+mrun:
+	(cd migrations && make mrun)
+
+torun:
+	(cd migrations && make torun)
+
+mrevert:
+	(cd migrations && make mrevert)
+
+mtest:
+	(cd migrations && make mtest)
 

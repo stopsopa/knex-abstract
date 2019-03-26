@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Test</title>
+    <style>
+        table {
+            width: 98%;
+            border: 1px solid gray;
+        }
+        .level {
+            border: 1px solid lightgray;
+            padding-left: 7px;
+        }
+        .level > div > .level {
+            margin-left: 30px;
+            margin-bottom: 1px;
+        }
+        .valid {
+            color: green;
+        }
+        .invalid {
+            color: red;
+        }
+        .level > .id {
+            color: darkcyan;
+        }
+        .level > .le {
+            color: #0056ff;
+        }
+        .level > .l {
+            color: brown;
+        }
+        .level > .s {
+            color: #b7952d;
+        }
+        .level > .r {
+            color: blueviolet;
+        }
+    </style>
+</head>
+<body>
+
+    <table>
+        <tbody>
+        <tr>
+            <td>
+    <div id="app">
+        Loading ...
+    </div>
+            </td>
+            <td>
+    <pre></pre>
+
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+    <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
+    <script src="node_modules/react/umd/react.production.min.js"></script>
+    <script src="node_modules/react-dom/umd/react-dom.production.min.js"></script>
+    <script src="node_modules/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+
+        const now = () => (new Date()).toISOString().substring(0, 19).replace('T', ' ');
+
+        const log           =   (function(){try{return console.log}catch(e){return function(){}}}());
+
+        const pre           =   document.querySelector('pre');
+
+        const delay = (time, data) =>
+            new Promise(
+                resolve => time ? setTimeout(resolve, time, data) : resolve(data)
+            )
+        ;
+
+        const {
+            Component,
+            Fragment,
+        } = React;
+
+        class Level extends Component {
+            render () {
+
+                const {
+                    tree,
+                } = this.props;
+
+                return (
+                    <div>
+                        {tree.map(c => (
+                            <Fragment key={c.id}>
+                                <div className="level">
+                                    <span className="id">id:{c.id}</span> <span className="le">le:{c.le}</span> <span className="s">s:{c.s}</span> <span className="l">l:{c.l}</span> <span className="r">r:{c.r}</span>: <b>{c.title}</b>
+                                    {Array.isArray(c.children) && <Level tree={c.children} />}
+                                </div>
+                            </Fragment>
+                        ))}
+                    </div>
+                );
+            }
+        }
+
+        const socket        =   io();
+
+        class Root extends React.Component {
+            constructor(...args) {
+
+                super(...args);
+
+                this.state = {
+                    tree: []
+                }
+            }
+            componentDidMount() {
+
+                const connect = () => {
+
+                    // to make sure it will be triggered only once
+                    socket.removeListener('connect', connect);
+
+                    const n = now();
+
+                    log('connected...: ', n);
+
+                    socket.on('data', data => {
+                        pre.innerHTML = JSON.stringify(data, null, 4);
+                    });
+
+                    socket.on('tobrowser', data => {
+                        log('tobrowser', data)
+                        this.setState(data);
+                    })
+                    //
+                    // socket.emit('init', {});
+
+                    socket.on('disconnect', () => {
+
+                        log('disconnect: ' + n);
+                    });
+                };
+
+                socket.on('connect', connect);
+
+            }
+            render() {
+
+                const {
+                    tree,
+                    valid,
+                    invalidMsg,
+                } = this.state;
+
+                return (
+                    <>
+                        <button onClick={() => socket.emit('reset')}>reset</button>
+                        <button onClick={() => socket.emit('check')}>check integrity</button>
+                        <span className={valid ? 'valid' : 'invalid'}>{valid ? 'valid...' : invalidMsg}</span>
+                        <Level tree={tree} />
+                    </>
+                );
+            }
+        }
+        ReactDOM.render(
+            <Root
+            />,
+            document.getElementById('app')
+        );
+
+        window.socket = socket;
+
+    </script>
+</body>
+</html>
