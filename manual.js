@@ -65,9 +65,9 @@ io.on('connection', socket => {
 
         try {
 
-            const fix = await knex().model.tree.treeFix();
+            const fix   = await knex().model.tree.treeFix();
 
-            const data = await knex().model.tree.treeCheckIntegrity('t.title');
+            const data  = await knex().model.tree.treeCheckIntegrity('t.title');
 
             emit('tobrowser', data);
         }

@@ -265,7 +265,7 @@ module.exports = opt => {
 
                 let [debug, trx] = a(args);
 
-                return await this.knex.transaction(async trx => {
+                const logic = async trx => {
 
                     let tree = await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: le, :l: l, :r: r, :sort: s FROM :table: t ORDER BY l, s`, {
                         ...opt.columns,
@@ -291,7 +291,14 @@ module.exports = opt => {
                     }
 
                     return tree;
-                });
+                };
+
+                if (trx) {
+
+                    return await logic.call(this, trx);
+                }
+
+                return await this.knex.transaction(logic);
             }
         }()),
     }

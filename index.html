@@ -141,6 +141,8 @@
 
                         log('disconnect: ' + n);
                     });
+
+                    socket.emit('check')
                 };
 
                 socket.on('connect', connect);
