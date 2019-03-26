@@ -6,6 +6,10 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <title>Test</title>
     <style>
+        * {
+            font-family: "Andale Mono",AndaleMono,monospace;
+            font-size: 11px;
+        }
         table {
             width: 98%;
             border: 1px solid gray;
@@ -38,6 +42,18 @@
         }
         .level > .r {
             color: blueviolet;
+        }
+        button {
+            background-color: #a5a5a5;
+            color: white;
+            border-radius: 1px;
+            margin-left: 5px;
+            margin-right: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: gray;
         }
     </style>
 </head>
@@ -87,6 +103,15 @@
 
                 const {
                     tree,
+                    onCopy          = () => {},
+                    onCut           = () => {},
+                    onPasteAfter    = () => {},
+                    onPasteBefore   = () => {},
+                    onPasteToStart  = () => {},
+                    onPasteToEnd    = () => {},
+                    onPasteToZeroN  = () => {},
+
+                    clipboard,
                 } = this.props;
 
                 return (
@@ -95,7 +120,22 @@
                             <Fragment key={c.id}>
                                 <div className="level">
                                     <span className="id">id:{c.id}</span> <span className="le">le:{c.le}</span> <span className="s">s:{c.s}</span> <span className="l">l:{c.l}</span> <span className="r">r:{c.r}</span>: <b>{c.title}</b>
-                                    {Array.isArray(c.children) && <Level tree={c.children} />}
+                                    <span>
+                                        <button onClick={() => onCopy(c.id)}>copy</button>
+                                        <button onClick={() => onCut(c.id)}>cut</button> :
+                                        {clipboard && (
+                                            <>
+                                                <button onClick={() => onPasteAfter(c.id)}>onPasteAfter</button>
+                                            </>
+                                        )}
+                                    </span>
+                                    {
+                                        Array.isArray(c.children) &&
+                                            <Level
+                                                {...this.props}
+                                                tree={c.children}
+                                            />
+                                    }
                                 </div>
                             </Fragment>
                         ))}
@@ -112,7 +152,8 @@
                 super(...args);
 
                 this.state = {
-                    tree: []
+                    tree: [],
+                    clipboard: false,
                 }
             }
             componentDidMount() {
@@ -148,12 +189,18 @@
                 socket.on('connect', connect);
 
             }
+            onCut = id => {
+
+                log('onCut', id);
+            }
             render() {
 
                 const {
                     tree,
                     valid,
                     invalidMsg,
+
+                    clipboard,
                 } = this.state;
 
                 return (
@@ -162,7 +209,21 @@
                         <button onClick={() => socket.emit('fix')}>fix</button>
                         <button onClick={() => socket.emit('check')}>check integrity</button>
                         <span className={valid ? 'valid' : 'invalid'}>{valid ? 'valid...' : invalidMsg}</span>
-                        <Level tree={tree} />
+                        <span>clipboard: {`>`}{clipboard}{`<`}</span>
+                        <Level
+                            tree={tree}
+                            onCopy={id => this.setState({
+                                clipboard: id
+                            })}
+                            onCut={id => this.onCut(id)}
+                            onPasteAfter={targetId => log('after: ', clipboard, targetId)}
+                            onPasteBefore={() => log('before')}
+                            onPasteToStart={() => log('first child')}
+                            onPasteToEnd={() => log('end child')}
+                            onPasteToZeroN={() => log('zero n child')}
+
+                            clipboard={clipboard}
+                        />
                     </>
                 );
             }

@@ -68,6 +68,24 @@ module.exports = opt => {
     });
 
     return {
+        treeSkeleton: async function (...args) {
+
+            let [debug, trx, select = ''] = a(args);
+
+            if (typeof select === 'string') {
+
+                select = select.trim();
+
+                if (select) {
+
+                    select = ', ' + select;
+                }
+            }
+
+            return await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: le, :l: l, :r: r, :sort: s${select} FROM :table: t ORDER BY l, s`, {
+                ...opt.columns,
+            });
+        },
         assemble: list => {
 
             if ( ! isArray(list) ) {
@@ -161,19 +179,7 @@ module.exports = opt => {
 
                 let [debug, trx, select = ''] = a(args);
 
-                if (typeof select === 'string') {
-
-                    select = select.trim();
-
-                    if (select) {
-
-                        select = ', ' + select;
-                    }
-                }
-
-                let tree = await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: le, :l: l, :r: r, :sort: s${select} FROM :table: t ORDER BY l, s`, {
-                    ...opt.columns,
-                });
+                let tree = await this.treeSkeleton(debug, trx, select);
 
                 tree = this.assemble(tree);
 
@@ -267,9 +273,7 @@ module.exports = opt => {
 
                 const logic = async trx => {
 
-                    let tree = await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: le, :l: l, :r: r, :sort: s FROM :table: t ORDER BY l, s`, {
-                        ...opt.columns,
-                    });
+                    let tree = await this.treeSkeleton(...args);
 
                     tree = this.assemble(tree);
 
