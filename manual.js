@@ -61,6 +61,25 @@ io.on('connection', socket => {
         fixtures.reset();
     })
 
+    socket.on('fix', async () => {
+
+        try {
+
+            const fix = await knex().model.tree.treeFix();
+
+            const data = await knex().model.tree.treeCheckIntegrity('t.title');
+
+            emit('tobrowser', data);
+        }
+        catch (e) {
+
+            log.dump({
+                check_error: e
+            })
+        }
+
+    });
+
     socket.on('check', async () => {
 
         try {

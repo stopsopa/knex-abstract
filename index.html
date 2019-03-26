@@ -157,6 +157,7 @@
                 return (
                     <>
                         <button onClick={() => socket.emit('reset')}>reset</button>
+                        <button onClick={() => socket.emit('fix')}>fix</button>
                         <button onClick={() => socket.emit('check')}>check integrity</button>
                         <span className={valid ? 'valid' : 'invalid'}>{valid ? 'valid...' : invalidMsg}</span>
                         <Level tree={tree} />

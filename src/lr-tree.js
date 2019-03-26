@@ -159,8 +159,6 @@ module.exports = opt => {
 
             return async function (...args) {
 
-                console.log('treeCheckIntegrity...');
-
                 let [debug, trx, select = ''] = a(args);
 
                 if (typeof select === 'string') {
@@ -173,7 +171,7 @@ module.exports = opt => {
                     }
                 }
 
-                let tree = await this.knex.model.tree.query(debug, trx, `SELECT :id: id, :pid: pid, :level: le, :l: l, :r: r, :sort: s${select} FROM tree t ORDER BY l, s`, {
+                let tree = await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: le, :l: l, :r: r, :sort: s${select} FROM :table: t ORDER BY l, s`, {
                     ...opt.columns,
                 });
 
@@ -204,6 +202,97 @@ module.exports = opt => {
                     invalidMsg,
                 };
             };
+        }()),
+        treeFix: (function () {
+
+            async function fix(debug, trx, tree, k = 1, p = '', pid = false, level = 1) {
+
+                if (Array.isArray(tree)) {
+
+                    for (let i = 0, l = tree.length, t, key; i < l ; i += 1 ) {
+
+                        const toFix = {};
+
+                        t = tree[i];
+
+                        key = p ? `${p}.${t.id}` : t.id;
+
+                        if (t.l !== k) {
+
+                            toFix[opt.columns.l] = k;
+                        }
+
+                        k += 1;
+
+                        if (Array.isArray(t.children)) {
+
+                            k = await fix.call(this, debug, trx, t.children, k, key, t.id, level + 1);
+                        }
+
+                        if (t.r !== k) {
+
+                            toFix[opt.columns.r] = k;
+                        }
+
+                        if (pid && t.pid !== pid) {
+
+                            toFix[opt.columns.pid] = pid;
+                        }
+
+                        if (t.le !== level) {
+
+                            toFix[opt.columns.level] = level;
+                        }
+
+                        if (t.s !== i + 1) {
+
+                            toFix[opt.columns.sort] = i + 1;
+                        }
+
+                        if (Object.keys(toFix).length) {
+
+                            await this.update(debug, trx, toFix, t.id);
+                        }
+
+                        k += 1;
+                    }
+                }
+
+                return k;
+            }
+
+            return async function (...args) {
+
+                let [debug, trx] = a(args);
+
+                return await this.knex.transaction(async trx => {
+
+                    let tree = await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: le, :l: l, :r: r, :sort: s FROM :table: t ORDER BY l, s`, {
+                        ...opt.columns,
+                    });
+
+                    tree = this.assemble(tree);
+
+                    try {
+
+                        await fix.call(this, debug, trx, tree);
+                    }
+                    catch (e) {
+
+                        // valid = false;
+                        //
+                        // invalidMsg = e.message;
+
+                        log.dump({
+                            fixError: e.message,
+                        })
+
+                        throw e;
+                    }
+
+                    return tree;
+                });
+            }
         }()),
     }
 }
