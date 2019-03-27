@@ -82,7 +82,7 @@ module.exports = opt => {
                 }
             }
 
-            return await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: le, :l: l, :r: r, :sort: s${select} FROM :table: t ORDER BY l, s`, {
+            return await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: s${select} FROM :table: t ORDER BY l, s`, {
                 ...opt.columns,
             });
         },
@@ -90,7 +90,7 @@ module.exports = opt => {
 
             let [debug, trx, id] = a(args);
 
-            return await this.queryOne(debug, trx, `SELECT :id: id, :pid: pid, :level: le, :l: l, :r: r, :sort: s FROM :table: t WHERE :id: = :id`, {
+            return await this.queryOne(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: s FROM :table: t WHERE :id: = :id`, {
                 ...opt.columns,
                 id,
             });
@@ -126,7 +126,7 @@ module.exports = opt => {
         },
         /**
          * For manual inspection in DB:
-         *      SELECT id, parent_id pid, level le, l, r, sort s, t.title FROM tree t ORDER BY l, s
+         *      SELECT id, parent_id pid, level level, l, r, sort s, t.title FROM tree t ORDER BY l, s
          */
         treeCheckIntegrity: (function () {
 
@@ -167,9 +167,9 @@ module.exports = opt => {
                             throw th(key, t.id, 'pid', pid, t.pid);
                         }
 
-                        if (t.le !== level) {
+                        if (t.level !== level) {
 
-                            throw th(key, t.id, 'le', level, t.le);
+                            throw th(key, t.id, 'level', level, t.level);
                         }
 
                         if (t.s !== i + 1) {
@@ -254,7 +254,7 @@ module.exports = opt => {
                             toFix[opt.columns.pid] = pid;
                         }
 
-                        if (t.le !== level) {
+                        if (t.level !== level) {
 
                             toFix[opt.columns.level] = level;
                         }
@@ -369,7 +369,103 @@ module.exports = opt => {
                  * https://github.com/mysqljs/mysql/issues/1751#issue-234563643
                  * Require config like:
                  *
-                    connection: {
+                 connection: {
+                        host        : process.env.PROTECTED_MYSQL_HOST,
+                        port        : process.env.PROTECTED_MYSQL_PORT,
+                        user        : process.env.PROTECTED_MYSQL_USER,
+                        password    : process.env.PROTECTED_MYSQL_PASS,
+                        database    : process.env.PROTECTED_MYSQL_DB,
+                        multipleStatements: true,
+                    },
+                 */
+                await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id`, {
+                    sort    : opt.columns.sort,
+                    pid     : opt.columns.pid,
+                    id      : parent.id
+                });
+            };
+
+            if (trx) {
+
+                return await logic.call(this, trx);
+            }
+
+            return await this.knex.transaction(logic);
+        },
+        treeCreate: async function (...args) {
+
+            let [debug, trx, id] = a(args);
+
+            const logic = async trx => {
+
+                const found = await this.treeFindOne(debug, trx, id);
+
+                if (typeof found.l !== null) {
+
+                    throw th(`treeCreate: found.l is not null, should be null`);
+                }
+
+                if (typeof found.r !== null) {
+
+                    throw th(`treeCreate: found.r is not null, should be null`);
+                }
+
+                if (typeof found.level !== null) {
+
+                    throw th(`treeCreate: found.level is not null, should be null`);
+                }
+
+                if (typeof found.pid !== null) {
+
+                    throw th(`treeCreate: found.pid is not null, should be null`);
+                }
+
+                if (typeof found.sort !== null) {
+
+                    throw th(`treeCreate: found.sort is not null, should be null`);
+                }
+
+
+
+
+                const howManyToRemove = (found.r - found.l + 1) / 2;
+
+                if ( ! Number.isInteger(howManyToRemove) ) {
+
+                    throw th(`treeCreate: howManyToRemove is not integer, found.l: ${found.l}, found.r: ${found.r}, howManyToRemove: ` + JSON.stringify(howManyToRemove));
+                }
+
+                const result = await this.query(debug, trx, `delete from :table: where :lcol: >= :l and :rcol: <= :r`, {
+                    lcol    : opt.columns.l,
+                    rcol    : opt.columns.r,
+                    l       : found.l,
+                    r       : found.r,
+                });
+
+                if ( result.affectedRows !== howManyToRemove ) {
+
+                    throw th(`treeCreate: howManyToRemove is prognosed to: '${howManyToRemove}' but after remove result.affectedRows is: '${result.affectedRows}'`);
+                }
+
+                const parent = await this.treeFindOne(debug, trx, found.pid);
+
+                await this.query(debug, trx, `update :table: set :lcol: = :lcol: - :x where :lcol: > :l`, {
+                    lcol    : opt.columns.l,
+                    x       : howManyToRemove * 2,
+                    l       : found.l,
+                });
+
+                await this.query(debug, trx, `update :table: set :rcol: = :rcol: - :x where :rcol: > :r`, {
+                    rcol    : opt.columns.r,
+                    x       : howManyToRemove * 2,
+                    r       : found.r,
+                });
+
+                /**
+                 * https://github.com/mysqljs/mysql/issues/1751#issue-234563643
+                 * Require config like:
+                 *
+                 connection: {
                         host        : process.env.PROTECTED_MYSQL_HOST,
                         port        : process.env.PROTECTED_MYSQL_PORT,
                         user        : process.env.PROTECTED_MYSQL_USER,
