@@ -174,10 +174,6 @@ module.exports = opt => {
 
                         if (t.sort !== i + 1) {
 
-                            log.dump({
-                                sort: t
-                            }, 5)
-
                             throw th(key, t.id, sort, i + 1, t.sort);
                         }
 

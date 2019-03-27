@@ -194,7 +194,13 @@ io.on('connection', socket => {
                     title,
                 });
 
-                await mtree.treeCreateBefore(trx, sourceId, targetId, where);
+                switch(where) {
+                    case 'before':
+                        await mtree.treeCreateBefore(trx, sourceId, targetId);
+                        break;
+                    default:
+                        throw new Error(`Method unknown '${where}'`);
+                }
             });
 
             log.dump('inserted');
