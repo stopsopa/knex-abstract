@@ -57,8 +57,20 @@ io.on('connection', socket => {
 
     console.log('connect..');
 
-    socket.on('reset', () => {
-        fixtures.reset();
+    socket.on('reset', async () => {
+
+        try {
+
+            fixtures.reset();
+
+            await checkIntegrity();
+        }
+        catch (e) {
+
+            log.dump({
+                reset_error: e
+            })
+        }
     })
 
     socket.on('onDelete', async id => {

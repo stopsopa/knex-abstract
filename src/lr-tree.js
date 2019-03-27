@@ -286,22 +286,7 @@ module.exports = opt => {
 
                     tree = this.assemble(tree);
 
-                    try {
-
-                        await fix.call(this, debug, trx, tree);
-                    }
-                    catch (e) {
-
-                        // valid = false;
-                        //
-                        // invalidMsg = e.message;
-
-                        log.dump({
-                            fixError: e.message,
-                        })
-
-                        throw e;
-                    }
+                    await fix.call(this, debug, trx, tree);
 
                     return tree;
                 };
