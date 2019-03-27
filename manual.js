@@ -198,6 +198,9 @@ io.on('connection', socket => {
                     case 'before':
                         await mtree.treeCreateBefore(trx, sourceId, targetId);
                         break;
+                    case 'after':
+                        await mtree.treeCreateAfter(trx, sourceId, targetId);
+                        break;
                     default:
                         throw new Error(`Method unknown '${where}'`);
                 }
@@ -210,7 +213,7 @@ io.on('connection', socket => {
         catch (e) {
 
             log.dump({
-                delete_error: e
+                add_error: e
             })
         }
     })

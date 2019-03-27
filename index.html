@@ -226,8 +226,8 @@
                             show && <div className="box">
                                 <input value={title} onChange={e => this.setState({title: e.target.value})} />
                                 <div onClick={() => this.setState({show: false})}>x</div>
-                                <div onClick={() => this.onAdd('after')}>after</div>
                                 <div onClick={() => this.onAdd('before')}>before</div>
+                                <div onClick={() => this.onAdd('after')}>after</div>
                             </div>
                         }
                     </span>

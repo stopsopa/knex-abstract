@@ -427,6 +427,11 @@ module.exports = opt => {
                     throw th(`treeCreateBefore: target not found by id: ${targetId}`);
                 }
 
+                if ( target.level === 1 ) {
+
+                    throw th(`Can't use method treeCreateBefore() with root element of the tree`);
+                }
+
                 // const parent = await this.treeFindOne(debug, trx, target.pid);
                 //
                 // if ( ! parent ) {
@@ -479,6 +484,98 @@ module.exports = opt => {
             }
 
             return await this.knex.transaction(logic);
-        }
+        },
+        treeCreateAfter: async function (...args) {
+
+            let [debug, trx, sourceId, targetId] = a(args);
+
+            const logic = async trx => {
+
+                const source = await this.treeFindOne(debug, trx, sourceId);
+
+                if ( ! source ) {
+
+                    throw th(`treeCreateAfter: source not found by id: ${sourceId}`);
+                }
+
+                Object.keys(opt.columns).forEach(key => {
+
+                    if ( source[key] !== null ) {
+
+                        log.start();
+
+                        log.dump(source);
+
+                        const dump = log.get(false);
+
+                        throw th(`treeCreateAfter: source.${key} is not null, should be null: ` + dump);
+                    }
+                });
+
+                const target = await this.treeFindOne(debug, trx, targetId);
+
+                if ( ! target ) {
+
+                    throw th(`treeCreateAfter: target not found by id: ${targetId}`);
+                }
+
+                if ( target.level === 1 ) {
+
+                    throw th(`Can't use method treeCreateAfter() with root element of the tree`);
+                }
+
+                // const parent = await this.treeFindOne(debug, trx, target.pid);
+                //
+                // if ( ! parent ) {
+                //
+                //     throw th(`treeCreateAfter: parent not found by id: ${targetId}`);
+                // }
+
+                await this.query(debug, trx, `update :table: set :lcol: = :lcol: + 2 where :lcol: > :l`, {
+                    lcol    : l,
+                    l       : target.l,
+                });
+
+                await this.query(debug, trx, `update :table: set :rcol: = :rcol: + 2 where :id: = :id or :rcol: > :r`, {
+                    rcol    : r,
+                    r       : target.l + 1,
+                    id      : target.pid,
+                });
+
+                await this.update(debug, trx, {
+                    [pid]   : target.pid,
+                    [level] : target.level,
+                    [l]     : target.l + 2,
+                    [r]     : target.l + 3,
+                }, sourceId);
+
+                /**
+                 * https://github.com/mysqljs/mysql/issues/1751#issue-234563643
+                 * Require config like:
+                 *
+                 connection: {
+                        host        : process.env.PROTECTED_MYSQL_HOST,
+                        port        : process.env.PROTECTED_MYSQL_PORT,
+                        user        : process.env.PROTECTED_MYSQL_USER,
+                        password    : process.env.PROTECTED_MYSQL_PASS,
+                        database    : process.env.PROTECTED_MYSQL_DB,
+                        multipleStatements: true,
+                    },
+                 */
+                await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id ORDER BY :l:`, {
+                    sort    : sort,
+                    pid     : pid,
+                    id      : target.pid,
+                    l
+                });
+            };
+
+            if (trx) {
+
+                return await logic.call(this, trx);
+            }
+
+            return await this.knex.transaction(logic);
+        },
     }
 }
