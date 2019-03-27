@@ -46,23 +46,32 @@ it('lrtree - treeDelete 74', async done => {
 
     let tmp;
 
-    await prepare();
+    try {
 
-    expect(await mtree.count()).toEqual(75);
+        await prepare();
 
-    tmp = await mtree.treeCheckIntegrity();
+        expect(await mtree.count()).toEqual(75);
 
-    expect(tmp.valid).toBeTruthy();
+        tmp = await mtree.treeCheckIntegrity();
 
-    await mtree.treeDelete(57);
+        expect(tmp.valid).toBeTruthy();
 
-    expect(await mtree.count()).toEqual(74);
+        await mtree.treeDelete(57);
 
-    tmp = await mtree.treeCheckIntegrity();
+        expect(await mtree.count()).toEqual(74);
 
-    expect(tmp.valid).toBeTruthy();
+        tmp = await mtree.treeCheckIntegrity();
 
-    done();
+        expect(tmp.valid).toBeTruthy();
+
+        done();
+    }
+    catch (e) {
+
+        log.dump(e, 5);
+
+        throw e;
+    }
 });
 
 it('lrtree - treeDelete 9', async done => {
@@ -80,13 +89,13 @@ it('lrtree - treeDelete 9', async done => {
     await knex().transaction(async trx => {
 
         await mtree.treeDelete(trx, 9);
+
+        expect(await mtree.count(trx)).toEqual(69);
+
+        tmp = await mtree.treeCheckIntegrity(trx);
+
+        expect(tmp.valid).toBeTruthy();
     });
-
-    expect(await mtree.count()).toEqual(69);
-
-    tmp = await mtree.treeCheckIntegrity();
-
-    expect(tmp.valid).toBeTruthy();
 
     done();
 });

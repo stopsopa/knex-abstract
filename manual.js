@@ -7,6 +7,10 @@ const log               = require('inspc');
 
 const express           = require('express');
 
+const isObject          = require('nlab/isObject');
+
+const isArray           = require('nlab/isArray');
+
 require('dotenv-up')({
     override    : false,
     deep        : 1,
@@ -48,12 +52,103 @@ const emit = require('./test/lr-tree-model/io')({
 
 io.on('connection', socket => {
 
-    const checkIntegrity = async () => {
+    const mtree = knex().model.tree;
 
-        const data  = await knex().model.tree.treeCheckIntegrity('t.title');
+    function enrich(data) {
 
-        emit('tobrowser', data);
-    };
+        if (isArray(data)) {
+
+            return data.map(a => enrich(a));
+        }
+
+        if (isObject(data)) {
+
+            return Object.keys(data).reduce((acc, key) => {
+
+                acc[key] = enrich(data[key]);
+
+                return acc;
+            }, {});
+        }
+
+        if (typeof data === 'number' || data === null) {
+
+            return {
+                d: data,
+                v: true,
+            }
+        }
+
+        return data;
+    }
+
+    function check(list, k = 1, p = '', pid = false, level = 1) {
+
+        if (Array.isArray(list)) {
+
+            for (let i = 0, l = list.length, t, key; i < l ; i += 1 ) {
+
+                t = list[i];
+
+                key = p ? `${p}.${t.id.d}` : t.id.d;
+
+                if (t.l.d !== k) {
+
+                    t.l.v = false;
+                }
+
+                k += 1;
+
+                if (Array.isArray(t.children)) {
+
+                    k = check(t.children, k, key, t.id.d, level + 1);
+                }
+
+                if (t.r.d !== k) {
+
+                    t.r.v = false;
+                }
+
+                if (pid && t.pid.d !== pid) {
+
+                    t.pid.v = false;
+                }
+
+                if (t.level.d !== level) {
+
+                    t.level.v = false;
+                }
+
+                if (t.sort.d !== i + 1) {
+
+                    t.sort.v = false;
+                }
+
+                k += 1;
+            }
+        }
+
+        return k;
+    }
+
+    const checkIntegrity = (function () {
+
+        return async () => {
+
+            const data  = await mtree.treeCheckIntegrity('t.title');
+
+            const enriched = enrich(JSON.parse(JSON.stringify(data.tree)));
+
+            const checked   = JSON.parse(JSON.stringify(enriched));
+
+            check(checked);
+
+            emit('tobrowser', {
+                old: data,
+                checked,
+            });
+        };
+    }());
 
     console.log('connect..');
 
@@ -61,7 +156,7 @@ io.on('connection', socket => {
 
         try {
 
-            fixtures.reset();
+            await fixtures.reset();
 
             await checkIntegrity();
         }
@@ -77,7 +172,32 @@ io.on('connection', socket => {
 
         try {
 
-            const data = await knex().model.tree.treeDelete(id);
+            const data = await mtree.treeDelete(id);
+
+            await checkIntegrity();
+        }
+        catch (e) {
+
+            log.dump({
+                delete_error: e
+            })
+        }
+    })
+
+    socket.on('onAdd', async ({title, targetId, where}) => {
+
+        try {
+
+            await knex().transaction(async trx => {
+
+                const sourceId = await mtree.insert(trx, {
+                    title,
+                });
+
+                await mtree.treeCreateBefore(trx, sourceId, targetId, where);
+            });
+
+            log.dump('inserted');
 
             await checkIntegrity();
         }
@@ -93,14 +213,14 @@ io.on('connection', socket => {
 
         try {
 
-            await knex().model.tree.treeFix();
+            await mtree.treeFix();
 
             await checkIntegrity();
         }
         catch (e) {
 
             log.dump({
-                check_error: e
+                fix_error: e
             })
         }
     });
@@ -117,19 +237,7 @@ io.on('connection', socket => {
                 check_error: e
             })
         }
-
     });
-
-    socket.on('gimi', () => {
-
-        console.log('gimi came');
-
-        // iolog('data', {
-        //     event: `init`,
-        //     inspect: cache.inspect(),
-        //     lastInfo: cache.lastInfo(),
-        // })
-    })
 });
 
 server.listen( // ... we have to listen on server

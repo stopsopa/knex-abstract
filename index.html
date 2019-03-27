@@ -91,6 +91,49 @@
         button:hover {
             background-color: gray;
         }
+
+        .create {
+            position: relative;
+        }
+        .create .box {
+            position: absolute;
+            top: -5px;
+            left: 0;
+            z-index: 1;
+            background-color: white;
+            padding: 3px;
+            border: 1px solid gray;
+            width: 269px;
+            box-shadow: 0 0 16px black;
+        }
+        .create .box > div {
+            display: inline-block;
+            background-color: #0056ff;
+            color: white;
+            cursor: pointer;
+            padding: 3px 5px;
+            margin-left: 3px;
+        }
+        .create .box > div:hover {
+            box-shadow: 0 0 2px black;
+        }
+        @keyframes blinking {
+            0%{
+                border: 3px solid greenyellow;
+            }
+            /* YOU CAN ADD MORE COLORS IN THE KEYFRAMES IF YOU WANT
+            50%{
+              background-color: #55d66b;
+              border: 5px solid #126620;
+            }
+            */
+            100%{
+                border: 3px solid orangered;
+            }
+        }
+        #app .error {
+            animation: blinking 0.5s infinite;
+        }
     </style>
 </head>
 <body>
@@ -134,6 +177,64 @@
             Fragment,
         } = React;
 
+        const newTitle = (function (i = 1) {
+            return (s = 'title-') => (s + (i++));
+        }());
+
+        class Create extends Component {
+            constructor(...args) {
+                super(...args);
+                this.state = {
+                    show: false,
+                    title: '',
+                };
+            }
+            onAdd = where => {
+
+                this.setState({show: false}, () => {
+
+                    const {
+                        onAdd,
+                        id: targetId,
+                    } = this.props;
+
+                    const {
+                        title,
+                    } = this.state;
+
+                    onAdd({
+                        title,
+                        targetId,
+                        where
+                    });
+                });
+            }
+            render () {
+
+                const {
+                    show,
+                    title,
+                } = this.state;
+
+                return (
+                    <span className="create">
+                        <button onClick={() => this.setState({
+                            show: true,
+                            title: newTitle()
+                        })}>create</button>
+                        {
+                            show && <div className="box">
+                                <input value={title} onChange={e => this.setState({title: e.target.value})} />
+                                <div onClick={() => this.setState({show: false})}>x</div>
+                                <div onClick={() => this.onAdd('after')}>after</div>
+                                <div onClick={() => this.onAdd('before')}>before</div>
+                            </div>
+                        }
+                    </span>
+                );
+            }
+        }
+
         class Level extends Component {
             render () {
 
@@ -147,6 +248,7 @@
                     onPasteToEnd    = () => {},
                     onPasteToZeroN  = () => {},
                     onDelete        = () => {},
+                    onAdd           = () => {},
 
                     clipboard,
                 } = this.props;
@@ -154,16 +256,17 @@
                 return (
                     <div>
                         {tree.map(c => (
-                            <Fragment key={c.id}>
+                            <Fragment key={c.id.d}>
                                 <div className="level">
-                                    <span className="id">#{c.id}</span> <span className="l">{c.l}</span><span className="r">{c.r}</span> <span className="le">{c.le}</span> <span className="s">{c.s}</span>: <b>{c.title}</b>
+                                    <span className={`id${c.id.v ? '' : ' error'}`}>#{c.id.d}</span> <span className={`l${c.l.v ? '' : ' error'}`}>{c.l.d}</span><span className={`r${c.r.v ? '' : ' error'}`}>{c.r.d}</span> <span className={`le${c.level.v ? '' : ' error'}`}>{c.level.d}</span> <span className={`s${c.sort.v ? '' : ' error'}`}>{c.sort.d}</span>: <b>{c.title}</b>
                                     <span>
-                                        <button onClick={() => onDelete(c.id)}>delete</button>
-                                        <button onClick={() => onCopy(c.id)}>copy</button>
-                                        <button onClick={() => onCut(c.id)}>cut</button> :
+                                        <button onClick={() => onDelete(c.id.d)}>delete</button>
+                                        <button onClick={() => onCopy(c.id.d)}>copy</button>
+                                        <button onClick={() => onCut(c.id.d)}>cut</button>
+                                        <Create {...this.props} id={c.id.d}>create</Create> :
                                         {clipboard && (
                                             <>
-                                                <button onClick={() => onPasteAfter(c.id)}>onPasteAfter</button>
+                                                <button onClick={() => onPasteAfter(c.id.d)}>onPasteAfter</button>
                                             </>
                                         )}
                                     </span>
@@ -210,8 +313,18 @@
                     });
 
                     socket.on('tobrowser', data => {
-                        log('tobrowser', data)
-                        this.setState(data);
+                        // this.setState(data.old);
+
+                        const tmp = {...data.old};
+
+                        // console.log('data: ', data);
+                        // console.log(JSON.stringify(data.checked, null, 4));
+
+                        // tmp.tree = data.checked;
+
+                        tmp.tree = data.checked;
+
+                        this.setState(tmp);
                     })
                     //
                     // socket.emit('init', {});
@@ -260,6 +373,7 @@
                             onPasteToEnd={() => log('end child')}
                             onPasteToZeroN={() => log('zero n child')}
                             onDelete={id => socket.emit('onDelete', id)}
+                            onAdd={a => socket.emit('onAdd', a)}
 
                             clipboard={clipboard}
                         />
