@@ -147,7 +147,7 @@ module.exports = opt => {
 
                         if (t.l !== k) {
 
-                            throw th(key, t.id, 'l', k, t.l);
+                            throw th(key, t.id, opt.columns.l, k, t.l);
                         }
 
                         k += 1;
@@ -159,22 +159,22 @@ module.exports = opt => {
 
                         if (t.r !== k) {
 
-                            throw th(key, t.id, 'r', k, t.r);
+                            throw th(key, t.id, opt.columns.r, k, t.r);
                         }
 
                         if (pid && t.pid !== pid) {
 
-                            throw th(key, t.id, 'pid', pid, t.pid);
+                            throw th(key, t.id, opt.columns.pid, pid, t.pid);
                         }
 
                         if (t.level !== level) {
 
-                            throw th(key, t.id, 'level', level, t.level);
+                            throw th(key, t.id, opt.columns.level, level, t.level);
                         }
 
                         if (t.s !== i + 1) {
 
-                            throw th(key, t.id, 's', i + 1, t.s);
+                            throw th(key, t.id, opt.columns.s, i + 1, t.s);
                         }
 
                         k += 1;
@@ -400,33 +400,13 @@ module.exports = opt => {
 
                 const found = await this.treeFindOne(debug, trx, id);
 
-                if (typeof found.l !== null) {
+                Object.keys(opt.columns).forEach(key => {
 
-                    throw th(`treeCreate: found.l is not null, should be null`);
-                }
+                    if ( typeof t[key] !== null ) {
 
-                if (typeof found.r !== null) {
-
-                    throw th(`treeCreate: found.r is not null, should be null`);
-                }
-
-                if (typeof found.level !== null) {
-
-                    throw th(`treeCreate: found.level is not null, should be null`);
-                }
-
-                if (typeof found.pid !== null) {
-
-                    throw th(`treeCreate: found.pid is not null, should be null`);
-                }
-
-                if (typeof found.sort !== null) {
-
-                    throw th(`treeCreate: found.sort is not null, should be null`);
-                }
-
-
-
+                        throw th(`treeCreate: found.${key} is not null, should be null`);
+                    }
+                });
 
                 const howManyToRemove = (found.r - found.l + 1) / 2;
 

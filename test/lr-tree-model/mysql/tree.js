@@ -11,17 +11,17 @@ const a                 = prototype.a;
 
 const table             = 'tree';
 
-const id                = 'id';
+const id                = 'tid';
 
 const lrtree            = require('../../../src/lr-tree');
 
 module.exports = knex => extend(knex, prototype, Object.assign(lrtree({
     columns: {
-        l       : 'l',
-        r       : 'r',
-        level   : 'level',
-        pid     : 'parent_id',
-        sort    : 'sort',
+        l       : 'tl',
+        r       : 'tr',
+        level   : 'tlevel',
+        pid     : 'tparent_id',
+        sort    : 'tsort',
     }
 }), {
 

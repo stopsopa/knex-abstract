@@ -9,11 +9,11 @@ const isArray           = require('nlab/isArray');
 
 function enrich (node, l = 1, level = 1, sort = 1) {
 
-    node.l     = l ++;
+    node.tl     = l ++;
 
-    node.level = level;
+    node.tlevel = level;
 
-    node.sort  = sort;
+    node.tsort  = sort;
 
     if (isArray(node.children)) {
 
@@ -23,7 +23,7 @@ function enrich (node, l = 1, level = 1, sort = 1) {
         }
     }
 
-    node.r = l ++;
+    node.tr = l ++;
 
     return l;
 }
@@ -47,7 +47,7 @@ module.exports = ({
 
         if (parent_id) {
 
-            rawNode.parent_id = parent_id;
+            rawNode.tparent_id = parent_id;
         }
 
         const {

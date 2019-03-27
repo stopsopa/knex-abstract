@@ -13,32 +13,32 @@ import {
 export class Tree {
 
     @PrimaryGeneratedColumn()
-    id: number;
+    tid: number;
 
     @Column({
         nullable: true,
     })
-    parent_id: number;
+    tparent_id: number;
 
     @Column({
         nullable: true,
     })
-    sort: number;
+    tsort: number;
 
     @Column({
         nullable: true,
     })
-    l: number;
+    tl: number;
 
     @Column({
         nullable: true,
     })
-    r: number;
+    tr: number;
 
     @Column({
         nullable: true,
     })
-    level: number;
+    tlevel: number;
 
     @Column({
         length: 50
