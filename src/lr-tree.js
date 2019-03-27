@@ -86,6 +86,15 @@ module.exports = opt => {
                 ...opt.columns,
             });
         },
+        treeFindOne: async function (...args) {
+
+            let [debug, trx, id] = a(args);
+
+            return await this.queryOne(debug, trx, `SELECT :id: id, :pid: pid, :level: le, :l: l, :r: r, :sort: s FROM :table: t WHERE :id: = :id`, {
+                ...opt.columns,
+                id,
+            });
+        },
         assemble: list => {
 
             if ( ! isArray(list) ) {
@@ -305,5 +314,125 @@ module.exports = opt => {
                 return await this.knex.transaction(logic);
             }
         }()),
+        treeDelete: async function (...args) {
+
+            let [debug, trx, id] = a(args);
+
+            const logic = async trx => {
+
+                const found = await this.treeFindOne(id);
+
+                if (typeof found.l !== 'number') {
+
+                    throw th(`treeDelete: found.l is not a number`);
+                }
+
+                if ( found.l < 1 ) {
+
+                    throw th(`treeDelete: found.l is smaller than 1`);
+                }
+
+
+                if (typeof found.r !== 'number') {
+
+                    throw th(`treeDelete: found.r is not a number`);
+                }
+
+                if ( found.r < 1 ) {
+
+                    throw th(`treeDelete: found.r is smaller than 1`);
+                }
+
+                if ( found.l >= found.r ) {
+
+                    throw th(`treeDelete: found.l is >= than found.r`);
+                }
+
+                const howManyToRemove = (found.r - found.l + 1) / 2;
+
+                if ( ! Number.isInteger(howManyToRemove) ) {
+
+                    throw th(`treeDelete: howManyToRemove is not integer, found.l: ${found.l}, found.r: ${found.r}, howManyToRemove: ` + JSON.stringify(howManyToRemove));
+                }
+
+                const result = await this.query(debug, trx, `delete from :table: where :lcol: >= :l and :rcol: <= :r`, {
+                    lcol    : opt.columns.l,
+                    rcol    : opt.columns.r,
+                    l       : found.l,
+                    r       : found.r,
+                });
+
+                if ( result.affectedRows !== howManyToRemove ) {
+
+                    throw th(`treeDelete: howManyToRemove is prognosed to: '${howManyToRemove}' but after remove result.affectedRows is: '${result.affectedRows}'`);
+                }
+
+                const parent = await this.treeFindOne(debug, trx, found.pid);
+
+                await this.query(debug, trx, `update :table: set :lcol: = :lcol: - :x where :lcol: > :l`, {
+                    lcol    : opt.columns.l,
+                    x       : howManyToRemove * 2,
+                    l       : found.l,
+                });
+
+                await this.query(debug, trx, `update :table: set :rcol: = :rcol: - :x where :rcol: > :r`, {
+                    rcol    : opt.columns.r,
+                    x       : howManyToRemove * 2,
+                    r       : found.r,
+                });
+
+                /**
+                 * https://github.com/mysqljs/mysql/issues/1751#issue-234563643
+                 * Require config like:
+                 *
+                 connection: {
+                    host        : process.env.PROTECTED_MYSQL_HOST,
+                    port        : process.env.PROTECTED_MYSQL_PORT,
+                    user        : process.env.PROTECTED_MYSQL_USER,
+                    password    : process.env.PROTECTED_MYSQL_PASS,
+                    database    : process.env.PROTECTED_MYSQL_DB,
+                    multipleStatements: true,
+                },
+                 */
+                await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id`, {
+                    sort    : opt.columns.sort,
+                    pid     : opt.columns.pid,
+                    id      : parent.id
+                });
+
+
+
+
+                // let tree = await this.treeSkeleton(...args);
+                //
+                // tree = this.assemble(tree);
+                //
+                // try {
+                //
+                //     await fix.call(this, debug, trx, tree);
+                // }
+                // catch (e) {
+                //
+                //     // valid = false;
+                //     //
+                //     // invalidMsg = e.message;
+                //
+                //     log.dump({
+                //         fixError: e.message,
+                //     })
+                //
+                //     throw e;
+                // }
+                //
+                // return tree;
+            };
+
+            if (trx) {
+
+                return await logic.call(this, trx);
+            }
+
+            return await this.knex.transaction(logic);
+        }
     }
 }

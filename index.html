@@ -32,16 +32,25 @@
             color: darkcyan;
         }
         .level > .le {
-            color: #0056ff;
+            background-color: #0056ff;
+            color: white;
+            padding-left: 3px;
+            padding-right: 3px;
         }
         .level > .l {
-            color: brown;
+            background-color: brown;
+            color: white;
+            padding-left: 3px;
+            padding-right: 3px;
         }
         .level > .s {
-            color: #b7952d;
+            color: #a98823;
         }
         .level > .r {
-            color: blueviolet;
+            background-color: blueviolet;
+            color: white;
+            padding-left: 3px;
+            padding-right: 3px;
         }
         button {
             background-color: #a5a5a5;
@@ -110,6 +119,7 @@
                     onPasteToStart  = () => {},
                     onPasteToEnd    = () => {},
                     onPasteToZeroN  = () => {},
+                    onDelete        = () => {},
 
                     clipboard,
                 } = this.props;
@@ -119,8 +129,9 @@
                         {tree.map(c => (
                             <Fragment key={c.id}>
                                 <div className="level">
-                                    <span className="id">id:{c.id}</span> <span className="le">le:{c.le}</span> <span className="s">s:{c.s}</span> <span className="l">l:{c.l}</span> <span className="r">r:{c.r}</span>: <b>{c.title}</b>
+                                    <span className="id">#{c.id}</span> <span className="l">{c.l}</span> <span className="r">{c.r}</span> <span className="le">{c.le}</span> <span className="s">{c.s}</span>: <b>{c.title}</b>
                                     <span>
+                                        <button onClick={() => onDelete(c.id)}>delete</button>
                                         <button onClick={() => onCopy(c.id)}>copy</button>
                                         <button onClick={() => onCut(c.id)}>cut</button> :
                                         {clipboard && (
@@ -221,6 +232,7 @@
                             onPasteToStart={() => log('first child')}
                             onPasteToEnd={() => log('end child')}
                             onPasteToZeroN={() => log('zero n child')}
+                            onDelete={id => socket.emit('onDelete', id)}
 
                             clipboard={clipboard}
                         />

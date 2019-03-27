@@ -48,11 +48,11 @@ const emit = require('./test/lr-tree-model/io')({
 
 io.on('connection', socket => {
 
-    const refresh = () => {
+    const checkIntegrity = async () => {
 
-        emit('refresh', {
-            data: 'data'
-        })
+        const data  = await knex().model.tree.treeCheckIntegrity('t.title');
+
+        emit('tobrowser', data);
     };
 
     console.log('connect..');
@@ -61,15 +61,33 @@ io.on('connection', socket => {
         fixtures.reset();
     })
 
+    socket.on('onDelete', async id => {
+
+        try {
+
+            const data = await knex().model.tree.treeDelete(id);
+
+            log.dump({
+                data,
+            }, 7)
+
+            await checkIntegrity();
+        }
+        catch (e) {
+
+            log.dump({
+                delete_error: e
+            })
+        }
+    })
+
     socket.on('fix', async () => {
 
         try {
 
-            const fix   = await knex().model.tree.treeFix();
+            await knex().model.tree.treeFix();
 
-            const data  = await knex().model.tree.treeCheckIntegrity('t.title');
-
-            emit('tobrowser', data);
+            await checkIntegrity();
         }
         catch (e) {
 
@@ -77,16 +95,13 @@ io.on('connection', socket => {
                 check_error: e
             })
         }
-
     });
 
     socket.on('check', async () => {
 
         try {
 
-            const data = await knex().model.tree.treeCheckIntegrity('t.title');
-
-            emit('tobrowser', data) ;
+            await checkIntegrity();
         }
         catch (e) {
 

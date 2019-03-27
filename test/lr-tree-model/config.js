@@ -15,6 +15,7 @@ module.exports = {
             user        : process.env.PROTECTED_MYSQL_USER,
             password    : process.env.PROTECTED_MYSQL_PASS,
             database    : process.env.PROTECTED_MYSQL_DB,
+            multipleStatements: true,
         },
         models: mysql,
     },
