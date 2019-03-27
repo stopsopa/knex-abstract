@@ -320,7 +320,7 @@ module.exports = opt => {
 
             const logic = async trx => {
 
-                const found = await this.treeFindOne(id);
+                const found = await this.treeFindOne(debug, trx, id);
 
                 if (typeof found.l !== 'number') {
 
@@ -331,7 +331,6 @@ module.exports = opt => {
 
                     throw th(`treeDelete: found.l is smaller than 1`);
                 }
-
 
                 if (typeof found.r !== 'number') {
 
@@ -385,46 +384,20 @@ module.exports = opt => {
                  * https://github.com/mysqljs/mysql/issues/1751#issue-234563643
                  * Require config like:
                  *
-                 connection: {
-                    host        : process.env.PROTECTED_MYSQL_HOST,
-                    port        : process.env.PROTECTED_MYSQL_PORT,
-                    user        : process.env.PROTECTED_MYSQL_USER,
-                    password    : process.env.PROTECTED_MYSQL_PASS,
-                    database    : process.env.PROTECTED_MYSQL_DB,
-                    multipleStatements: true,
-                },
+                    connection: {
+                        host        : process.env.PROTECTED_MYSQL_HOST,
+                        port        : process.env.PROTECTED_MYSQL_PORT,
+                        user        : process.env.PROTECTED_MYSQL_USER,
+                        password    : process.env.PROTECTED_MYSQL_PASS,
+                        database    : process.env.PROTECTED_MYSQL_DB,
+                        multipleStatements: true,
+                    },
                  */
                 await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id`, {
                     sort    : opt.columns.sort,
                     pid     : opt.columns.pid,
                     id      : parent.id
                 });
-
-
-
-
-                // let tree = await this.treeSkeleton(...args);
-                //
-                // tree = this.assemble(tree);
-                //
-                // try {
-                //
-                //     await fix.call(this, debug, trx, tree);
-                // }
-                // catch (e) {
-                //
-                //     // valid = false;
-                //     //
-                //     // invalidMsg = e.message;
-                //
-                //     log.dump({
-                //         fixError: e.message,
-                //     })
-                //
-                //     throw e;
-                // }
-                //
-                // return tree;
             };
 
             if (trx) {

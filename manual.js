@@ -67,10 +67,6 @@ io.on('connection', socket => {
 
             const data = await knex().model.tree.treeDelete(id);
 
-            log.dump({
-                data,
-            }, 7)
-
             await checkIntegrity();
         }
         catch (e) {

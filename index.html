@@ -36,21 +36,48 @@
             color: white;
             padding-left: 3px;
             padding-right: 3px;
+            border-radius: 10px;
         }
         .level > .l {
+            position: relative;
             background-color: brown;
             color: white;
-            padding-left: 3px;
+            padding-left: 1px;
             padding-right: 3px;
+            /*border-top-left-radius: 3px;*/
+            /*border-bottom-left-radius: 3px;*/
         }
-        .level > .s {
-            color: #a98823;
+        .level > .l::before {
+            position: absolute;
+            top: 0px;
+            border-right: 4px solid brown;
+            border-bottom: 6px solid transparent;
+            border-top: 6px solid transparent;
+            border-left: 4px solid transparent;
+            content: "";
+            left: -8px;
         }
         .level > .r {
+            position: relative;
             background-color: blueviolet;
             color: white;
             padding-left: 3px;
-            padding-right: 3px;
+            padding-right: 1px;
+            /*border-top-right-radius: 3px;*/
+            /*border-bottom-right-radius: 3px;*/
+        }
+        .level > .r::before {
+            position: absolute;
+            top: 0px;
+            border-right: 4px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-top: 6px solid transparent;
+            border-left: 4px solid blueviolet;
+            content: "";
+            right: -8px;
+        }
+        .level > .s {
+            color: #a98823;
         }
         button {
             background-color: #a5a5a5;
@@ -129,7 +156,7 @@
                         {tree.map(c => (
                             <Fragment key={c.id}>
                                 <div className="level">
-                                    <span className="id">#{c.id}</span> <span className="l">{c.l}</span> <span className="r">{c.r}</span> <span className="le">{c.le}</span> <span className="s">{c.s}</span>: <b>{c.title}</b>
+                                    <span className="id">#{c.id}</span> <span className="l">{c.l}</span><span className="r">{c.r}</span> <span className="le">{c.le}</span> <span className="s">{c.s}</span>: <b>{c.title}</b>
                                     <span>
                                         <button onClick={() => onDelete(c.id)}>delete</button>
                                         <button onClick={() => onCopy(c.id)}>copy</button>
