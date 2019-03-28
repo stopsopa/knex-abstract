@@ -60,7 +60,9 @@ it('lrtree - treeCreateAfter 76', async done => {
             title: 'test',
         });
 
-        await mtree.treeCreateAfter(id, 12);
+        await mtree.treeCreateAfter({
+            sourceId: id, targetId: 12
+        });
 
         expect(await mtree.count()).toEqual(76);
 
@@ -110,7 +112,10 @@ it('lrtree - treeCreateAfter 9', async done => {
                 title: 'test',
             });
 
-            await mtree.treeCreateAfter(trx, id, 12);
+            await mtree.treeCreateAfter(trx, {
+                sourceId: id,
+                targetId: 12,
+            });
 
             expect(await mtree.count(trx)).toEqual(76);
 

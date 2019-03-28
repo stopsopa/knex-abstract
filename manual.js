@@ -221,7 +221,10 @@ io.on('connection', socket => {
                         await mtree.treeCreateBefore(trx, sourceId, targetId);
                         break;
                     case 'after':
-                        await mtree.treeCreateAfter(trx, sourceId, targetId);
+                        await mtree.treeCreateAfter(trx, {
+                            sourceId,
+                            targetId
+                        });
                         break;
                     case 'treeCreateAsNthChild':
                         const params = {
@@ -245,8 +248,9 @@ io.on('connection', socket => {
         catch (e) {
 
             log.dump({
+                method,
                 add_error: e
-            })
+            }, 6)
 
             emit('setstate', {
                 valid: false,

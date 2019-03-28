@@ -15,6 +15,15 @@ const a                 = prototype.a;
 
 const th = msg => new Error(`lr-tree.js: ${msg}`);
 
+const toString = data => {
+
+    log.start();
+
+    log.dump(data);
+
+    return log.get(false);
+}
+
 
 /**
  * const lrtree = require('./lr-tree');
@@ -32,16 +41,16 @@ const th = msg => new Error(`lr-tree.js: ${msg}`);
  * @param opt
  * @returns {{}}
  */
-module.exports = opt => {
+module.exports = topt => {
 
-    if ( ! isObject(opt) ) {
+    if ( ! isObject(topt) ) {
 
-        throw th(`opt is not an object`);
+        throw th(`topt is not an object`);
     }
 
-    if ( ! isObject(opt.columns) ) {
+    if ( ! isObject(topt.columns) ) {
 
-        throw th(`opt.columns is not an object`);
+        throw th(`topt.columns is not an object`);
     }
 
     const {
@@ -50,20 +59,20 @@ module.exports = opt => {
         level,
         pid,
         sort,
-    } = opt.columns;
+    } = topt.columns;
 
-    Object.keys(opt.columns).forEach(key => {
+    Object.keys(topt.columns).forEach(key => {
 
-        if ( typeof opt.columns[key] !== 'string' ) {
+        if ( typeof topt.columns[key] !== 'string' ) {
 
-            throw th(`opt.columns.${key} is not a string`);
+            throw th(`topt.columns.${key} is not a string`);
         }
 
         key = key.trim();
 
-        if ( ! opt.columns[key] ) {
+        if ( ! topt.columns[key] ) {
 
-            throw th(`opt.columns.${key} is an empty string`);
+            throw th(`topt.columns.${key} is an empty string`);
         }
     });
 
@@ -83,7 +92,7 @@ module.exports = opt => {
             }
 
             return await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort${select} FROM :table: t ORDER BY l, sort`, {
-                ...opt.columns,
+                ...topt.columns,
             });
         },
         treeFindOne: async function (...args) {
@@ -91,7 +100,7 @@ module.exports = opt => {
             let [debug, trx, id] = a(args);
 
             return await this.queryOne(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort FROM :table: t WHERE :id: = :id`, {
-                ...opt.columns,
+                ...topt.columns,
                 id,
             });
         },
@@ -220,11 +229,11 @@ module.exports = opt => {
         }()),
         treeFix: (function () {
 
-            async function fix(debug, trx, tree, k = 1, p = '', pid = false, level = 1) {
+            async function fix(debug, trx, tree, k = 1, p = '', _pid = false, lvl = 1) {
 
                 if (Array.isArray(tree)) {
 
-                    for (let i = 0, l = tree.length, t, key; i < l ; i += 1 ) {
+                    for (let i = 0, ll = tree.length, t, key; i < ll ; i += 1 ) {
 
                         const toFix = {};
 
@@ -241,7 +250,7 @@ module.exports = opt => {
 
                         if (Array.isArray(t.children)) {
 
-                            k = await fix.call(this, debug, trx, t.children, k, key, t.id, level + 1);
+                            k = await fix.call(this, debug, trx, t.children, k, key, t.id, lvl + 1);
                         }
 
                         if (t.r !== k) {
@@ -249,14 +258,14 @@ module.exports = opt => {
                             toFix[r] = k;
                         }
 
-                        if (pid && t.pid !== pid) {
+                        if (_pid && t.pid !== _pid) {
 
-                            toFix[pid] = pid;
+                            toFix[pid] = _pid;
                         }
 
-                        if (t.level !== level) {
+                        if (t.level !== lvl) {
 
-                            toFix[level] = level;
+                            toFix[level] = lvl;
                         }
 
                         if (t.sort !== i + 1) {
@@ -306,6 +315,16 @@ module.exports = opt => {
             const logic = async trx => {
 
                 const found = await this.treeFindOne(debug, trx, id);
+
+                if ( ! found ) {
+
+                    throw th(`treeDelete: entity not found by id: ${id}`);
+                }
+
+                if ( found.level === 1 ) {
+
+                    throw th(`Can't use method treeDelete() with root element of the tree`);
+                }
 
                 if (typeof found.l !== 'number') {
 
@@ -379,8 +398,8 @@ module.exports = opt => {
                     },
                  */
                 await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id ORDER BY :l:`, {
-                    sort    : sort,
-                    pid     : pid,
+                    sort,
+                    pid,
                     id      : parent.id,
                     l
                 });
@@ -406,17 +425,11 @@ module.exports = opt => {
                     throw th(`treeCreateBefore: source not found by id: ${sourceId}`);
                 }
 
-                Object.keys(opt.columns).forEach(key => {
+                Object.keys(topt.columns).forEach(key => {
 
                     if ( source[key] !== null ) {
 
-                        log.start();
-
-                        log.dump(source);
-
-                        const dump = log.get(false);
-
-                        throw th(`treeCreateBefore: source.${key} is not null, should be null: ` + dump);
+                        throw th(`treeCreateBefore: source.${key} is not null, should be null: ` + toString(source));
                     }
                 });
 
@@ -471,8 +484,8 @@ module.exports = opt => {
                     },
                  */
                 await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id ORDER BY :l:`, {
-                    sort    : sort,
-                    pid     : pid,
+                    sort,
+                    pid,
                     id      : target.pid,
                     l
                 });
@@ -487,30 +500,16 @@ module.exports = opt => {
         },
         treeCreateAfter: async function (...args) {
 
-            let [debug, trx, sourceId, targetId] = a(args);
+            let [debug, trx, opt = {}] = a(args);
+
+            const {sourceId, targetId} = opt;
 
             const logic = async trx => {
 
-                const source = await this.treeFindOne(debug, trx, sourceId);
+                if ( targetId === undefined) {
 
-                if ( ! source ) {
-
-                    throw th(`treeCreateAfter: source not found by id: ${sourceId}`);
+                    throw th(`treeCreateAfter: targetId can't be undefined`);
                 }
-
-                Object.keys(opt.columns).forEach(key => {
-
-                    if ( source[key] !== null ) {
-
-                        log.start();
-
-                        log.dump(source);
-
-                        const dump = log.get(false);
-
-                        throw th(`treeCreateAfter: source.${key} is not null, should be null: ` + dump);
-                    }
-                });
 
                 const target = await this.treeFindOne(debug, trx, targetId);
 
@@ -519,35 +518,222 @@ module.exports = opt => {
                     throw th(`treeCreateAfter: target not found by id: ${targetId}`);
                 }
 
-                if ( target.level === 1 ) {
+                if ( sourceId === undefined) {
+
+                    throw th(`treeCreateAfter: sourceId can't be undefined`);
+                }
+
+                const source = await this.treeFindOne(debug, trx, sourceId);
+
+                if ( ! source ) {
+
+                    throw th(`treeCreateAfter: source not found by id: ${sourceId}`);
+                }
+
+                if ( target.pid === undefined) {
+
+                    throw th(`treeCreateAfter: target.pid can't be undefined`);
+                }
+
+                const parent = await this.treeFindOne(debug, trx, target.pid);
+
+                if ( ! parent ) {
+
+                    throw th(`treeCreateAfter: parent not found by id: ${target.pid}`);
+                }
+
+                if ( parent.level === 1 ) {
 
                     throw th(`Can't use method treeCreateAfter() with root element of the tree`);
                 }
 
-                // const parent = await this.treeFindOne(debug, trx, target.pid);
-                //
-                // if ( ! parent ) {
-                //
-                //     throw th(`treeCreateAfter: parent not found by id: ${targetId}`);
-                // }
+                const params = {
+                    sourceId    : source,
+                    parentId    : parent,
+                    nOneIndexed : target.sort + 1,
+                };
 
-                await this.query(debug, trx, `update :table: set :lcol: = :lcol: + 2 where :lcol: > :l`, {
-                    lcol    : l,
-                    l       : target.l,
+                return await this.treeCreateAsNthChild(debug, trx, params);
+            };
+
+            if (trx) {
+
+                return await logic.call(this, trx);
+            }
+
+            return await this.knex.transaction(logic);
+        },
+        treeCreateAsNthChild: async function (...args) {
+
+            let [debug, trx, opt = {}] = a(args);
+
+            let { sourceId, parentId, nOneIndexed } = opt;
+
+            const logic = async trx => {
+
+                let source;
+
+                if ( isObject(sourceId) ) {
+
+                    source = sourceId;
+                }
+                else {
+
+                    if ( sourceId === undefined) {
+
+                        throw th(`treeCreateAsNthChild: sourceId can't be undefined`);
+                    }
+
+                    source = await this.treeFindOne(debug, trx, sourceId);
+                }
+
+                if ( ! source ) {
+
+                    throw th(`treeCreateAsNthChild: source not found by id: ${sourceId}`);
+                }
+
+                Object.keys(topt.columns).forEach(key => {
+
+                    if ( source[key] !== null ) {
+
+                        throw th(`treeCreateAsNthChild: source.${key} is not null, should be null: ` + toString(source));
+                    }
                 });
 
-                await this.query(debug, trx, `update :table: set :rcol: = :rcol: + 2 where :id: = :id or :rcol: > :r`, {
-                    rcol    : r,
-                    r       : target.l + 1,
-                    id      : target.pid,
+                let parent;
+
+                if ( isObject(parentId) ) {
+
+                    parent = parentId;
+                }
+                else {
+
+                    if ( parentId === undefined) {
+
+                        throw th(`treeCreateAsNthChild: parentId can't be undefined`);
+                    }
+
+                    parent = await this.treeFindOne(debug, trx, parentId);
+                }
+
+                if ( ! parent ) {
+
+                    throw th(`treeCreateAsNthChild: parent not found by id: ${parentId}`);
+                }
+
+                Object.keys(topt.columns).forEach(key => {
+
+                    if ( ! parent[key] ) {
+
+                        throw th(`treeCreateAsNthChild: parent.${key} can't be falsy: ` + toString(parent));
+                    }
                 });
 
-                await this.update(debug, trx, {
-                    [pid]   : target.pid,
-                    [level] : target.level,
-                    [l]     : target.l + 2,
-                    [r]     : target.l + 3,
-                }, sourceId);
+                const maxIndex = await this.queryColumn(debug, trx, `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id`, {
+                    pid,
+                    sort,
+                    id: parent.id,
+                });
+
+                // no children then default 1
+                if (maxIndex === null) {
+
+                    nOneIndexed = 1;
+                }
+                else {
+
+                    if (nOneIndexed > maxIndex || ! nOneIndexed) {
+
+                        nOneIndexed = maxIndex;
+                    }
+                }
+
+                if ( ! Number.isInteger(nOneIndexed) ) {
+
+                    throw th(`treeCreateAsNthChild: nOneIndexed param is not an integer`)
+                }
+
+                if ( nOneIndexed < 1 ) {
+
+                    throw th(`treeCreateAsNthChild: nOneIndexed is < than 1`)
+                }
+
+                let newl = parent.l + ( (nOneIndexed - 1) * 2) + 1;
+
+                let newr = newl + 1;
+
+                let rowUnderIndex = await this.queryOne(debug, trx, `select * from :table: WHERE :pid: = :id and :sort: = :s`, {
+                    pid,
+                    id: parent.id,
+                    sort,
+                    s: nOneIndexed
+                });
+
+                // run some operations to prepare children
+                if ( (parent.r - parent.l) > 1 ) {
+
+                    if ( rowUnderIndex) {
+
+                        newl = rowUnderIndex[l];
+
+                        newr = rowUnderIndex[r];
+                    }
+                    else {
+
+                        const tmp = await this.queryOne(debug, trx, `select * from :table: WHERE :pid: = :id and :sort: = :s`, {
+                            pid,
+                            id: parent.id,
+                            sort,
+                            s: nOneIndexed - 1
+                        });
+
+                        newl = tmp[r] + 1;
+
+                        newr = newl + 1;
+                    }
+                }
+
+                if ( newr !== undefined && ( ! Number.isInteger(newr) || newr < 1 ) ) {
+
+                    throw th(`treeCreateAsNthChild: newr is invalid: ` + toString(newr));
+                }
+
+                await this.query(debug, trx, `update :table: set :l: = :l: + 2 where :l: > :vl`, {
+                    l,
+                    vl       : newl - 1,
+                });
+
+                let rquery      = `update :table: set :r: = :r: + 2 where :id: = :id or :r: > :vr`;
+
+                let rparams     = {
+                    r,
+                    vr      : newr - 1,
+                    id      : parent.id,
+                }
+
+                if (rowUnderIndex && (rowUnderIndex[r] - rowUnderIndex[l]) > 1 ) {
+
+                    rquery += ` or (:l: > :rvl and :r: < :rvr)`;
+
+                    rparams.l   = l;
+
+                    rparams.rvl  = rowUnderIndex[l];
+
+                    rparams.rvr  = rowUnderIndex[r];
+                }
+
+                await this.query(debug, trx, rquery, rparams);
+
+                const update = {
+                    [pid]   : parent.id,
+                    [level] : parent.level + 1,
+                    [l]     : newl,
+                    [sort]  : nOneIndexed,
+                }
+
+                update[r] = update[l] + 1;
+
+                await this.update(debug, trx, update, source.id);
 
                 /**
                  * https://github.com/mysqljs/mysql/issues/1751#issue-234563643
@@ -565,7 +751,7 @@ module.exports = opt => {
                 await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id ORDER BY :l:`, {
                     sort    : sort,
                     pid     : pid,
-                    id      : target.pid,
+                    id      : parent.id,
                     l
                 });
             };
