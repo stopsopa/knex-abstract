@@ -201,7 +201,7 @@ prototype.prototype.raw = function (...args) {
 
         if ( typeof params[name] === 'undefined') {
 
-            throw `Query: '${query}' error: value for parameter '${name}' is missing on the list of given parameter: ` + JSON.stringify(params);
+            throw `Query: '${query}' error: value for parameter '${name}' is missing on the list of given parameters: ` + JSON.stringify(params);
         }
 
         const placeholder = semi ? '??' : '?';

@@ -165,6 +165,11 @@ io.on('connection', socket => {
             log.dump({
                 reset_error: e
             })
+
+            emit('setstate', {
+                valid: false,
+                invalidMsg: e.message,
+            });
         }
     })
 
@@ -181,10 +186,27 @@ io.on('connection', socket => {
             log.dump({
                 delete_error: e
             })
+
+            emit('setstate', {
+                valid: false,
+                invalidMsg: e.message,
+            });
         }
     })
 
-    socket.on('onAdd', async ({title, targetId, where}) => {
+    socket.on('onAdd', async (data) => {
+
+        const {
+            title,
+            targetId,
+            method,
+            n,
+            extra = {}
+        } = data;
+
+        log.dump({
+            onAdd_params: data,
+        }, 3)
 
         try {
 
@@ -194,15 +216,25 @@ io.on('connection', socket => {
                     title,
                 });
 
-                switch(where) {
+                switch(method) {
                     case 'before':
                         await mtree.treeCreateBefore(trx, sourceId, targetId);
                         break;
                     case 'after':
                         await mtree.treeCreateAfter(trx, sourceId, targetId);
                         break;
+                    case 'treeCreateAsNthChild':
+                        const params = {
+                            sourceId,
+                            parentId: targetId,
+                        };
+                        if (n) {
+                            params.nOneIndexed = n;
+                        }
+                        await mtree.treeCreateAsNthChild(trx, params);
+                        break;
                     default:
-                        throw new Error(`Method unknown '${where}'`);
+                        throw new Error(`Method unknown '${method}'`);
                 }
             });
 
@@ -215,6 +247,11 @@ io.on('connection', socket => {
             log.dump({
                 add_error: e
             })
+
+            emit('setstate', {
+                valid: false,
+                invalidMsg: e.message,
+            });
         }
     })
 
@@ -231,6 +268,11 @@ io.on('connection', socket => {
             log.dump({
                 fix_error: e
             })
+
+            emit('setstate', {
+                valid: false,
+                invalidMsg: e.message,
+            });
         }
     });
 
@@ -245,6 +287,11 @@ io.on('connection', socket => {
             log.dump({
                 check_error: e
             })
+
+            emit('setstate', {
+                valid: false,
+                invalidMsg: e.message,
+            });
         }
     });
 });

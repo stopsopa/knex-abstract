@@ -103,7 +103,7 @@
             background-color: white;
             padding: 3px;
             border: 1px solid gray;
-            width: 269px;
+            width: 523px;
             box-shadow: 0 0 16px black;
         }
         .create .box > div {
@@ -112,10 +112,18 @@
             color: white;
             cursor: pointer;
             padding: 3px 5px;
+        }
+        .create .box > * {
             margin-left: 3px;
+        }
+        .create .box > *.glue {
+            margin-left: 0;
         }
         .create .box > div:hover {
             box-shadow: 0 0 2px black;
+        }
+        .n {
+            width: 27px;
         }
         @keyframes blinking {
             0%{
@@ -187,9 +195,15 @@
                 this.state = {
                     show: false,
                     title: '',
+                    n: 1,
                 };
             }
-            onAdd = where => {
+            onAdd = (method, extra) => {
+
+                if ( extra === undefined ) {
+
+                    extra = {};
+                }
 
                 this.setState({show: false}, () => {
 
@@ -200,13 +214,22 @@
 
                     const {
                         title,
+                        n,
                     } = this.state;
 
-                    onAdd({
+                    const data = {
                         title,
                         targetId,
-                        where
-                    });
+                        method,
+                        extra,
+                    };
+
+                    if (n) {
+
+                        data.n = n;
+                    }
+
+                    onAdd(data);
                 });
             }
             render () {
@@ -214,6 +237,7 @@
                 const {
                     show,
                     title,
+                    n,
                 } = this.state;
 
                 return (
@@ -224,10 +248,12 @@
                         })}>create</button>
                         {
                             show && <div className="box">
-                                <input value={title} onChange={e => this.setState({title: e.target.value})} />
                                 <div onClick={() => this.setState({show: false})}>x</div>
+                                <input value={title} onChange={e => this.setState({title: e.target.value})} />
                                 <div onClick={() => this.onAdd('before')}>before</div>
                                 <div onClick={() => this.onAdd('after')}>after</div>
+                                <div onClick={() => this.onAdd('treeCreateAsNthChild')}>treeCreateAsNthChild</div>
+                                <input value={n} onChange={e => this.setState({n: parseInt(e.target.value || 0, 10) || ''})} className="n glue" onFocus={e => e.target.select()} />
                             </div>
                         }
                     </span>
@@ -326,6 +352,8 @@
 
                         this.setState(tmp);
                     })
+
+                    socket.on('setstate', state => this.setState(state))
                     //
                     // socket.emit('init', {});
 

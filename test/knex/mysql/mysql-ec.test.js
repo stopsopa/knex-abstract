@@ -232,7 +232,7 @@ it(`knex - mysql - queryOne, missing param`, async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual("Query: 'select email from :table: where lastName = :p1' error: value for parameter 'p1' is missing on the list of given parameter: {\"__table\":\"users\"}");
+        expect(e + '').toEqual("Query: 'select email from :table: where lastName = :p1' error: value for parameter 'p1' is missing on the list of given parameters: {\"__table\":\"users\"}");
 
         done();
     }
