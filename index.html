@@ -16,12 +16,19 @@
             border: 1px solid gray;
         }
         .level {
+            position: relative;
             border: 1px solid lightgray;
             padding-left: 7px;
         }
         .level > div > .level {
             margin-left: 30px;
             margin-bottom: 1px;
+        }
+        .check {
+            position: absolute;
+            top: -1px;
+            left: -20px;
+            z-index: 1;
         }
         .valid {
             color: green;
@@ -113,6 +120,9 @@
             color: white;
             cursor: pointer;
             padding: 3px 5px;
+        }
+        .create .box.paste > div {
+            background-color: #009b2b;
         }
         .create .box > * {
             margin-left: 3px;
@@ -246,7 +256,7 @@
                         <button onClick={() => this.setState({
                             show: true,
                             title: newTitle()
-                        })}>create</button>
+                        })}>{this.props.children}</button>
                         {
                             show && <div className="box">
                                 <div onClick={() => this.setState({show: false})}>x</div>
@@ -254,6 +264,72 @@
                                 <div onClick={() => this.onAdd('before')}>before</div>
                                 <div onClick={() => this.onAdd('after')}>after</div>
                                 <div onClick={() => this.onAdd('treeCreateAsNthChild')}>treeCreateAsNthChild</div>
+                                <input value={n} onChange={e => this.setState({n: parseInt(e.target.value || 0, 10) || ''})} className="n glue" onFocus={e => e.target.select()} />
+                            </div>
+                        }
+                    </span>
+                );
+            }
+        }
+
+        class Paste extends Component {
+            constructor(...args) {
+                super(...args);
+                this.state = {
+                    show: false,
+                    n: 1,
+                };
+            }
+            onPaste = (method, extra) => {
+
+                if ( extra === undefined ) {
+
+                    extra = {};
+                }
+
+                this.setState({show: false}, () => {
+
+                    const {
+                        onPaste,
+                        id: targetId,
+                    } = this.props;
+
+                    const {
+                        n,
+                    } = this.state;
+
+                    const data = {
+                        targetId,
+                        method,
+                        extra,
+                    };
+
+                    if (n) {
+
+                        data.n = n;
+                    }
+
+                    onPaste(data);
+                });
+            }
+            render () {
+
+                const {
+                    show,
+                    n,
+                } = this.state;
+
+                return (
+                    <span className="create">
+                        <button onClick={() => this.setState({
+                            show: true,
+                        })}>{this.props.children}</button>
+                        {
+                            show && <div className="box paste">
+                                <div onClick={() => this.setState({show: false})}>x</div>
+                                <div onClick={() => this.onPaste('before')}>before</div>
+                                <div onClick={() => this.onPaste('after')}>after</div>
+                                <div onClick={() => this.onPaste('treeCreateAsNthChild')}>treeCreateAsNthChild</div>
                                 <input value={n} onChange={e => this.setState({n: parseInt(e.target.value || 0, 10) || ''})} className="n glue" onFocus={e => e.target.select()} />
                             </div>
                         }
@@ -285,16 +361,15 @@
                         {tree.map(c => (
                             <Fragment key={c.id.d}>
                                 <div className="level">
+                                    <div class="check">
+                                        <input type="checkbox" checked={c.id.d === clipboard} onClick={() => onCopy(c.id.d)}/>
+                                    </div>
                                     <span className={`id${c.id.v ? '' : ' error'}`}>#{c.id.d}</span> <span className={`l${c.l.v ? '' : ' error'}`}>{c.l.d}</span><span className={`r${c.r.v ? '' : ' error'}`}>{c.r.d}</span> <span className={`le${c.level.v ? '' : ' error'}`}>{c.level.d}</span> <span className={`s${c.sort.v ? '' : ' error'}`}>{c.sort.d}</span>: <b>{c.title}</b>
                                     <span>
                                         <button onClick={() => onDelete(c.id.d)}>delete</button>
-                                        <button onClick={() => onCopy(c.id.d)}>copy</button>
-                                        <button onClick={() => onCut(c.id.d)}>cut</button>
-                                        <Create {...this.props} id={c.id.d}>create</Create> :
+                                        <Create {...this.props} id={c.id.d}>create</Create>
                                         {clipboard && (
-                                            <>
-                                                <button onClick={() => onPasteAfter(c.id.d)}>onPasteAfter</button>
-                                            </>
+                                            <Paste {...this.props} id={c.id.d}>paste</Paste>
                                         )}
                                     </span>
                                     {
@@ -392,9 +467,12 @@
                         <span>clipboard: {`>`}{clipboard}{`<`}</span>
                         <Level
                             tree={tree}
-                            onCopy={id => this.setState({
-                                clipboard: id
-                            })}
+                            onCopy={id => {
+                                console.log('onCopy', clipboard, id);
+                                return this.setState({
+                                    clipboard: (clipboard === id) ? false : id,
+                                });
+                            }}
                             onCut={id => this.onCut(id)}
                             onPasteAfter={targetId => log('after: ', clipboard, targetId)}
                             onPasteBefore={() => log('before')}
@@ -403,6 +481,7 @@
                             onPasteToZeroN={() => log('zero n child')}
                             onDelete={id => socket.emit('onDelete', id)}
                             onAdd={a => socket.emit('onAdd', a)}
+                            onPaste={a => socket.emit('onPaste', a)}
 
                             clipboard={clipboard}
                         />

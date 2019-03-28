@@ -262,6 +262,75 @@ io.on('connection', socket => {
         }
     })
 
+    socket.on('onPaste', async (data) => {
+
+        const {
+            targetId,
+            method,
+            n,
+            extra = {}
+        } = data;
+
+        log.dump({
+            onPaste_params: data,
+        }, 3)
+
+        return;
+
+        try {
+
+            await knex().transaction(async trx => {
+
+                const sourceId = await mtree.insert(trx, {
+                    title,
+                });
+
+                switch(method) {
+                    case 'before':
+                        await mtree.treeCreateBefore(trx, {
+                            sourceId,
+                            targetId,
+                        });
+                        break;
+                    case 'after':
+                        await mtree.treeCreateAfter(trx, {
+                            sourceId,
+                            targetId,
+                        });
+                        break;
+                    case 'treeCreateAsNthChild':
+                        const params = {
+                            sourceId,
+                            parentId: targetId,
+                        };
+                        if (n) {
+                            params.nOneIndexed = n;
+                        }
+                        await mtree.treeCreateAsNthChild(trx, params);
+                        break;
+                    default:
+                        throw new Error(`Method unknown '${method}'`);
+                }
+            });
+
+            log.dump('inserted');
+
+            await checkIntegrity();
+        }
+        catch (e) {
+
+            log.dump({
+                method,
+                add_error: e
+            }, 6)
+
+            emit('setstate', {
+                valid: false,
+                invalidMsg: e.message,
+            });
+        }
+    })
+
     socket.on('fix', async () => {
 
         try {
