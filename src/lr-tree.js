@@ -418,77 +418,54 @@ module.exports = topt => {
 
             const logic = async trx => {
 
-                const source = await this.treeFindOne(debug, trx, sourceId);
+                if ( targetId === undefined) {
 
-                if ( ! source ) {
-
-                    throw th(`treeCreateBefore: source not found by id: ${sourceId}`);
+                    throw th(`treeCreateAfter: targetId can't be undefined`);
                 }
-
-                Object.keys(topt.columns).forEach(key => {
-
-                    if ( source[key] !== null ) {
-
-                        throw th(`treeCreateBefore: source.${key} is not null, should be null: ` + toString(source));
-                    }
-                });
 
                 const target = await this.treeFindOne(debug, trx, targetId);
 
                 if ( ! target ) {
 
-                    throw th(`treeCreateBefore: target not found by id: ${targetId}`);
+                    throw th(`treeCreateAfter: target not found by id: ${targetId}`);
                 }
 
-                if ( target.level === 1 ) {
+                if ( sourceId === undefined) {
 
-                    throw th(`Can't use method treeCreateBefore() with root element of the tree`);
+                    throw th(`treeCreateAfter: sourceId can't be undefined`);
                 }
 
-                // const parent = await this.treeFindOne(debug, trx, target.pid);
-                //
-                // if ( ! parent ) {
-                //
-                //     throw th(`treeCreateBefore: parent not found by id: ${targetId}`);
-                // }
+                const source = await this.treeFindOne(debug, trx, sourceId);
 
-                await this.query(debug, trx, `update :table: set :lcol: = :lcol: + 2 where :lcol: >= :l`, {
-                    lcol    : l,
-                    l       : target.l,
-                });
+                if ( ! source ) {
 
-                await this.query(debug, trx, `update :table: set :rcol: = :rcol: + 2 where :id: = :id or :rcol: >= :r`, {
-                    rcol    : r,
-                    r       : target.l + 1,
-                    id      : target.pid,
-                });
+                    throw th(`treeCreateAfter: source not found by id: ${sourceId}`);
+                }
 
-                await this.update(debug, trx, {
-                    [pid]   : target.pid,
-                    [level] : target.level,
-                    [l]     : target.l,
-                    [r]     : target.l + 1,
-                }, sourceId);
+                if ( target.pid === undefined) {
 
-                /**
-                 * https://github.com/mysqljs/mysql/issues/1751#issue-234563643
-                 * Require config like:
-                 *
-                 connection: {
-                        host        : process.env.PROTECTED_MYSQL_HOST,
-                        port        : process.env.PROTECTED_MYSQL_PORT,
-                        user        : process.env.PROTECTED_MYSQL_USER,
-                        password    : process.env.PROTECTED_MYSQL_PASS,
-                        database    : process.env.PROTECTED_MYSQL_DB,
-                        multipleStatements: true,
-                    },
-                 */
-                await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id ORDER BY :l:`, {
-                    sort,
-                    pid,
-                    id      : target.pid,
-                    l
-                });
+                    throw th(`treeCreateAfter: target.pid can't be undefined`);
+                }
+
+                const parent = await this.treeFindOne(debug, trx, target.pid);
+
+                if ( ! parent ) {
+
+                    throw th(`treeCreateAfter: parent not found by id: ${target.pid}`);
+                }
+
+                if ( parent.level === 1 ) {
+
+                    throw th(`Can't use method treeCreateAfter() with root element of the tree`);
+                }
+
+                const params = {
+                    sourceId    : source,
+                    parentId    : parent,
+                    nOneIndexed : target.sort,
+                };
+
+                return await this.treeCreateAsNthChild(debug, trx, params);
             };
 
             if (trx) {
@@ -655,7 +632,7 @@ module.exports = topt => {
 
                 if ( nOneIndexed < 1 ) {
 
-                    throw th(`treeCreateAsNthChild: nOneIndexed is < than 1`)
+                    nOneIndexed = 1;
                 }
 
                 let newl = parent.l + ( (nOneIndexed - 1) * 2) + 1;
