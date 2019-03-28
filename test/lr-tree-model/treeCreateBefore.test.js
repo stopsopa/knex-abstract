@@ -60,7 +60,10 @@ it('lrtree - treeCreateBefore 76', async done => {
             title: 'test',
         });
 
-        await mtree.treeCreateBefore(id, 12);
+        await mtree.treeCreateBefore({
+            sourceId: id,
+            targetId: 12
+        });
 
         expect(await mtree.count()).toEqual(76);
 
@@ -110,7 +113,10 @@ it('lrtree - treeCreateBefore 9', async done => {
                 title: 'test',
             });
 
-            await mtree.treeCreateBefore(trx, id, 12);
+            await mtree.treeCreateBefore(trx, {
+                sourceId: id,
+                targetId: 12
+            });
 
             expect(await mtree.count(trx)).toEqual(76);
 

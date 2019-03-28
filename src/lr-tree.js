@@ -414,7 +414,9 @@ module.exports = topt => {
         },
         treeCreateBefore: async function (...args) {
 
-            let [debug, trx, sourceId, targetId] = a(args);
+            let [debug, trx, opt = {}] = a(args);
+
+            const {sourceId, targetId} = opt;
 
             const logic = async trx => {
 
