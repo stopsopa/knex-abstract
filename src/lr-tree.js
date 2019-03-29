@@ -312,13 +312,39 @@ module.exports = topt => {
 
             let [debug, trx, id] = a(args);
 
+            let flip    = false;
+
+            if (isObject(id)) {
+
+                if (id.flip) {
+
+                    flip = true;
+                }
+
+                id = id.id;
+            }
+
             const logic = async trx => {
 
-                const found = await this.treeFindOne(debug, trx, id);
+                let found;
+
+                if ( isObject(id) ) {
+
+                    found = id;
+                }
+                else {
+
+                    if ( id === undefined) {
+
+                        throw th(`treeDelete: id can't be undefined`);
+                    }
+
+                    found = await this.treeFindOne(debug, trx, id);
+                }
 
                 if ( ! found ) {
 
-                    throw th(`treeDelete: entity not found by id: ${id}`);
+                    throw th(`treeDelete: found not found by id: ${id}`);
                 }
 
                 if ( found.level === 1 ) {
@@ -351,6 +377,8 @@ module.exports = topt => {
                     throw th(`treeDelete: found.l is >= than found.r`);
                 }
 
+                const parent = await this.treeFindOne(debug, trx, found.pid);
+
                 const howManyToRemove = (found.r - found.l + 1) / 2;
 
                 if ( ! Number.isInteger(howManyToRemove) ) {
@@ -358,43 +386,58 @@ module.exports = topt => {
                     throw th(`treeDelete: howManyToRemove is not integer, found.l: ${found.l}, found.r: ${found.r}, howManyToRemove: ` + JSON.stringify(howManyToRemove));
                 }
 
-                const result = await this.query(debug, trx, `delete from :table: where :l: >= :vl and :r: <= :vr`, {
-                    l,
-                    r,
-                    vl       : found.l,
-                    vr       : found.r,
-                });
+                let result;
+
+                if (flip) {
+
+                    result = await this.query(true, trx, `update :table: set :sort: = -:sort: where :l: >= :vl and :r: <= :vr`, {
+                        sort,
+                        l,
+                        r,
+                        vl  : found.l,
+                        vr  : found.r,
+                    });
+                }
+                else {
+
+                    result = await this.query(debug, trx, `delete from :table: where :l: >= :vl and :r: <= :vr`, {
+                        l,
+                        r,
+                        vl  : found.l,
+                        vr  : found.r,
+                    });
+                }
 
                 if ( result.affectedRows !== howManyToRemove ) {
 
                     throw th(`treeDelete: howManyToRemove is prognosed to: '${howManyToRemove}' but after remove result.affectedRows is: '${result.affectedRows}'`);
                 }
 
-                const parent = await this.treeFindOne(debug, trx, found.pid);
-
-                await this.query(debug, trx, `update :table: set :l: = :l: - :x where :l: > :vl`, {
+                await this.query(debug, trx, `update :table: set :l: = :l: - :offset where :l: > :vl and :sort: > 0`, {
                     l,
-                    x       : howManyToRemove * 2,
-                    vl       : found.l,
+                    sort,
+                    offset  : howManyToRemove * 2,
+                    vl      : found.l,
                 });
 
-                await this.query(debug, trx, `update :table: set :r: = :r: - :x where :r: > :vr`, {
+                await this.query(debug, trx, `update :table: set :r: = :r: - :offset where :r: > :vr and :sort: > 0`, {
                     r,
-                    x       : howManyToRemove * 2,
-                    vr       : found.r,
+                    sort,
+                    offset  : howManyToRemove * 2,
+                    vr      : found.r,
                 });
 
                 /**
                  * https://github.com/mysqljs/mysql/issues/1751#issue-234563643
                  * Require config like:
                  *
-                 connection: {
-                        host        : process.env.PROTECTED_MYSQL_HOST,
-                        port        : process.env.PROTECTED_MYSQL_PORT,
-                        user        : process.env.PROTECTED_MYSQL_USER,
-                        password    : process.env.PROTECTED_MYSQL_PASS,
-                        database    : process.env.PROTECTED_MYSQL_DB,
-                        multipleStatements: true,
+                    connection: {
+                        host                : process.env.PROTECTED_MYSQL_HOST,
+                        port                : process.env.PROTECTED_MYSQL_PORT,
+                        user                : process.env.PROTECTED_MYSQL_USER,
+                        password            : process.env.PROTECTED_MYSQL_PASS,
+                        database            : process.env.PROTECTED_MYSQL_DB,
+                        multipleStatements  : true,
                     },
                  */
                 await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id ORDER BY :l:`, {
@@ -546,7 +589,7 @@ module.exports = topt => {
 
             let [debug, trx, opt = {}] = a(args);
 
-            let { sourceId, parentId, nOneIndexed } = opt;
+            let { sourceId, parentId, nOneIndexed, moveMode = false } = opt;
 
             const logic = async trx => {
 
@@ -571,7 +614,7 @@ module.exports = topt => {
                     throw th(`treeCreateAsNthChild: source not found by id: ${sourceId}`);
                 }
 
-                Object.keys(topt.columns).forEach(key => {
+                moveMode || Object.keys(topt.columns).forEach(key => {
 
                     if ( source[key] !== null ) {
 
@@ -959,7 +1002,7 @@ AND :sort: > 0`, {
                         });
 
                         break;
-                    case ( source.level === (parent.level + 1) && ( source.sort > nOneIndexed )): // #2
+                    case source.level === (parent.level + 1): // #2
 
                         gate(2);
 
@@ -974,10 +1017,125 @@ AND :sort: > 0`, {
                         gate(3);
 
                         break;
-                    case ( source.level > parent.level ): // #5
+                    case ( source.level > parent.level ): // #5  ?????
 
                         gate(5);
 
+                        // throw new Error('test');
+
+                        // gate(6);
+                    {
+
+                        if ( ! rowUnderIndex ) {
+
+                            rowUnderIndex = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s`, {
+                                ...topt.columns,
+                                id: parent.id,
+                                s: nOneIndexed - 1
+                            });
+                        }
+
+                        // flip
+                        await this.treeDelete(debug, trx, {
+                            id: source,
+                            flip: true,
+                        })
+                        // await this.query(debug, trx, `update :table: set :sort: = -:sort:, :l: = :l: + 1000, :r: = :r: + 1000 where :l: >= :vl and :r: <= :vr`, {
+                        // // await this.query(debug, trx, `update :table: set :sort: = -:sort: where :l: >= :vl and :r: <= :vr`, {
+                        //     sort,
+                        //     l,
+                        //     r,
+                        //     vl: source.l,
+                        //     vr: source.r,
+                        // });
+                                    // await this.query(debug, trx, `delete from :table: where :l: >= :vl and :r: <= :vr`, {
+                                    //     // await this.query(debug, trx, `update :table: set :sort: = -:sort: where :l: >= :vl and :r: <= :vr`, {
+                                    //     sort,
+                                    //     l,
+                                    //     r,
+                                    //     vl: source.l,
+                                    //     vr: source.r,
+                                    // })
+
+                        // await this.query(debug, trx, `update :table: set :l: = :l: - :offset where :l: > :vl and :sort: > 0`, {
+                        //     l,
+                        //     sort,
+                        //     vl: source.l,
+                        //     offset: source.r - source.l + 1,
+                        // })
+                        //
+                        // await this.query(debug, trx, `update :table: set :r: = :r: - :offset where :r: > :vr and :sort: > 0`, {
+                        //     r,
+                        //     sort,
+                        //     vr: source.r,
+                        //     offset: source.r - source.l + 1,
+                        // })
+
+                                    // await this.query(debug, trx, `update :table: set :pid: = :ppid, :sort: where :id: = :id`, {
+                                    //     pid,
+                                    //     l,
+                                    //     r,
+                                    //     ppid: parent.id,
+                                    //     id: source.id,
+                                    // })
+
+//                         const offset = source.r - source.l + 1;
+//
+//                         // move up
+//                         await this.query(debug, trx, `
+// UPDATE :table: SET :l: = :l: - :offset, :r: = :r: - :offset
+// WHERE
+// (
+//   (:l: >= :sl AND :l: <= :tl AND :r: <= :tr AND :r: >= :sr)
+//   OR (:l: >= :tl AND :r: <= :tr)
+// )
+// AND :sort: > 0`, {
+//                             sort,
+//                             l,
+//                             r,
+//                             sl: source.l,
+//                             sr: source.r,
+//                             tl: rowUnderIndex.l,
+//                             tr: rowUnderIndex.r,
+//                             offset,
+//                         });
+
+//                         const offset = source.r - source.l + 1;
+//
+//                         // move up
+//                         await this.query(debug, trx, `
+// UPDATE :table: SET :l: = :l: - :offset, :r: = :r: - :offset
+// WHERE
+// (
+//   (:l: >= :sl AND :l: <= :tl AND :r: <= :tr AND :r: >= :sr)
+//   OR (:l: >= :tl AND :r: <= :tr)
+// )
+// AND :sort: > 0`, {
+//                             sort,
+//                             l,
+//                             r,
+//                             sl: source.l,
+//                             sr: source.r,
+//                             tl: rowUnderIndex.l,
+//                             tr: rowUnderIndex.r,
+//                             offset,
+//                         });
+//
+//                         // move down
+//                         await this.query(debug, trx, "UPDATE :table: SET :l: = :l: + :offset, :r: = :r: + :offset, :sort: = -:sort: where :sort: < 0", {
+//                             sort,
+//                             l,
+//                             r,
+//                             offset: rowUnderIndex.r - source.l - offset + 1,
+//                         })
+//
+//                         await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id ORDER BY :l:`, {
+//                             sort,
+//                             pid,
+//                             id      : parent.id,
+//                             l
+//                         });
+                    }
                         break;
                     default:
                         throw th(`treeMoveToNthChild: unhandled/unknown case`);

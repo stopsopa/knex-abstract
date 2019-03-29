@@ -278,7 +278,9 @@ io.on('connection', socket => {
 
         try {
 
-            await knex().transaction(async trx => {
+            // await knex().transaction(async trx => {
+
+                const trx = false;
 
                 switch(method) {
                     case 'before':
@@ -297,17 +299,19 @@ io.on('connection', socket => {
                         const params = {
                             sourceId,
                             parentId: targetId,
-                            gate: true,
+                            // gate: true,
                         };
+
                         if (n) {
                             params.nOneIndexed = n;
                         }
+
                         await mtree.treeMoveToNthChild(trx, params);
                         break;
                     default:
                         throw new Error(`Method unknown '${method}'`);
                 }
-            });
+            // });
 
             log.dump('inserted');
 
