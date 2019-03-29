@@ -846,7 +846,7 @@ module.exports = topt => {
 
                 if ( source.id === parent.id || ( parent.l > source.l && parent.r < source.r ) ) {
 
-                    throw th(`treeMoveToNthChild: can't move element as a child of itself`);
+                    throw th(`treeMoveToNthChild: #8 can't move element as a child of itself`);
                 }
 
                 if ( source.pid === parent.id && source.sort === nOneIndexed) {
