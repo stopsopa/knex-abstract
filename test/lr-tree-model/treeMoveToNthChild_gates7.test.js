@@ -72,58 +72,106 @@ const test = async (opt, equal) => {
     }, null, 4));
 }
 
-it('lrtree - treeMoveToNthChild #3', async done => {
+it('lrtree - treeMoveToNthChild #4', async done => {
 
     await test({
-        sourceId    : 6,
-        parentId    : 12,
-        nOneIndexed : 2,
-    }, '#3');
-
-    done()
-});
-
-it('lrtree - treeMoveToNthChild #3 1', async done => {
-
-    await test({
-        sourceId    : 6,
+        sourceId    : 34,
         parentId    : 15,
         nOneIndexed : 2,
-    }, '#3');
+    }, '#4');
 
     done()
 });
 
-it('lrtree - treeMoveToNthChild #3 2', async done => {
+
+it('lrtree - treeMoveToNthChild #4 1', async done => {
 
     await test({
-        sourceId    : 6,
-        parentId    : 27,
+        sourceId    : 34,
+        parentId    : 12,
+        nOneIndexed : 2,
+    }, '#4');
+
+    done()
+});
+
+it('lrtree - treeMoveToNthChild #4 implicit', async done => {
+
+    await test({
+        sourceId    : 34,
+        parentId    : 15,
         // nOneIndexed : 2,
-    }, '#3');
+    }, '#4');
 
     done()
 });
 
-it('lrtree - treeMoveToNthChild #3 3', async done => {
+it('lrtree - treeMoveToNthChild #4 explicit', async done => {
 
     await test({
-        sourceId    : 6,
+        sourceId    : 34,
+        parentId    : 15,
+        nOneIndexed : 3,
+    }, '#4');
+
+    done()
+});
+
+it('lrtree - treeMoveToNthChild #4 explicit 2', async done => {
+
+    await test({
+        sourceId    : 34,
+        parentId    : 15,
+        nOneIndexed : 4,
+    }, '#4');
+
+    done()
+});
+
+
+it('lrtree - treeMoveToNthChild #4 explicit 3', async done => {
+
+    await test({
+        sourceId    : 34,
+        parentId    : 27,
+        // nOneIndexed : 4,
+    }, '#4');
+
+    done()
+});
+
+it('lrtree - treeMoveToNthChild #4 explicit 4', async done => {
+
+    await test({
+        sourceId    : 34,
         parentId    : 27,
         nOneIndexed : 5,
-    }, '#3');
+    }, '#4');
 
     done()
 });
 
 
-it('lrtree - treeMoveToNthChild #3 3 equal', async done => {
+it('lrtree - treeMoveToNthChild #4 explicit 5', async done => {
 
     await test({
-        sourceId    : 6,
-        parentId    : 6,
-        nOneIndexed : 2,
-    }, '#8');
+        sourceId    : 34,
+        parentId    : 27,
+        nOneIndexed : 6,
+    }, '#4');
 
     done()
 });
+
+it('lrtree - treeMoveToNthChild #4 explicit 6', async done => {
+
+    await test({
+        sourceId    : 34,
+        parentId    : 27,
+        nOneIndexed : 60,
+    }, '#4');
+
+    done()
+});
+
+

@@ -892,21 +892,17 @@ module.exports = topt => {
                     });
                 }
 
-                if ( (source.sort >= (maxIndex - 1)) && ( indexParamNotGiven || ( ! rowUnderIndex || rowUnderIndex.sort >= (maxIndex - 1) ) ) ) {
-
-                    gate('already-last');
-
-                    throw th(`treeMoveToNthChild: can't move last element to the end, because it's already at the end because it's "last"`);
-                }
-
                 switch(true) {
                     case ( source.level === (parent.level + 1) && ( source.sort < nOneIndexed ) ): // #1
 
+                        if (source.sort >= (maxIndex - 1)) {
+
+                            gate('already-last');
+
+                            throw th(`treeMoveToNthChild: can't move last element to the end, because it's already at the end because it's "last"`);
+                        }
+
                         gate(1);
-
-                        console.log('#1');
-
-                        // throw new Error('#1');
 
                         if ( ! rowUnderIndex ) {
 
@@ -967,21 +963,20 @@ AND :sort: > 0`, {
 
                         gate(2);
 
-                        throw new Error('#2');
+                        break;
+                    case ( ( source.level <= parent.level ) && (source.l > parent.l) ): // #4
+
+                        gate(4);
 
                         break;
                     case ( source.level <= parent.level ): // #3
 
                         gate(3);
 
-                        throw new Error('#3');
-
                         break;
                     case ( source.level > parent.level ): // #5
 
                         gate(5);
-
-                        throw new Error('#5');
 
                         break;
                     default:
