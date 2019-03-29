@@ -746,7 +746,14 @@ module.exports = topt => {
 
             let [debug, trx, opt = {}] = a(args);
 
-            let { sourceId, parentId, nOneIndexed } = opt;
+            let { sourceId, parentId, nOneIndexed, gate = false } = opt;
+
+            gate = gate ?
+                flag => {
+                    throw new Error(`#${flag}`);
+                } :
+                () => {}
+            ;
 
             const logic = async trx => {
 
@@ -809,7 +816,17 @@ module.exports = topt => {
 
                     if ( ! parent[key] ) {
 
-                        throw th(`treeMoveToNthChild: parent.${key} can't be falsy: ` + toString(parent));
+                        if (key === 'pid') {
+
+                            if (parent.level > 1) {
+
+                                throw th(`treeMoveToNthChild: parent.${key} can't be falsy 1: ` + toString(parent));
+                            }
+                        }
+                        else {
+
+                            throw th(`treeMoveToNthChild: parent.${key} can't be falsy 2: ` + toString(parent));
+                        }
                     }
                 });
 
@@ -846,10 +863,14 @@ module.exports = topt => {
 
                 if ( source.id === parent.id || ( parent.l > source.l && parent.r < source.r ) ) {
 
+                    gate('8');
+
                     throw th(`treeMoveToNthChild: #8 can't move element as a child of itself`);
                 }
 
                 if ( source.pid === parent.id && source.sort === nOneIndexed) {
+
+                    gate('same-index');
 
                     throw th(`treeMoveToNthChild: can't move element as a child of the same parent '${parent.id}' and to the same index '${nOneIndexed}'`);
                 }
@@ -873,11 +894,15 @@ module.exports = topt => {
 
                 if ( (source.sort >= (maxIndex - 1)) && ( indexParamNotGiven || ( ! rowUnderIndex || rowUnderIndex.sort >= (maxIndex - 1) ) ) ) {
 
+                    gate('already-last');
+
                     throw th(`treeMoveToNthChild: can't move last element to the end, because it's already at the end because it's "last"`);
                 }
 
                 switch(true) {
-                    case ( source.level === (parent.level + 1) && ( source.sort < nOneIndexed ) ): // #3
+                    case ( source.level === (parent.level + 1) && ( source.sort < nOneIndexed ) ): // #1
+
+                        gate(1);
 
                         console.log('#1');
 
@@ -938,21 +963,24 @@ AND :sort: > 0`, {
                         });
 
                         break;
-                    case ( source.level === (parent.level + 1) && ( source.sort > nOneIndexed )): // #4
+                    case ( source.level === (parent.level + 1) && ( source.sort > nOneIndexed )): // #2
 
-                        console.log('#2')
+                        gate(2);
+
                         throw new Error('#2');
 
                         break;
-                    case ( source.level <= parent.level ): // #2
+                    case ( source.level <= parent.level ): // #3
 
-                        console.log('#3')
+                        gate(3);
+
                         throw new Error('#3');
 
                         break;
-                    case ( source.level > parent.level ): // #1
+                    case ( source.level > parent.level ): // #5
 
-                        console.log('#5')
+                        gate(5);
+
                         throw new Error('#5');
 
                         break;

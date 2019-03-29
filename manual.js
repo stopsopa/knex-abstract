@@ -297,6 +297,7 @@ io.on('connection', socket => {
                         const params = {
                             sourceId,
                             parentId: targetId,
+                            gate: true,
                         };
                         if (n) {
                             params.nOneIndexed = n;
