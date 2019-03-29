@@ -32,10 +32,10 @@ afterAll(async () => {
     await man.destroy();
 });
 
-const prepare = async () => {
+const prepare = async (file = 'tree-fixture-test-set-1') => {
 
     const fixtures = fixturesTool({
-        yamlFile: path.resolve(__dirname, 'tree-fixture-basic.yml'),
+        yamlFile: path.resolve(__dirname, `${file}.yml`),
         knex,
     });
 

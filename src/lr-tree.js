@@ -879,7 +879,9 @@ module.exports = topt => {
                 switch(true) {
                     case ( source.level === (parent.level + 1) && ( source.sort < nOneIndexed ) ): // #3
 
-                        console.log('#3');
+                        console.log('#1');
+
+                        throw new Error('#1');
 
                         if ( ! rowUnderIndex ) {
 
@@ -938,20 +940,20 @@ AND :sort: > 0`, {
                         break;
                     case ( source.level === (parent.level + 1) && ( source.sort > nOneIndexed )): // #4
 
-                        console.log('#4')
-                        throw '#4';
+                        console.log('#2')
+                        throw new Error('#2');
 
                         break;
                     case ( source.level <= parent.level ): // #2
 
-                        console.log('#2')
-                        throw '#2';
+                        console.log('#3')
+                        throw new Error('#3');
 
                         break;
                     case ( source.level > parent.level ): // #1
 
-                        console.log('#1')
-                        throw '#1';
+                        console.log('#5')
+                        throw new Error('#5');
 
                         break;
                     default:
