@@ -265,6 +265,7 @@ io.on('connection', socket => {
     socket.on('onPaste', async (data) => {
 
         const {
+            sourceId,
             targetId,
             method,
             n,
@@ -273,17 +274,11 @@ io.on('connection', socket => {
 
         log.dump({
             onPaste_params: data,
-        }, 3)
-
-        return;
+        }, 3);
 
         try {
 
             await knex().transaction(async trx => {
-
-                const sourceId = await mtree.insert(trx, {
-                    title,
-                });
 
                 switch(method) {
                     case 'before':
@@ -298,7 +293,7 @@ io.on('connection', socket => {
                             targetId,
                         });
                         break;
-                    case 'treeCreateAsNthChild':
+                    case 'treeMoveToNthChild':
                         const params = {
                             sourceId,
                             parentId: targetId,
@@ -306,7 +301,7 @@ io.on('connection', socket => {
                         if (n) {
                             params.nOneIndexed = n;
                         }
-                        await mtree.treeCreateAsNthChild(trx, params);
+                        await mtree.treeMoveToNthChild(trx, params);
                         break;
                     default:
                         throw new Error(`Method unknown '${method}'`);

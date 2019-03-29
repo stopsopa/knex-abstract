@@ -23,13 +23,19 @@ root:
                                 -
                                     title: r1 a1 b6 c1                        
                                 -
-                                    title: r1 a1 b6 c2                       
+                                    title: r1 a1 b6 c2
                                 -
                                     title: r1 a1 b6 c3                         
                                 -
                                     title: r1 a1 b6 c4                         
                                 -
-                                    title: r1 a1 b6 c5   
+                                    title: r1 a1 b6 c5
+
+                                    children:
+                                        -
+                                            title: r1 a1 b6 c2 1
+                                        -
+                                            title: r1 a1 b6 c2 2
                         -
                             title: r1 a1 b7
                         -

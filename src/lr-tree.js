@@ -358,11 +358,11 @@ module.exports = topt => {
                     throw th(`treeDelete: howManyToRemove is not integer, found.l: ${found.l}, found.r: ${found.r}, howManyToRemove: ` + JSON.stringify(howManyToRemove));
                 }
 
-                const result = await this.query(debug, trx, `delete from :table: where :lcol: >= :l and :rcol: <= :r`, {
-                    lcol    : l,
-                    rcol    : r,
-                    l       : found.l,
-                    r       : found.r,
+                const result = await this.query(debug, trx, `delete from :table: where :l: >= :vl and :r: <= :vr`, {
+                    l,
+                    r,
+                    vl       : found.l,
+                    vr       : found.r,
                 });
 
                 if ( result.affectedRows !== howManyToRemove ) {
@@ -372,16 +372,16 @@ module.exports = topt => {
 
                 const parent = await this.treeFindOne(debug, trx, found.pid);
 
-                await this.query(debug, trx, `update :table: set :lcol: = :lcol: - :x where :lcol: > :l`, {
-                    lcol    : l,
+                await this.query(debug, trx, `update :table: set :l: = :l: - :x where :l: > :vl`, {
+                    l,
                     x       : howManyToRemove * 2,
-                    l       : found.l,
+                    vl       : found.l,
                 });
 
-                await this.query(debug, trx, `update :table: set :rcol: = :rcol: - :x where :rcol: > :r`, {
-                    rcol    : r,
+                await this.query(debug, trx, `update :table: set :r: = :r: - :x where :r: > :vr`, {
+                    r,
                     x       : howManyToRemove * 2,
-                    r       : found.r,
+                    vr       : found.r,
                 });
 
                 /**
@@ -728,11 +728,237 @@ module.exports = topt => {
                     },
                  */
                 await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id ORDER BY :l:`, {
-                    sort    : sort,
-                    pid     : pid,
+                    sort,
+                    pid,
                     id      : parent.id,
                     l
                 });
+            };
+
+            if (trx) {
+
+                return await logic.call(this, trx);
+            }
+
+            return await this.knex.transaction(logic);
+        },
+        treeMoveToNthChild: async function (...args) {
+
+            let [debug, trx, opt = {}] = a(args);
+
+            let { sourceId, parentId, nOneIndexed } = opt;
+
+            const logic = async trx => {
+
+                let source;
+
+                if ( isObject(sourceId) ) {
+
+                    source = sourceId;
+                }
+                else {
+
+                    if ( sourceId === undefined) {
+
+                        throw th(`treeMoveToNthChild: sourceId can't be undefined`);
+                    }
+
+                    source = await this.treeFindOne(debug, trx, sourceId);
+                }
+
+                if ( ! source ) {
+
+                    throw th(`treeMoveToNthChild: source not found by id: ${sourceId}`);
+                }
+
+                if (source.level < 2) {
+
+                    throw th(`treeMoveToNthChild: can't move root element`);
+                }
+
+                Object.keys(topt.columns).forEach(key => {
+
+                    if ( ! source[key] ) {
+
+                        throw th(`treeMoveToNthChild: source.${key} can't be falsy: ` + toString(source));
+                    }
+                });
+
+                let parent;
+
+                if ( isObject(parentId) ) {
+
+                    parent = parentId;
+                }
+                else {
+
+                    if ( parentId === undefined) {
+
+                        throw th(`treeMoveToNthChild: parentId can't be undefined`);
+                    }
+
+                    parent = await this.treeFindOne(debug, trx, parentId);
+                }
+
+                if ( ! parent ) {
+
+                    throw th(`treeMoveToNthChild: parent not found by id: ${parentId}`);
+                }
+
+                Object.keys(topt.columns).forEach(key => {
+
+                    if ( ! parent[key] ) {
+
+                        throw th(`treeMoveToNthChild: parent.${key} can't be falsy: ` + toString(parent));
+                    }
+                });
+
+                const maxIndex = await this.queryColumn(debug, trx, `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id`, {
+                    pid,
+                    sort,
+                    id: parent.id,
+                });
+
+                let indexParamNotGiven = (nOneIndexed === undefined);
+
+                // no children then default 1
+                if (maxIndex === null) {
+
+                    nOneIndexed = 1;
+                }
+                else {
+
+                    if (nOneIndexed > maxIndex || ! nOneIndexed) {
+
+                        nOneIndexed = maxIndex;
+                    }
+                }
+
+                if ( ! Number.isInteger(nOneIndexed) ) {
+
+                    throw th(`treeMoveToNthChild: nOneIndexed param is not an integer`)
+                }
+
+                if ( nOneIndexed < 1 ) {
+
+                    nOneIndexed = 1;
+                }
+
+                if ( source.id === parent.id || ( parent.l > source.l && parent.r < source.r ) ) {
+
+                    throw th(`treeMoveToNthChild: can't move element as a child of itself`);
+                }
+
+                if ( source.pid === parent.id && source.sort === nOneIndexed) {
+
+                    throw th(`treeMoveToNthChild: can't move element as a child of the same parent '${parent.id}' and to the same index '${nOneIndexed}'`);
+                }
+
+                let rowUnderIndex = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s`, {
+                    ...topt.columns,
+                    id: parent.id,
+                    s: nOneIndexed
+                });
+
+                if ( rowUnderIndex ) {
+
+                    Object.keys(topt.columns).forEach(key => {
+
+                        if ( ! rowUnderIndex[key] ) {
+
+                            throw th(`treeMoveToNthChild: parent.${key} can't be falsy: ` + toString(rowUnderIndex));
+                        }
+                    });
+                }
+
+                if ( (source.sort >= (maxIndex - 1)) && ( indexParamNotGiven || ( ! rowUnderIndex || rowUnderIndex.sort >= (maxIndex - 1) ) ) ) {
+
+                    throw th(`treeMoveToNthChild: can't move last element to the end, because it's already at the end because it's "last"`);
+                }
+
+                switch(true) {
+                    case ( source.level === (parent.level + 1) && ( source.sort < nOneIndexed ) ): // #3
+
+                        console.log('#3');
+
+                        if ( ! rowUnderIndex ) {
+
+                            rowUnderIndex = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s`, {
+                                ...topt.columns,
+                                id: parent.id,
+                                s: nOneIndexed - 1
+                            });
+                        }
+
+                        // flip
+                        await this.query(debug, trx, `update :table: set :sort: = -:sort: where :l: >= :vl and :r: <= :vr`, {
+                            sort,
+                            l,
+                            r,
+                            vl: source.l,
+                            vr: source.r,
+                        });
+
+                        const offset = source.r - source.l + 1;
+
+                        // move up
+                        await this.query(debug, trx, `
+UPDATE :table: SET :l: = :l: - :offset, :r: = :r: - :offset 
+WHERE 
+(
+  (:l: >= :sl AND :l: <= :tl AND :r: <= :tr AND :r: >= :sr)
+  OR (:l: >= :tl AND :r: <= :tr)
+)  
+AND :sort: > 0`, {
+                            sort,
+                            l,
+                            r,
+                            sl: source.l,
+                            sr: source.r,
+                            tl: rowUnderIndex.l,
+                            tr: rowUnderIndex.r,
+                            offset,
+                        });
+
+                        // move down
+                        await this.query(debug, trx, "UPDATE :table: SET :l: = :l: + :offset, :r: = :r: + :offset, :sort: = -:sort: where :sort: < 0", {
+                            sort,
+                            l,
+                            r,
+                            offset: rowUnderIndex.r - source.l - offset + 1,
+                        })
+
+                        await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id ORDER BY :l:`, {
+                            sort,
+                            pid,
+                            id      : parent.id,
+                            l
+                        });
+
+                        break;
+                    case ( source.level === (parent.level + 1) && ( source.sort > nOneIndexed )): // #4
+
+                        console.log('#4')
+                        throw '#4';
+
+                        break;
+                    case ( source.level <= parent.level ): // #2
+
+                        console.log('#2')
+                        throw '#2';
+
+                        break;
+                    case ( source.level > parent.level ): // #1
+
+                        console.log('#1')
+                        throw '#1';
+
+                        break;
+                    default:
+                        throw th(`treeMoveToNthChild: unhandled/unknown case`);
+                        break;
+                }
+
             };
 
             if (trx) {
