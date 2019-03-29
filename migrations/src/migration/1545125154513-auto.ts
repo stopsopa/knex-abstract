@@ -105,7 +105,7 @@ export class auto1545125154513 implements MigrationInterface {
             }
         }).then(() => {
 
-            setTimeout(() => process.exit(0), 1000);
+            // setTimeout(() => process.exit(0), 1000);
         }, e => {
 
             log.dump(e, 2)
@@ -167,7 +167,7 @@ export class auto1545125154513 implements MigrationInterface {
 
         }).then(() => {
 
-            setTimeout(() => process.exit(0), 1000);
+            // setTimeout(() => process.exit(0), 1000);
         }, e => {
 
             log.dump(e, 2)
