@@ -26,11 +26,11 @@ root:
                             title: r1 a1 b5
                         -
                             title: r1 a1 b6
-                            children:                         
+                            children:
                                 -
-                                    title: r1 a1 b6 c1                        
+                                    title: r1 a1 b6 c1
                                 -
-                                    title: r1 a1 b6 c2                       
+                                    title: r1 a1 b6 c2
                                 -
                                     title: r1 a1 b6 c3
 
@@ -46,7 +46,7 @@ root:
                                 -
                                     title: r1 a1 b9 c5
                                 -
-                                    title: r1 a1 b6 c4                         
+                                    title: r1 a1 b6 c4
                                 -
                                     title: r1 a1 b6 c5
 
@@ -61,17 +61,17 @@ root:
                             title: r1 a1 b8
                         -
                             title: r1 a1 b9
-                            children:                         
+                            children:
                                 -
-                                    title: r1 a1 b9 c1                        
+                                    title: r1 a1 b9 c1
                                 -
-                                    title: r1 a1 b9 c2                       
+                                    title: r1 a1 b9 c2
                                 -
-                                    title: r1 a1 b9 c3                         
+                                    title: r1 a1 b9 c3
                                 -
-                                    title: r1 a1 b9 c4                         
+                                    title: r1 a1 b9 c4
                                 -
-                                    title: r1 a1 b9 c5  
+                                    title: r1 a1 b9 c5
                         -
                             title: r1 a1 b10
                         -
@@ -123,34 +123,34 @@ root:
                             title: r2 a1 b5
                         -
                             title: r2 a1 b6
-                            children:                         
+                            children:
                                 -
-                                    title: r2 a1 b6 c1                        
+                                    title: r2 a1 b6 c1
                                 -
-                                    title: r2 a1 b6 c2                       
+                                    title: r2 a1 b6 c2
                                 -
-                                    title: r2 a1 b6 c3                         
+                                    title: r2 a1 b6 c3
                                 -
-                                    title: r2 a1 b6 c4                         
+                                    title: r2 a1 b6 c4
                                 -
-                                    title: r2 a1 b6 c5   
+                                    title: r2 a1 b6 c5
                         -
                             title: r2 a1 b7
                         -
                             title: r2 a1 b8
                         -
                             title: r2 a1 b9
-                            children:                         
+                            children:
                                 -
-                                    title: r2 a1 b9 c1                        
+                                    title: r2 a1 b9 c1
                                 -
-                                    title: r2 a1 b9 c2                       
+                                    title: r2 a1 b9 c2
                                 -
-                                    title: r2 a1 b9 c3                         
+                                    title: r2 a1 b9 c3
                                 -
-                                    title: r2 a1 b9 c4                         
+                                    title: r2 a1 b9 c4
                                 -
-                                    title: r2 a1 b9 c5  
+                                    title: r2 a1 b9 c5
                         -
                             title: r2 a1 b10
                         -

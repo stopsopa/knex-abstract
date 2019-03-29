@@ -264,7 +264,6 @@ io.on('connection', socket => {
 
     socket.on('onPaste', async (data) => {
 
-
         const {
             sourceId,
             targetId,

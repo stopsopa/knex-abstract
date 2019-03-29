@@ -881,7 +881,7 @@ module.exports = topt => {
 
                         console.log('#1');
 
-                        throw new Error('#1');
+                        // throw new Error('#1');
 
                         if ( ! rowUnderIndex ) {
 
