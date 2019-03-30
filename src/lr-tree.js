@@ -703,32 +703,42 @@ module.exports = topt => {
 
                 let newr = newl + 1;
 
-                let rowUnderIndex = await this.queryOne(debug, trx, `select * from :table: WHERE :pid: = :id and :sort: = :s`, {
-                    pid,
+                let rowUnderIndex = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s`, {
+                    ...topt.columns,
                     id: parent.id,
-                    sort,
                     s: nOneIndexed
                 });
 
+                // log.dump({
+                //     source,
+                //     parent,
+                //     moveMode,
+                //     maxIndex,
+                //     nOneIndexed,
+                //     newl,
+                //     newr,
+                //     rowUnderIndex,
+                // })
+                //
+                // return;
                 // run some operations to prepare children
                 if ( (parent.r - parent.l) > 1 ) {
 
                     if ( rowUnderIndex) {
 
-                        newl = rowUnderIndex[l];
+                        newl = rowUnderIndex.l;
 
-                        newr = rowUnderIndex[r];
+                        newr = rowUnderIndex.r;
                     }
                     else {
 
-                        const tmp = await this.queryOne(debug, trx, `select * from :table: WHERE :pid: = :id and :sort: = :s`, {
-                            pid,
+                        const tmp = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s`, {
+                            ...topt.columns,
                             id: parent.id,
-                            sort,
                             s: nOneIndexed - 1
                         });
 
-                        newl = tmp[r] + 1;
+                        newl = tmp.r + 1;
 
                         newr = newl + 1;
                     }
@@ -752,15 +762,15 @@ module.exports = topt => {
                     id      : parent.id,
                 }
 
-                if (rowUnderIndex && (rowUnderIndex[r] - rowUnderIndex[l]) > 1 ) {
+                if (rowUnderIndex && (rowUnderIndex.r - rowUnderIndex.l) > 1 ) {
 
                     rquery += ` or (:l: > :rvl and :r: < :rvr)`;
 
                     rparams.l   = l;
 
-                    rparams.rvl  = rowUnderIndex[l];
+                    rparams.rvl  = rowUnderIndex.l;
 
-                    rparams.rvr  = rowUnderIndex[r];
+                    rparams.rvr  = rowUnderIndex.r;
                 }
 
                 await this.query(debug, trx, rquery, rparams);
