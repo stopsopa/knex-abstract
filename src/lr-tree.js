@@ -390,7 +390,7 @@ module.exports = topt => {
 
                 if (flip) {
 
-                    result = await this.query(true, trx, `update :table: set :sort: = -:sort: where :l: >= :vl and :r: <= :vr`, {
+                    result = await this.query(debug, trx, `update :table: set :sort: = -:sort: where :l: >= :vl and :r: <= :vr`, {
                         sort,
                         l,
                         r,
@@ -440,7 +440,16 @@ module.exports = topt => {
                         multipleStatements  : true,
                     },
                  */
-                await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id ORDER BY :l:`, {
+
+                let excludeFlipped = '';
+
+                if (flip) {
+
+                    excludeFlipped = ` AND :sort: > 0`;
+                }
+
+                // return;
+                await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id${excludeFlipped} ORDER BY :l:`, {
                     sort,
                     pid,
                     id      : parent.id,
@@ -647,7 +656,17 @@ module.exports = topt => {
 
                     if ( ! parent[key] ) {
 
-                        throw th(`treeCreateAsNthChild: parent.${key} can't be falsy: ` + toString(parent));
+                        if (key === 'pid') {
+
+                            if (parent.level > 1) {
+
+                                throw th(`treeMoveToNthChild: parent.${key} can't be falsy 3: ` + toString(parent));
+                            }
+                        }
+                        else {
+
+                            throw th(`treeMoveToNthChild: parent.${key} can't be falsy 4: ` + toString(parent));
+                        }
                     }
                 });
 
@@ -1039,7 +1058,14 @@ AND :sort: > 0`, {
                         await this.treeDelete(debug, trx, {
                             id: source,
                             flip: true,
-                        })
+                        });
+
+                        await this.treeCreateAsNthChild({
+                            sourceId    : source,
+                            parentId    : parent,
+                            nOneIndexed,
+                            moveMode    : true,
+                        });
                         // await this.query(debug, trx, `update :table: set :sort: = -:sort:, :l: = :l: + 1000, :r: = :r: + 1000 where :l: >= :vl and :r: <= :vr`, {
                         // // await this.query(debug, trx, `update :table: set :sort: = -:sort: where :l: >= :vl and :r: <= :vr`, {
                         //     sort,
