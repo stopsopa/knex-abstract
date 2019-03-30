@@ -86,6 +86,7 @@ io.on('connection', socket => {
 
         if (Array.isArray(list)) {
 
+            let ii = 0;
             for (let i = 0, l = list.length, t, key; i < l ; i += 1 ) {
 
                 t = list[i];
@@ -105,6 +106,8 @@ io.on('connection', socket => {
                 if (t.sort.d > 0) {
 
                     k += 1;
+
+                    ii += 1;
                 }
 
                 if (Array.isArray(t.children)) {
@@ -127,7 +130,7 @@ io.on('connection', socket => {
                     t.level.v = false;
                 }
 
-                if (t.sort.d !== i + 1) {
+                if (t.sort.d !== ii) {
 
                     t.sort.v = false;
                 }
