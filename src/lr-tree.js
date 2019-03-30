@@ -709,18 +709,6 @@ module.exports = topt => {
                     s: nOneIndexed
                 });
 
-                // log.dump({
-                //     source,
-                //     parent,
-                //     moveMode,
-                //     maxIndex,
-                //     nOneIndexed,
-                //     newl,
-                //     newr,
-                //     rowUnderIndex,
-                // })
-                //
-                // return;
                 // run some operations to prepare children
                 if ( (parent.r - parent.l) > 1 ) {
 
@@ -728,11 +716,18 @@ module.exports = topt => {
 
                         newl = rowUnderIndex.l;
 
-                        newr = rowUnderIndex.r;
+                        if (moveMode) {
+
+                            newr = newl + (source.r - source.l);
+                        }
+                        else {
+
+                            newr = rowUnderIndex.r;
+                        }
                     }
                     else {
 
-                        const tmp = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s`, {
+                        const tmp = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort, title from :table: WHERE :pid: = :id and :sort: = :s`, {
                             ...topt.columns,
                             id: parent.id,
                             s: nOneIndexed - 1
@@ -740,7 +735,14 @@ module.exports = topt => {
 
                         newl = tmp.r + 1;
 
-                        newr = newl + 1;
+                        if (moveMode) {
+
+                            newr = newl + (source.r - source.l);
+                        }
+                        else {
+
+                            newr = newl + 1;
+                        }
                     }
                 }
 
@@ -749,17 +751,19 @@ module.exports = topt => {
                     throw th(`treeCreateAsNthChild: newr is invalid: ` + toString(newr));
                 }
 
-                await this.query(debug, trx, `update :table: set :l: = :l: + 2 where :l: > :vl`, {
+                await this.query(debug, trx, `update :table: set :l: = :l: + :offset where :l: > :vl`, {
                     l,
-                    vl       : newl - 1,
+                    vl      : newl - 1,
+                    offset  : moveMode ? (source.r - source.l) + 1 : 2,
                 });
 
-                let rquery      = `update :table: set :r: = :r: + 2 where :id: = :id or :r: > :vr`;
+                let rquery      = `update :table: set :r: = :r: + :offset where :id: = :id or :r: > :vr`;
 
                 let rparams     = {
                     r,
                     vr      : newr - 1,
                     id      : parent.id,
+                    offset  : moveMode ? (source.r - source.l) + 1 : 2,
                 }
 
                 if (rowUnderIndex && (rowUnderIndex.r - rowUnderIndex.l) > 1 ) {
@@ -775,16 +779,38 @@ module.exports = topt => {
 
                 await this.query(debug, trx, rquery, rparams);
 
-                const update = {
-                    [pid]   : parent.id,
-                    [level] : parent.level + 1,
-                    [l]     : newl,
-                    [sort]  : nOneIndexed,
+                if (moveMode) {
+
+                    const offset        = source.l - newl + (source.r - source.l) + 1 ;
+
+                    const levelOffset   = source.level - (parent.level + 1);
+
+                    await this.query(debug, trx, `UPDATE :table: SET :l: = :l: - :offset, :r: = :r: - :offset, :sort: = -:sort:, :level: = :level: - :levelOffset WHERE :sort: < 0`, {
+                        l,
+                        r,
+                        sort,
+                        offset,
+                        level,
+                        levelOffset,
+                    });
+
+                    await this.update(debug, trx, {
+                        [pid]: parent.id,
+                    }, source.id);
                 }
+                else {
 
-                update[r] = update[l] + 1;
+                    const update = {
+                        [pid]   : parent.id,
+                        [level] : parent.level + 1,
+                        [l]     : newl,
+                        [sort]  : nOneIndexed,
+                    }
 
-                await this.update(debug, trx, update, source.id);
+                    update[r] = update[l] + 1;
+
+                    await this.update(debug, trx, update, source.id);
+                }
 
                 /**
                  * https://github.com/mysqljs/mysql/issues/1751#issue-234563643
@@ -1070,7 +1096,7 @@ AND :sort: > 0`, {
                             flip: true,
                         });
 
-                        await this.treeCreateAsNthChild({
+                        await this.treeCreateAsNthChild(debug, trx,{
                             sourceId    : source,
                             parentId    : parent,
                             nOneIndexed,
