@@ -91,6 +91,8 @@ io.on('connection', socket => {
 
                 t = list[i];
 
+                let wrong = ! (t.sort.d > 0);
+
                 if (t.sort.d < 0) {
 
                     t.sort.n = true;
@@ -98,9 +100,9 @@ io.on('connection', socket => {
 
                 key = p ? `${p}.${t.id.d}` : t.id.d;
 
-                if (t.l.d !== k) {
+                if (t.sort.d < 0 && t.l.d !== k) {
 
-                    t.l.v = false;
+                    t.l.v = wrong;
                 }
 
                 if (t.sort.d > 0) {
@@ -117,22 +119,22 @@ io.on('connection', socket => {
 
                 if (t.r.d !== k) {
 
-                    t.r.v = false;
+                    t.r.v = wrong;
                 }
 
                 if (pid && t.pid.d !== pid) {
 
-                    t.pid.v = false;
+                    t.pid.v = wrong;
                 }
 
                 if (t.level.d !== level) {
 
-                    t.level.v = false;
+                    t.level.v = wrong;
                 }
 
                 if (t.sort.d !== ii) {
 
-                    t.sort.v = false;
+                    t.sort.v = wrong;
                 }
 
                 if (t.sort.d > 0) {
