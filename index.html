@@ -136,6 +136,10 @@
         .n {
             width: 27px;
         }
+        .negative {
+            background-color: #ffeb00;
+            color: white;
+        }
         @keyframes blinking {
             0%{
                 border: 3px solid greenyellow;
@@ -366,7 +370,7 @@
                                     <div class="check">
                                         <input type="checkbox" checked={c.id.d === clipboard} onClick={() => onCopy(c.id.d)}/>
                                     </div>
-                                    <span className={`id${c.id.v ? '' : ' error'}`}>#{c.id.d}</span> <span className={`l${c.l.v ? '' : ' error'}`}>{c.l.d}</span><span className={`r${c.r.v ? '' : ' error'}`}>{c.r.d}</span> <span className={`le${c.level.v ? '' : ' error'}`}>{c.level.d}</span> <span className={`s${c.sort.v ? '' : ' error'}`}>{c.sort.d}</span>: <b>{c.title}</b>
+                                    <span className={`id${c.id.v ? '' : ' error'}`}>#{c.id.d}</span> <span className={`l${c.l.v ? '' : ' error'}`}>{c.l.d}</span><span className={`r${c.r.v ? '' : ' error'}`}>{c.r.d}</span> <span className={`le${c.level.v ? '' : ' error'}`}>{c.level.d}</span> <span className={`s${c.sort.v ? '' : ' error'}${c.sort.n ? ' negative' : ''}`}>{c.sort.d}</span>: <b>{c.title}</b>
                                     <span>
                                         <button onClick={() => onDelete(c.id.d)}>delete</button>
                                         <Create {...this.props} id={c.id.d}>create</Create>

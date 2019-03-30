@@ -92,7 +92,7 @@ io.on('connection', socket => {
 
                 if (t.sort.d < 0) {
 
-                    continue;
+                    t.sort.n = true;
                 }
 
                 key = p ? `${p}.${t.id.d}` : t.id.d;
@@ -102,7 +102,10 @@ io.on('connection', socket => {
                     t.l.v = false;
                 }
 
-                k += 1;
+                if (t.sort.d > 0) {
+
+                    k += 1;
+                }
 
                 if (Array.isArray(t.children)) {
 
@@ -129,7 +132,10 @@ io.on('connection', socket => {
                     t.sort.v = false;
                 }
 
-                k += 1;
+                if (t.sort.d > 0) {
+
+                    k += 1;
+                }
             }
         }
 
