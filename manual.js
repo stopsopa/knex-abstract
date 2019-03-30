@@ -90,6 +90,11 @@ io.on('connection', socket => {
 
                 t = list[i];
 
+                if (t.sort.d < 0) {
+
+                    continue;
+                }
+
                 key = p ? `${p}.${t.id.d}` : t.id.d;
 
                 if (t.l.d !== k) {
