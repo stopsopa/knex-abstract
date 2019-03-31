@@ -1025,60 +1025,6 @@ where     (
 
                         gate(1);
 
-//                         if ( ! rowUnderIndex ) {
-//
-//                             rowUnderIndex = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s`, {
-//                                 ...topt.columns,
-//                                 id: parent.id,
-//                                 s: nOneIndexed - 1
-//                             });
-//                         }
-//
-//                         // flip
-//                         await this.query(debug, trx, `update :table: set :sort: = -:sort: where :l: >= :vl and :r: <= :vr`, {
-//                             sort,
-//                             l,
-//                             r,
-//                             vl: source.l,
-//                             vr: source.r,
-//                         });
-//
-//                         const offset = source.r - source.l + 1;
-//
-//                         // move up
-//                         await this.query(debug, trx, `
-// UPDATE :table: SET :l: = :l: - :offset, :r: = :r: - :offset
-// WHERE
-// (
-//   (:l: >= :sl AND :l: <= :tl AND :r: <= :tr AND :r: >= :sr)
-//   OR (:l: >= :tl AND :r: <= :tr)
-// )
-// AND :sort: > 0`, {
-//                             sort,
-//                             l,
-//                             r,
-//                             sl: source.l,
-//                             sr: source.r,
-//                             tl: rowUnderIndex.l,
-//                             tr: rowUnderIndex.r,
-//                             offset,
-//                         });
-//
-//                         // move down
-//                         await this.query(debug, trx, "UPDATE :table: SET :l: = :l: + :offset, :r: = :r: + :offset, :sort: = -:sort: where :sort: < 0", {
-//                             sort,
-//                             l,
-//                             r,
-//                             offset: rowUnderIndex.r - source.l - offset + 1,
-//                         })
-//
-//                         await this.query(debug, trx, `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id ORDER BY :l:`, {
-//                             sort,
-//                             pid,
-//                             id      : parent.id,
-//                             l
-//                         });
-
                         // break;
                     case source.level === (parent.level + 1): // #2
 
@@ -1099,8 +1045,6 @@ where     (
 
                         gate(5);
 
-                        // throw new Error('test');
-
                         // gate(6);
 
                         // flip
@@ -1114,7 +1058,7 @@ where     (
                             parentId    : parent.id, // don't pass object to force to retrieve parent again
                             nOneIndexed,
                             moveMode    : true,
-                            maxIndex,
+                            // maxIndex,
                         });
 
                         break;
