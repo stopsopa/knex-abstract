@@ -17,8 +17,10 @@
         }
         .level {
             position: relative;
-            border: 1px solid lightgray;
+            /*border: 1px solid lightgray;*/
             padding-left: 7px;
+            /*maring-bottom: 1px;*/
+            margin-top: 1px;
         }
         .level > div > .level {
             margin-left: 30px;
@@ -470,7 +472,6 @@
                         <button onClick={() => socket.emit('fix')}>fix</button>
                         <button onClick={() => socket.emit('check')}>check integrity</button>
                         <span className={valid ? 'valid' : 'invalid'}>{valid ? 'valid...' : invalidMsg}</span>
-                        <span>clipboard: {`>`}{clipboard}{`<`}</span>
                         <Level
                             tree={tree}
                             onCopy={id => {
