@@ -331,6 +331,8 @@ module.exports = topt => {
                 if ( isObject(id) ) {
 
                     found = id;
+
+                    id = found.id;
                 }
                 else {
 
@@ -515,7 +517,7 @@ module.exports = topt => {
 
                 const params = {
                     sourceId    : source,
-                    parentId    : parent,
+                    parentId    : parent.id,
                     nOneIndexed : target.sort,
                 };
 
@@ -580,7 +582,7 @@ module.exports = topt => {
 
                 const params = {
                     sourceId    : source,
-                    parentId    : parent,
+                    parentId    : parent.id,
                     nOneIndexed : target.sort + 1,
                 };
 
@@ -610,6 +612,8 @@ module.exports = topt => {
                 if ( isObject(sourceId) ) {
 
                     source = sourceId;
+
+                    sourceId = source.id;
                 }
                 else {
 
@@ -634,21 +638,17 @@ module.exports = topt => {
                     }
                 });
 
-                let parent;
+                if (isObject(parentId)) {
 
-                if ( isObject(parentId) ) {
-
-                    parent = parentId;
+                    throw th(`treeCreateAsNthChild: parentId can't be an object: ` + toString(parentId));
                 }
-                else {
 
-                    if ( parentId === undefined) {
+                if ( parentId === undefined) {
 
-                        throw th(`treeCreateAsNthChild: parentId can't be undefined`);
-                    }
-
-                    parent = await this.treeFindOne(debug, trx, parentId);
+                    throw th(`treeCreateAsNthChild: parentId can't be undefined`);
                 }
+
+                const parent = await this.treeFindOne(debug, trx, parentId);
 
                 if ( ! parent ) {
 
@@ -754,17 +754,6 @@ module.exports = topt => {
                     throw th(`treeCreateAsNthChild: nr is invalid: ` + toString(nr));
                 }
 
-                log.dump({
-                    maxIndex,
-                    nOneIndexed,
-                    rowUnderIndex,
-                    lastNode,
-                    nl,
-                    nr,
-                    'nl - 1': nl - 1,
-                    offset: moveMode ? (source.r - source.l) + 1 : 2,
-                })
-
                 await this.query(debug, trx, `update :table: set :l: = :l: + :offset where :l: > :vl and :sort: > 0`, {
                     l,
                     sort,
@@ -772,13 +761,22 @@ module.exports = topt => {
                     offset  : moveMode ? (source.r - source.l) + 1 : 2,
                 });
 
-                // return;
-
-                let rquery      = `update :table: set :r: = :r: + :offset where (( (:r: > :vr or :id: = :id) and not (:pid: = :id && :sort: < :n) ) or :id: = 1) and :sort: > 0`;
+                let rquery      = `
+update    :table: set :r: = :r: + :offset 
+where     ( 
+              ( 
+                  (:r: > :pl or :id: = :id) 
+                  and not (:l: > :pl && :r: < :nl) 
+              ) 
+              or :id: = 1 
+          ) 
+          and :sort: > 0`;
 
                 let rparams     = {
+                    l,
                     r,
-                    vr      : parent.l,
+                    pl      : parent.l,
+                    nl,
                     sort,
                     pid,
                     n       : nOneIndexed,
@@ -883,6 +881,8 @@ module.exports = topt => {
                 if ( isObject(sourceId) ) {
 
                     source = sourceId;
+
+                    sourceId = source.id;
                 }
                 else {
 
@@ -917,6 +917,8 @@ module.exports = topt => {
                 if ( isObject(parentId) ) {
 
                     parent = parentId;
+
+                    parentId = parent.id;
                 }
                 else {
 
