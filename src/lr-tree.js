@@ -705,65 +705,76 @@ module.exports = topt => {
                     nOneIndexed = 1;
                 }
 
-                let newl = parent.l + ( (nOneIndexed - 1) * 2) + 1;
-
-                let newr = newl + 1;
-
-                let rowUnderIndex = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s`, {
+                let rowUnderIndex = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s and :sort: > 0`, {
                     ...topt.columns,
                     id: parent.id,
                     s: nOneIndexed
                 });
 
+                let lastNode;
+
+                if ( ! rowUnderIndex ) {
+
+                    lastNode = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s and :sort: > 0`, {
+                        ...topt.columns,
+                        id: parent.id,
+                        s: nOneIndexed - 1
+                    });
+                }
+
+                let
+                    nl  = parent.l + 1, // precalculation if parent will have no children
+                    nr = undefined      // can't determine at this point yet
+                ;
+
                 // run some operations to prepare children
                 if ( (parent.r - parent.l) > 1 ) {
 
-                    if ( rowUnderIndex) {
+                    if ( rowUnderIndex ) {
 
-                        newl = rowUnderIndex.l;
-
-                        if (moveMode) {
-
-                            newr = newl + (source.r - source.l);
-                        }
-                        else {
-
-                            newr = rowUnderIndex.r;
-                        }
+                        nl = rowUnderIndex.l;
                     }
                     else {
 
-                        const tmp = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort, title from :table: WHERE :pid: = :id and :sort: = :s`, {
-                            ...topt.columns,
-                            id: parent.id,
-                            s: nOneIndexed - 1
-                        });
+                        nl = lastNode.r + 1;
+                    }
 
-                        newl = tmp.r + 1;
+                    if (moveMode) {
 
-                        if (moveMode) {
+                        nr = nl + (source.r - source.l);
+                    }
+                    else {
 
-                            newr = newl + (source.r - source.l);
-                        }
-                        else {
-
-                            newr = newl + 1;
-                        }
+                        nr = nl + 1;
                     }
                 }
 
-                if ( newr !== undefined && ( ! Number.isInteger(newr) || newr < 1 ) ) {
+                if ( nr !== undefined && ( ! Number.isInteger(nr) || nr < 1 ) ) {
 
-                    throw th(`treeCreateAsNthChild: newr is invalid: ` + toString(newr));
+                    throw th(`treeCreateAsNthChild: nr is invalid: ` + toString(nr));
                 }
 
-                await this.query(debug, trx, `update :table: set :l: = :l: + :offset where :l: > :vl`, {
+                log.dump({
+                    maxIndex,
+                    nOneIndexed,
+                    rowUnderIndex,
+                    lastNode,
+                    nl,
+                    nr,
+                    'nl - 1': nl - 1,
+                    offset: moveMode ? (source.r - source.l) + 1 : 2,
+                })
+
+                await this.query(debug, trx, `update :table: set :l: = :l: + :offset where :l: > :vl and :sort: > 0`, {
                     l,
-                    vl      : newl - 1,
+                    sort,
+                    vl      : nl - 1,
                     offset  : moveMode ? (source.r - source.l) + 1 : 2,
                 });
 
-                let rquery      = `update :table: set :r: = :r: + :offset where ( (:r: > :vr or :id: = :id) and not (:pid: = :id && :sort: < :n) ) or :id: = 1`;
+                // return;
+
+                let rquery      = `update :table: set :r: = :r: + :offset where (( (:r: > :vr or :id: = :id) and not (:pid: = :id && :sort: < :n) ) or :id: = 1) and :sort: > 0`;
 
                 let rparams     = {
                     r,
@@ -790,11 +801,11 @@ module.exports = topt => {
 
                 if (moveMode) {
 
-                    const offset        = source.l - newl + (source.r - source.l) + 1 ;
+                    const offset        = nl - source.l;
 
                     const levelOffset   = source.level - (parent.level + 1);
 
-                    await this.query(debug, trx, `UPDATE :table: SET :l: = :l: - :offset, :r: = :r: - :offset, :sort: = -:sort:, :level: = :level: - :levelOffset WHERE :sort: < 0`, {
+                    await this.query(debug, trx, `UPDATE :table: SET :l: = :l: + :offset, :r: = :r: + :offset, :sort: = -:sort:, :level: = :level: - :levelOffset WHERE :sort: < 0`, {
                         l,
                         r,
                         sort,
@@ -812,7 +823,7 @@ module.exports = topt => {
                     const update = {
                         [pid]   : parent.id,
                         [level] : parent.level + 1,
-                        [l]     : newl,
+                        [l]     : nl,
                         [sort]  : nOneIndexed,
                     }
 
@@ -1098,7 +1109,7 @@ module.exports = topt => {
 
                         await this.treeCreateAsNthChild(debug, trx,{
                             sourceId    : source,
-                            parentId    : parent,
+                            parentId    : parent.id, // don't pass object to force to retrieve parent again
                             nOneIndexed,
                             moveMode    : true,
                             maxIndex,
