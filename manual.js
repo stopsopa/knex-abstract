@@ -100,7 +100,7 @@ io.on('connection', socket => {
 
                 key = p ? `${p}.${t.id.d}` : t.id.d;
 
-                if (t.sort.d < 0 && t.l.d !== k) {
+                if (t.sort.d > 0 && t.l.d !== k) {
 
                     t.l.v = wrong;
                 }
