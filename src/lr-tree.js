@@ -675,7 +675,7 @@ module.exports = topt => {
 
                 if (maxIndex === false) {
 
-                    maxIndex = await this.queryColumn(debug, trx, `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id`, {
+                    maxIndex = await this.queryColumn(debug, trx, `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id and :sort: > 0`, {
                         pid,
                         sort,
                         id: parent.id,
