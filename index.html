@@ -268,7 +268,7 @@
                                 <div onClick={() => this.onAdd('before')}>before</div>
                                 <div onClick={() => this.onAdd('after')}>after</div>
                                 <div onClick={() => this.onAdd('treeCreateAsNthChild')}>treeCreateAsNthChild()</div>
-                                <input value={n} onChange={e => this.setState({n: parseInt(e.target.value || 0, 10) || ''})} className="n glue" onFocus={e => e.target.select()} />
+                                <input value={n} onChange={e => this.setState({n: parseInt(e.target.value || 0, 10) || ''})} className="n glue" onFocus={e => e.target.select()} placeholder="end" />
                             </div>
                         }
                     </span>
@@ -336,7 +336,7 @@
                                 <div onClick={() => this.onPaste('before')}>before</div>
                                 <div onClick={() => this.onPaste('after')}>after</div>
                                 <div onClick={() => this.onPaste('treeMoveToNthChild')}>treeMoveToNthChild()</div>
-                                <input value={n} onChange={e => this.setState({n: parseInt(e.target.value || 0, 10) || ''})} className="n glue" onFocus={e => e.target.select()} />
+                                <input value={n} onChange={e => this.setState({n: parseInt(e.target.value || 0, 10) || ''})} className="n glue" onFocus={e => e.target.select()} placeholder="end" />
                             </div>
                         }
                     </span>
