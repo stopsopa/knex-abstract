@@ -74,6 +74,40 @@ it('lrtree - treeDelete 74', async done => {
     }
 });
 
+it('lrtree - treeDelete 74 f', async done => {
+
+    let tmp;
+
+    try {
+
+        await prepare();
+
+        expect(await mtree.count()).toEqual(75);
+
+        tmp = await mtree.treeCheckIntegrity();
+
+        expect(tmp.valid).toBeTruthy();
+
+        await mtree.treeDelete({
+            id: 57
+        });
+
+        expect(await mtree.count()).toEqual(74);
+
+        tmp = await mtree.treeCheckIntegrity();
+
+        expect(tmp.valid).toBeTruthy();
+
+        done();
+    }
+    catch (e) {
+
+        log.dump(e, 5);
+
+        throw e;
+    }
+});
+
 it('lrtree - treeDelete 9', async done => {
 
     let tmp;

@@ -602,7 +602,7 @@ module.exports = topt => {
 
             let {
                 sourceId, parentId, nOneIndexed,    // standard parameters
-                moveMode = false, maxIndex = false  // parameters for internal use - usually optimalization
+                moveMode = false                    // parameters for internal use - usually optimalization
             } = opt;
 
             const logic = async trx => {
@@ -673,14 +673,11 @@ module.exports = topt => {
                     }
                 });
 
-                if (maxIndex === false) {
-
-                    maxIndex = await this.queryColumn(debug, trx, `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id and :sort: > 0`, {
-                        pid,
-                        sort,
-                        id: parent.id,
-                    });
-                }
+                maxIndex = await this.queryColumn(debug, trx, `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id and :sort: > 0`, {
+                    pid,
+                    sort,
+                    id: parent.id,
+                });
 
                 // no children then default 1
                 if (maxIndex === null) {
@@ -876,23 +873,12 @@ where     (
 
             const logic = async trx => {
 
-                let source;
+                if ( sourceId === undefined) {
 
-                if ( isObject(sourceId) ) {
-
-                    source = sourceId;
-
-                    sourceId = source.id;
+                    throw th(`treeMoveToNthChild: sourceId can't be undefined`);
                 }
-                else {
 
-                    if ( sourceId === undefined) {
-
-                        throw th(`treeMoveToNthChild: sourceId can't be undefined`);
-                    }
-
-                    source = await this.treeFindOne(debug, trx, sourceId);
-                }
+                const source = await this.treeFindOne(debug, trx, sourceId);
 
                 if ( ! source ) {
 
@@ -912,23 +898,12 @@ where     (
                     }
                 });
 
-                let parent;
+                if ( parentId === undefined) {
 
-                if ( isObject(parentId) ) {
-
-                    parent = parentId;
-
-                    parentId = parent.id;
+                    throw th(`treeMoveToNthChild: parentId can't be undefined`);
                 }
-                else {
 
-                    if ( parentId === undefined) {
-
-                        throw th(`treeMoveToNthChild: parentId can't be undefined`);
-                    }
-
-                    parent = await this.treeFindOne(debug, trx, parentId);
-                }
+                const parent = await this.treeFindOne(debug, trx, parentId);
 
                 if ( ! parent ) {
 
@@ -1041,7 +1016,8 @@ where     (
                         gate(3);
 
                         // break;
-                    case ( source.level > parent.level ): // #5  ?????
+                    // case ( source.level > parent.level ): // #5  ?????
+                    default:
 
                         gate(5);
 
@@ -1058,13 +1034,7 @@ where     (
                             parentId    : parent.id, // don't pass object to force to retrieve parent again
                             nOneIndexed,
                             moveMode    : true,
-                            // maxIndex,
                         });
-
-                        break;
-                    default:
-                        throw th(`treeMoveToNthChild: unhandled/unknown case`);
-                        break;
                 }
 
             };
