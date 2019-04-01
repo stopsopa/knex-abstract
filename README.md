@@ -59,3 +59,5 @@ make manual
 
 
 ```
+
+.. and simply visit http://localhost:8080/
