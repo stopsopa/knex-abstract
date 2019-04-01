@@ -41,6 +41,16 @@
         .level > .id {
             color: darkcyan;
         }
+        .level.parent > .id {
+            background-color: darkmagenta;
+            box-shadow: 400px 0 3px darkmagenta;
+            color: white;
+        }
+        .level.source > .id {
+            background-color: darkgreen;
+            box-shadow: 400px 0 3px darkgreen;
+            color: white;
+        }
         .level > .le {
             background-color: #0056ff;
             color: white;
@@ -159,6 +169,17 @@
         #app .error {
             animation: blinking 0.5s infinite;
         }
+        .debug {
+            position: fixed;
+            top: 5px;
+            right: 5px;
+            border: 1px solid lightgray;
+            background-color: white;
+        }
+        textarea {
+            min-width: 700px;
+            min-height: 250px;
+        }
     </style>
 </head>
 <body>
@@ -184,6 +205,10 @@
     <script src="node_modules/react-dom/umd/react-dom.production.min.js"></script>
     <script src="node_modules/@babel/standalone/babel.min.js"></script>
     <script type="text/babel">
+
+        function isObject(o) {
+            return Object.prototype.toString.call(o) === '[object Object]';
+        }
 
         const now = () => (new Date()).toISOString().substring(0, 19).replace('T', ' ');
 
@@ -352,7 +377,6 @@
                 const {
                     tree,
                     onCopy          = () => {},
-                    onCut           = () => {},
                     onPasteAfter    = () => {},
                     onPasteBefore   = () => {},
                     onPasteToStart  = () => {},
@@ -367,28 +391,26 @@
                 return (
                     <div>
                         {tree.map(c => (
-                            <Fragment key={c.id.d}>
-                                <div className="level">
-                                    <div class="check">
-                                        <input type="checkbox" checked={c.id.d === clipboard} onClick={() => onCopy(c.id.d)}/>
-                                    </div>
-                                    <span className={`id${c.id.v ? '' : ' error'}`}>#{c.id.d}</span> <span className={`l${c.l.v ? '' : ' error'}`}>{c.l.d}</span><span className={`r${c.r.v ? '' : ' error'}`}>{c.r.d}</span> <span className={`le${c.level.v ? '' : ' error'}`}>{c.level.d}</span> <span className={`s${c.sort.v ? '' : ' error'}${c.sort.n ? ' negative' : ''}`}>{c.sort.d}</span>: <b>{c.title}</b>
-                                    <span>
-                                        <button onClick={() => onDelete(c.id.d)}>delete</button>
-                                        <Create {...this.props} id={c.id.d}>create</Create>
-                                        {clipboard && (
-                                            <Paste {...this.props} id={c.id.d}>paste</Paste>
-                                        )}
-                                    </span>
-                                    {
-                                        Array.isArray(c.children) &&
-                                            <Level
-                                                {...this.props}
-                                                tree={c.children}
-                                            />
-                                    }
+                            <div className={`level${c.operation ? ` ${c.operation}` : ''}`} key={c.id.d}>
+                                <div class="check">
+                                    <input type="checkbox" checked={c.id.d === clipboard} onClick={() => onCopy(c.id.d)}/>
                                 </div>
-                            </Fragment>
+                                <span className={`id${c.id.v ? '' : ' error'}`}>#{c.id.d}</span> <span className={`l${c.l.v ? '' : ' error'}`}>{c.l.d}</span><span className={`r${c.r.v ? '' : ' error'}`}>{c.r.d}</span> <span className={`le${c.level.v ? '' : ' error'}`}>{c.level.d}</span> <span className={`s${c.sort.v ? '' : ' error'}${c.sort.n ? ' negative' : ''}`}>{c.sort.d}</span>: <b>{c.title}</b>
+                                <span>
+                                    <button onClick={() => onDelete(c.id.d)}>delete</button>
+                                    <Create {...this.props} id={c.id.d}>create</Create>
+                                    {clipboard && (
+                                        <Paste {...this.props} id={c.id.d}>paste</Paste>
+                                    )}
+                                </span>
+                                {
+                                    Array.isArray(c.children) &&
+                                        <Level
+                                            {...this.props}
+                                            tree={c.children}
+                                        />
+                                }
+                            </div>
                         ))}
                     </div>
                 );
@@ -396,6 +418,79 @@
         }
 
         const socket        =   io();
+        let gon             = 0;
+        let setState       = data => {
+            log('original setState', data);
+        }
+
+        class Debugger extends React.Component {
+            constructor(...args) {
+                super(...args);
+
+                this.state = {
+                    show: false,
+                    t: 2,
+                    on: false,
+                    data: '',
+                    operation: {},
+                }
+
+                setState = data => this.setState(data);
+
+            }
+            onIject = () => {
+
+                const {
+                    data,
+                } = this.state;
+
+                socket.emit('reset', data);
+            }
+            onStart = () => this.setState(state => ({
+                on: state.on + 1,
+                operation: {}
+            }), () => {
+                socket.emit('start', this.state.on);
+            })
+            onStop = () => this.setState({
+                on: 0,
+            })
+            render() {
+
+                const {
+                    show,
+                    t,
+                    on,
+                    data,
+                    operation,
+                } = this.state;
+
+                gon = on;
+
+                return (
+                    <div className="debug" style={{
+                        minHeight: '49px',
+                    }}>
+                        <div style={{height: '4px'}}>
+                            <button onClick={() => this.setState({show: !show})} style={{float: 'right'}}>toggle debuger</button>
+                        </div>
+                        <br />
+                        <button onClick={this.onStart} style={{float: 'right'}}>start</button>
+                        <button onClick={this.onStop} style={{float: 'right'}}>stop</button>
+                        {show && <div>
+                            <textarea
+                                onChange={e => this.setState({data: e.target.value})}
+                                value={data}
+                            />
+                        </div>}
+                        <div style={{height: '17px'}}>
+                            <button onClick={this.onIject} style={{float: 'right'}}>inject</button>
+                        </div>
+                        {(isObject(operation) && Object.keys(operation).length > 0) ? <pre>{JSON.stringify(operation, null, 4)}</pre> : ''}
+                    </div>
+                );
+            }
+        }
 
         class Root extends React.Component {
             constructor(...args) {
@@ -427,7 +522,7 @@
 
                         const tmp = {...data.old};
 
-                        // console.log('data: ', data);
+                        // console.log('tobrowser: ', data);
                         // console.log(JSON.stringify(data.checked, null, 4));
 
                         // tmp.tree = data.checked;
@@ -446,15 +541,63 @@
                         log('disconnect: ' + n);
                     });
 
+                    socket.on('flood', data => {
+
+                        if ( gon < 1 ) {
+
+                            return log('gon is off... stop');
+                        }
+
+                        const {
+                            invalid,
+                            on,
+                        } = data;
+
+                        // this.setState(data.old);
+
+                        const tmp = {...data.old};
+
+                        if ( invalid ) {
+
+                            log('invalid: ' + tmp.invalidMsg);
+                            log('invalid: ', invalid)
+
+                            gon = 0; // stop immediately
+
+                            setState({
+                                on: false,
+                                data: invalid.snapshot,
+                                show: true,
+                                operation: invalid.operation,
+                            });
+                        }
+
+                        // console.log('data: ', data);
+                        // console.log(JSON.stringify(data.checked, null, 4));
+
+                        // tmp.tree = data.checked;
+
+                        tmp.tree = data.checked;
+
+                        this.setState(tmp, () => {
+
+                            if (gon > 0) {
+
+                                // log.dump({'send start': on})
+                                setTimeout(() => socket.emit('start', on), 200);
+                            }
+                            else {
+
+                                log(`flag 'on' false`);
+                            }
+                        });
+                    });
+
                     socket.emit('check')
                 };
 
                 socket.on('connect', connect);
 
-            }
-            onCut = id => {
-
-                log('onCut', id);
             }
             render() {
 
@@ -480,7 +623,6 @@
                                     clipboard: (clipboard === id) ? false : id,
                                 });
                             }}
-                            onCut={id => this.onCut(id)}
                             onPasteAfter={targetId => log('after: ', clipboard, targetId)}
                             onPasteBefore={() => log('before')}
                             onPasteToStart={() => log('first child')}
@@ -492,13 +634,13 @@
 
                             clipboard={clipboard}
                         />
+                        <Debugger />
                     </>
                 );
             }
         }
         ReactDOM.render(
-            <Root
-            />,
+            <Root />,
             document.getElementById('app')
         );
 

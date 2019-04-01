@@ -11,6 +11,12 @@ const isObject          = require('nlab/isObject');
 
 const isArray           = require('nlab/isArray');
 
+const yaml              = require('js-yaml');
+
+const {
+    safeDump,
+} = yaml;
+
 require('dotenv-up')({
     override    : false,
     deep        : 1,
@@ -82,7 +88,7 @@ io.on('connection', socket => {
         return data;
     }
 
-    function check(list, k = 1, p = '', pid = false, level = 1) {
+    function check(list, k = 1, p = '', pid = false, level = 1, operation = {}) {
 
         if (Array.isArray(list)) {
 
@@ -90,6 +96,16 @@ io.on('connection', socket => {
             for (let i = 0, l = list.length, t, key; i < l ; i += 1 ) {
 
                 t = list[i];
+
+                if (t.id.d === operation.sourceId) {
+
+                    t.operation = 'source';
+                }
+
+                if (t.id.d === operation.parentId) {
+
+                    t.operation = 'parent';
+                }
 
                 let wrong = ! (t.sort.d > 0);
 
@@ -114,7 +130,7 @@ io.on('connection', socket => {
 
                 if (Array.isArray(t.children)) {
 
-                    k = check(t.children, k, key, t.id.d, level + 1);
+                    k = check(t.children, k, key, t.id.d, level + 1, operation);
                 }
 
                 if (t.r.d !== k) {
@@ -149,7 +165,7 @@ io.on('connection', socket => {
 
     const checkIntegrity = (function () {
 
-        return async () => {
+        return async operation => {
 
             const data  = await mtree.treeCheckIntegrity('t.title');
 
@@ -157,7 +173,7 @@ io.on('connection', socket => {
 
             const checked   = JSON.parse(JSON.stringify(enriched));
 
-            check(checked);
+            check(checked, 1, '', false, 1, operation);
 
             emit('tobrowser', {
                 old: data,
@@ -168,11 +184,23 @@ io.on('connection', socket => {
 
     console.log('connect..');
 
-    socket.on('reset', async () => {
+    socket.on('reset', async data => {
 
         try {
 
-            await fixtures.reset();
+            const tmp = await fixtures.reset(data);
+
+            if (tmp) {
+
+                const {
+                    operation,
+                } = tmp;
+
+                if (operation) {
+
+                    return await checkIntegrity(operation);
+                }
+            }
 
             await checkIntegrity();
         }
@@ -386,6 +414,178 @@ io.on('connection', socket => {
             });
         }
     });
+
+
+    (function () {
+
+        const toYml = (function () {
+
+            function level (data, operation) {
+
+                if (isArray(data)) {
+
+                    return data.map(a => level(a, operation));
+                }
+
+                if (isObject(data)) {
+
+                    const d = {};
+
+                    if (data.id === operation.sourceId) {
+
+                        d.operation = 'source';
+                    }
+
+                    if (data.id === operation.parentId) {
+
+                        d.operation = 'parent';
+                    }
+
+                    if (data.title) {
+
+                        d.title = data.title;
+                    }
+
+                    if (data.children) {
+
+                        d.children = level(data.children, operation);
+                    }
+
+                    return d;
+                }
+
+                return data;
+            }
+
+            return function (data, operation) {
+
+                try {
+
+                    const yml = {
+                        operation,
+                        root: level(data.tree, operation)[0],
+                    }
+
+                    return safeDump(yml)
+                }
+                catch (e) {
+
+                    return `catch: toYaml: ` + (e + '');
+                }
+            }
+        }());
+
+        socket.on('start', async on => {
+
+            // log.dump('start', on);
+
+            try {
+
+                const man = knex().model.tree;
+
+                await knex().transaction(async trx => {
+
+                    const source = await man.queryOne(trx, `SELECT * FROM :table: t WHERE t.tlevel > 1 ORDER BY rand() LIMIT 1`);
+
+                    if ( ! source) {
+
+                        return log.dump({
+                            start_error_l1: 'source not found',
+                        });
+                    }
+
+                    // log.dump({
+                    //     t: 'source',
+                    //     [source.tid]: source,
+                    // });
+
+                    const target = await man.queryOne(trx, `select * FROM tree t where t.tlevel > 1 AND not (t.tl >= :l AND t.tr <= :r) ORDER BY RAND() LIMIT 1`, {
+                        l: source.tl,
+                        r: source.tr,
+                    });
+
+                    if ( ! target) {
+
+                        return log.dump({
+                            start_error_l2: 'target not found',
+                        });
+                    }
+
+                    // log.dump({
+                    //     t: 'target',
+                    //     [target.tid]: target,
+                    // });
+
+                    const index = (Math.random() < 0.15) ? 1000 : target.tsort;
+
+                    const operation = {
+                        sourceId    : source.tid,
+                        parentId    : target.tparent_id,
+                        nOneIndexed : index
+                    }
+
+                    console.log(`${on}: source: ${operation.sourceId} parentId: ${operation.parentId} n: ${index}`);
+
+                    const snapshot = await mtree.treeCheckIntegrity(trx, 't.title');
+
+                    try {
+
+                        await man.treeMoveToNthChild(trx, operation);
+                    }
+                    catch (e) {
+
+                        if (e.message.indexOf(`already at the end because it's "last`) > -1) {
+
+                            log.dump({soft_error: on + ': already last'});
+                        }
+                        else {
+
+                            throw e
+                        }
+                    }
+
+                    const data  = await mtree.treeCheckIntegrity(trx, 't.title');
+
+                    const {
+                        tree,
+                        valid,
+                        invalidMsg,
+                    } = data;
+
+                    let invalid = false;
+
+                    if ( ! valid ) {
+
+                        invalid = {
+                            snapshot: toYml(snapshot, operation),
+                            s: snapshot,
+                            operation,
+                        }
+                    }
+
+                    const enriched = enrich(JSON.parse(JSON.stringify(data.tree)));
+
+                    const checked   = JSON.parse(JSON.stringify(enriched));
+
+                    check(checked, 1, '', false, 1, operation);
+
+                    setTimeout(() => emit('flood', {
+                        old: data,
+                        checked,
+                        invalid,
+                        on,
+                    }), 200);
+                });
+            }
+            catch (e) {
+
+                log.dump({
+                    start_error: e,
+                })
+            }
+
+        });
+    }());
 });
 
 server.listen( // ... we have to listen on server

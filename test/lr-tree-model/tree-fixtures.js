@@ -61,19 +61,38 @@ module.exports = ({
 
             for (let i = 0, len = children.length ; i < len ; i += 1 ) {
 
-                await iterateReset(trx, children[i], id);
+                const {
+                    operation,
+                    ...row
+                } = children[i];
+
+                await iterateReset(trx, row, id);
             }
         }
     }
 
     const tools = {
-        reset: async () => {
+        reset: async data => {
 
             return await connection.transaction(async trx => {
 
                 await man.query(trx, 'TRUNCATE :table:');
 
-                await iterateReset(trx, fixtures);
+                let ret;
+
+                const tmp = data ? (function (data) {
+
+                    ret = data;
+
+                    enrich(data.root)
+
+                    return data.root;
+
+                }(yaml.safeLoad(data))) : fixtures;
+
+                await iterateReset(trx, tmp);
+
+                return ret;
             })
         },
     }

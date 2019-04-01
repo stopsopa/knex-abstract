@@ -486,6 +486,11 @@ module.exports = topt => {
                     throw th(`treeCreateAfter: target not found by id: ${targetId}`);
                 }
 
+                if ( target.level === 1 ) {
+
+                    throw th(`Can't use method treeCreateAfter() with root element of the tree`);
+                }
+
                 if ( sourceId === undefined) {
 
                     throw th(`treeCreateAfter: sourceId can't be undefined`);
@@ -508,11 +513,6 @@ module.exports = topt => {
                 if ( ! parent ) {
 
                     throw th(`treeCreateAfter: parent not found by id: ${target.pid}`);
-                }
-
-                if ( parent.level === 1 ) {
-
-                    throw th(`Can't use method treeCreateAfter() with root element of the tree`);
                 }
 
                 const params = {
@@ -551,6 +551,11 @@ module.exports = topt => {
                     throw th(`treeCreateAfter: target not found by id: ${targetId}`);
                 }
 
+                if ( target.level === 1 ) {
+
+                    throw th(`Can't use method treeCreateAfter() with root element of the tree`);
+                }
+
                 if ( sourceId === undefined) {
 
                     throw th(`treeCreateAfter: sourceId can't be undefined`);
@@ -573,11 +578,6 @@ module.exports = topt => {
                 if ( ! parent ) {
 
                     throw th(`treeCreateAfter: parent not found by id: ${target.pid}`);
-                }
-
-                if ( parent.level === 1 ) {
-
-                    throw th(`Can't use method treeCreateAfter() with root element of the tree`);
                 }
 
                 const params = {
