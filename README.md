@@ -39,3 +39,23 @@ Follow:
 
  - [test cases](https://github.com/stopsopa/knex-abstract/blob/master/test/knex/mysql/mysql-insert.test.js)
  - [test script](https://github.com/stopsopa/knex-abstract/blob/master/example/test.js)
+
+# Dev notes
+
+```bash
+
+git clone https://github.com/stopsopa/knex-abstract.git 
+cd knex-abstract
+make doc
+sleep 10 # give little time for mysql docker to start
+make ct
+cp .env.dist .env
+cp migrations/ormconfig.js.dist migrations/ormconfig.js
+yarn
+npm install --global nodemon
+make link
+make fixtures
+make manual
+
+
+```

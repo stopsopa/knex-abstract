@@ -534,11 +534,17 @@ io.on('connection', socket => {
                     }
                     catch (e) {
 
-                        if (e.message.indexOf(`already at the end because it's "last`) > -1) {
+                        log.dump({
+                            e
+                        })
+
+                        if ((e + '').indexOf(`already at the end because it's "last`) > -1) {
 
                             log.dump({soft_error: on + ': already last'});
                         }
                         else {
+
+
 
                             throw e
                         }
