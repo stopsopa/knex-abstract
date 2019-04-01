@@ -582,13 +582,13 @@ LIMIT 1
                         }
                         catch (e) {
 
-                            log.dump({
-                                e
-                            })
+                            // log.dump({
+                            //     e
+                            // })
 
                             if ((e + '').indexOf(`already at the end because it's "last`) > -1) {
 
-                                log.dump({soft_error: on + ': already last'});
+                                // log.dump({soft_error: on + ': already last'});
                             }
                             else {
 
@@ -644,7 +644,7 @@ LIMIT 1
 
                             if ( (e + '').indexOf('move element as a child of the same paren') > -1) {
 
-                                console.log(`move element as a child of the same paren in ${i} attempt, let's repeat logic`);
+                                // console.log(`move element as a child of the same paren in ${i} attempt, let's repeat logic`);
                             }
                             else {
 
@@ -659,9 +659,9 @@ LIMIT 1
             }
             catch (e) {
 
-                log.dump({
-                    start_error: e,
-                })
+                // log.dump({
+                //     start_error: e,
+                // })
             }
 
         });

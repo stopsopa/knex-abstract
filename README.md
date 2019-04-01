@@ -3,6 +3,10 @@
 [![codecov](https://codecov.io/gh/stopsopa/knex-abstract/branch/v0.0.77/graph/badge.svg)](https://codecov.io/gh/stopsopa/knex-abstract/tree/v0.0.77)
 [![NpmLicense](https://img.shields.io/npm/l/knex-abstract.svg)](https://github.com/knex-abstract/blob/master/LICENSE)
 
+
+[![knex-abstract youtube demo - nested set example](yt.png)](https://youtu.be/d8k98noOR5c)
+
+
 # Installation:
 
     npx knex-abstract
