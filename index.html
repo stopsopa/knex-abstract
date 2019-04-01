@@ -433,6 +433,7 @@
                     on: false,
                     data: '',
                     operation: {},
+                    log: [],
                 }
 
                 setState = data => this.setState(data);
@@ -450,11 +451,21 @@
                 on: state.on + 1,
                 operation: {}
             }), () => {
+
+                if (this.state.log.find(e => e == this.state.on)) {
+
+                    return console.log('already triggered');
+                }
+                else {
+                    console.log('triggering');
+                }
+
                 socket.emit('start', this.state.on);
             })
             onStop = () => this.setState({
                 on: 0,
-            })
+                log: [],
+            }, () => gon = 0)
             render() {
 
                 const {

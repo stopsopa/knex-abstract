@@ -91,7 +91,7 @@ module.exports = topt => {
                 }
             }
 
-            return await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort${select} FROM :table: t ORDER BY l, sort`, {
+            return await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort${select} FROM :table: t ORDER BY l, sort FOR UPDATE`, {
                 ...topt.columns,
             });
         },
@@ -99,7 +99,7 @@ module.exports = topt => {
 
             let [debug, trx, id] = a(args);
 
-            return await this.queryOne(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort FROM :table: t WHERE :id: = :id`, {
+            return await this.queryOne(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort FROM :table: t WHERE :id: = :id FOR UPDATE`, {
                 ...topt.columns,
                 id,
             });
@@ -702,7 +702,7 @@ module.exports = topt => {
                     nOneIndexed = 1;
                 }
 
-                let rowUnderIndex = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s and :sort: > 0`, {
+                let rowUnderIndex = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s and :sort: > 0 FOR UPDATE`, {
                     ...topt.columns,
                     id: parent.id,
                     s: nOneIndexed
@@ -712,7 +712,7 @@ module.exports = topt => {
 
                 if ( ! rowUnderIndex ) {
 
-                    lastNode = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s and :sort: > 0`, {
+                    lastNode = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s and :sort: > 0 FOR UPDATE`, {
                         ...topt.columns,
                         id: parent.id,
                         s: nOneIndexed - 1
@@ -973,7 +973,7 @@ where             (
                     throw th(`treeMoveToNthChild: can't move element as a child of the same parent '${parent.id}' and to the same index '${nOneIndexed}'`);
                 }
 
-                // let rowUnderIndex = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s`, {
+                // let rowUnderIndex = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s FOR UPDATE`, {
                 //     ...topt.columns,
                 //     id: parent.id,
                 //     s: nOneIndexed

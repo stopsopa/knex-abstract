@@ -477,7 +477,7 @@ io.on('connection', socket => {
 
         socket.on('start', async on => {
 
-            // log.dump('start', on);
+            // log.dump('start', on, ' wtf?');
 
             try {
 
@@ -485,7 +485,7 @@ io.on('connection', socket => {
 
                 await knex().transaction(async trx => {
 
-                    const source = await man.queryOne(trx, `SELECT * FROM :table: t WHERE t.tlevel > 1 ORDER BY rand() LIMIT 1`);
+                    const source = await man.queryOne(trx, `SELECT * FROM :table: t WHERE t.tlevel > 1 ORDER BY rand() LIMIT 1 FOR UPDATE`);
 
                     if ( ! source) {
 
@@ -494,93 +494,122 @@ io.on('connection', socket => {
                         });
                     }
 
-                    // log.dump({
-                    //     t: 'source',
-                    //     [source.tid]: source,
-                    // });
+                    const logic = async () => {
 
-                    const target = await man.queryOne(trx, `select * FROM tree t where t.tlevel > 1 AND not (t.tl >= :l AND t.tr <= :r) ORDER BY RAND() LIMIT 1`, {
-                        l: source.tl,
-                        r: source.tr,
-                    });
 
-                    if ( ! target) {
+                        // log.dump({
+                        //     t: 'source',
+                        //     [source.tid]: source,
+                        // });
 
-                        return log.dump({
-                            start_error_l2: 'target not found',
+                        const target = await man.queryOne(trx, `select * FROM tree t where t.tlevel > 1 AND not (t.tl >= :l AND t.tr <= :r) ORDER BY RAND() LIMIT 1 FOR UPDATE`, {
+                            l: source.tl,
+                            r: source.tr,
                         });
-                    }
 
-                    // log.dump({
-                    //     t: 'target',
-                    //     [target.tid]: target,
-                    // });
+                        if ( ! target) {
 
-                    const index = (Math.random() < 0.15) ? 1000 : target.tsort;
-
-                    const operation = {
-                        sourceId    : source.tid,
-                        parentId    : target.tparent_id,
-                        nOneIndexed : index
-                    }
-
-                    console.log(`${on}: source: ${operation.sourceId} parentId: ${operation.parentId} n: ${index}`);
-
-                    const snapshot = await mtree.treeCheckIntegrity(trx, 't.title');
-
-                    try {
-
-                        await man.treeMoveToNthChild(trx, operation);
-                    }
-                    catch (e) {
-
-                        log.dump({
-                            e
-                        })
-
-                        if ((e + '').indexOf(`already at the end because it's "last`) > -1) {
-
-                            log.dump({soft_error: on + ': already last'});
+                            return log.dump({
+                                start_error_l2: 'target not found',
+                            });
                         }
-                        else {
 
+                        // log.dump({
+                        //     t: 'target',
+                        //     [target.tid]: target,
+                        // });
 
+                        const index = (Math.random() < 0.15) ? 1000 : target.tsort;
 
-                            throw e
+                        const operation = {
+                            sourceId    : source.tid,
+                            parentId    : target.tparent_id,
+                            nOneIndexed : index
                         }
+
+                        console.log(`${on}: source: ${operation.sourceId} parentId: ${operation.parentId} n: ${index}`);
+
+                        const snapshot = await mtree.treeCheckIntegrity(trx, 't.title');
+
+                        try {
+
+                            await man.treeMoveToNthChild(trx, operation);
+                        }
+                        catch (e) {
+
+                            log.dump({
+                                e
+                            })
+
+                            if ((e + '').indexOf(`already at the end because it's "last`) > -1) {
+
+                                log.dump({soft_error: on + ': already last'});
+                            }
+                            else {
+
+                                throw e
+                            }
+                        }
+
+                        const data  = await mtree.treeCheckIntegrity(trx, 't.title');
+
+                        const {
+                            tree,
+                            valid,
+                            invalidMsg,
+                        } = data;
+
+                        let invalid = false;
+
+                        if ( ! valid ) {
+
+                            invalid = {
+                                snapshot: toYml(snapshot, operation),
+                                s: snapshot,
+                                operation,
+                            }
+                        }
+
+                        const enriched = enrich(JSON.parse(JSON.stringify(data.tree)));
+
+                        const checked   = JSON.parse(JSON.stringify(enriched));
+
+                        check(checked, 1, '', false, 1, operation);
+
+                        setTimeout(() => emit('flood', {
+                            old: data,
+                            checked,
+                            invalid,
+                            on,
+                        }), 0); /* delay */
+
+
                     }
 
-                    const data  = await mtree.treeCheckIntegrity(trx, 't.title');
+                    let i = 1;
+                    while (i < 5) {
 
-                    const {
-                        tree,
-                        valid,
-                        invalidMsg,
-                    } = data;
+                        try {
 
-                    let invalid = false;
+                            await logic();
 
-                    if ( ! valid ) {
-
-                        invalid = {
-                            snapshot: toYml(snapshot, operation),
-                            s: snapshot,
-                            operation,
+                            break;
                         }
+                        catch (e) {
+
+                            if ( (e + '').indexOf('move element as a child of the same paren') > -1) {
+
+                                console.log(`move element as a child of the same paren in ${i} attempt, let's repeat logic`);
+                            }
+                            else {
+
+                                throw e;
+                            }
+                        }
+
+                        i += 1;
                     }
 
-                    const enriched = enrich(JSON.parse(JSON.stringify(data.tree)));
-
-                    const checked   = JSON.parse(JSON.stringify(enriched));
-
-                    check(checked, 1, '', false, 1, operation);
-
-                    setTimeout(() => emit('flood', {
-                        old: data,
-                        checked,
-                        invalid,
-                        on,
-                    }), 0); /* delay */
                 });
             }
             catch (e) {
