@@ -574,7 +574,7 @@ io.on('connection', socket => {
                         checked,
                         invalid,
                         on,
-                    }), 200);
+                    }), 0); /* delay */
                 });
             }
             catch (e) {

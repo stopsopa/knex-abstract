@@ -673,7 +673,7 @@ module.exports = topt => {
                     }
                 });
 
-                maxIndex = await this.queryColumn(debug, trx, `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id and :sort: > 0`, {
+                const maxIndex = await this.queryColumn(debug, trx, `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id and :sort: > 0`, {
                     pid,
                     sort,
                     id: parent.id,
@@ -758,16 +758,18 @@ module.exports = topt => {
                     offset  : moveMode ? (source.r - source.l) + 1 : 2,
                 });
 
+
+                const offset = moveMode ? (source.r - source.l) + 1 : 2;
+
                 let rquery      = `
-update    :table: set :r: = :r: + :offset 
-where     ( 
-              ( 
-                  (:r: > :pl or :id: = :id) 
-                  and not (:l: > :pl && :r: < :nl) 
-              ) 
-              or :id: = 1 
-          ) 
-          and :sort: > 0`;
+update            :table: 
+set               :r: = :r: + :offset 
+where             (
+                    (:r: > :pl or :id: = :id) 
+            and not (:l: > :pl && :r: < :nl)  
+                and :sort: > 0
+                  )             
+`;
 
                 let rparams     = {
                     l,
@@ -778,19 +780,19 @@ where     (
                     pid,
                     n       : nOneIndexed,
                     id      : parent.id,
-                    offset  : moveMode ? (source.r - source.l) + 1 : 2,
+                    offset,
                 }
 
-                if (rowUnderIndex && (rowUnderIndex.r - rowUnderIndex.l) > 1 ) {
-
-                    rquery += ` or (:l: > :rvl and :r: < :rvr)`;
-
-                    rparams.l   = l;
-
-                    rparams.rvl  = rowUnderIndex.l;
-
-                    rparams.rvr  = rowUnderIndex.r;
-                }
+                // if (rowUnderIndex && (rowUnderIndex.r - rowUnderIndex.l) > 1 ) {
+                //
+                //     rquery += ` or (:l: > :rvl and :r: < :rvr)`;
+                //
+                //     rparams.l   = l;
+                //
+                //     rparams.rvl  = rowUnderIndex.l;
+                //
+                //     rparams.rvr  = rowUnderIndex.r;
+                // }
 
                 await this.query(debug, trx, rquery, rparams);
 

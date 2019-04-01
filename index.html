@@ -584,7 +584,7 @@
                             if (gon > 0) {
 
                                 // log.dump({'send start': on})
-                                setTimeout(() => socket.emit('start', on), 200);
+                                setTimeout(() => socket.emit('start', on), 0); /* delay */
                             }
                             else {
 

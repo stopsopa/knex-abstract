@@ -52,6 +52,7 @@ module.exports = ({
 
         const {
             children,
+            operation,
             ...node
         } = rawNode;
 
@@ -61,12 +62,7 @@ module.exports = ({
 
             for (let i = 0, len = children.length ; i < len ; i += 1 ) {
 
-                const {
-                    operation,
-                    ...row
-                } = children[i];
-
-                await iterateReset(trx, row, id);
+                await iterateReset(trx, children[i], id);
             }
         }
     }
