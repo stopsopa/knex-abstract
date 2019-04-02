@@ -30,7 +30,7 @@
         
         // ...
     
-        knex().destroy();
+        
     })();
     
 # examples:
