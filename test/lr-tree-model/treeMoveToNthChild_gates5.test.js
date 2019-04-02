@@ -72,7 +72,7 @@ const test = async (opt, equal) => {
     }, null, 4));
 }
 
-it('lrtree - treeMoveToNthChild #7', async done => {
+it('nestedset - treeMoveToNthChild #7', async done => {
 
     await test({
         sourceId    : 59,
@@ -84,7 +84,7 @@ it('lrtree - treeMoveToNthChild #7', async done => {
 });
 
 
-it('lrtree - treeMoveToNthChild #7 1', async done => {
+it('nestedset - treeMoveToNthChild #7 1', async done => {
 
     await test({
         sourceId    : 59,
@@ -95,7 +95,7 @@ it('lrtree - treeMoveToNthChild #7 1', async done => {
     done()
 });
 
-it('lrtree - treeMoveToNthChild #7 2', async done => {
+it('nestedset - treeMoveToNthChild #7 2', async done => {
 
     await test({
         sourceId    : 59,
@@ -107,7 +107,7 @@ it('lrtree - treeMoveToNthChild #7 2', async done => {
 });
 
 
-it('lrtree - treeMoveToNthChild #7 3', async done => {
+it('nestedset - treeMoveToNthChild #7 3', async done => {
 
     await test({
         sourceId    : 2,
@@ -120,7 +120,7 @@ it('lrtree - treeMoveToNthChild #7 3', async done => {
 
 
 
-it('lrtree - treeMoveToNthChild #7 4', async done => {
+it('nestedset - treeMoveToNthChild #7 4', async done => {
 
     await test({
         sourceId    : 2,

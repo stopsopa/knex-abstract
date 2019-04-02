@@ -13,9 +13,9 @@ const table             = 'tree';
 
 const id                = 'tid';
 
-const lrtree            = require('../../../src/lr-tree');
+const nestedset            = require('../../../src/nestedset');
 
-module.exports = knex => extend(knex, prototype, Object.assign(lrtree({
+module.exports = knex => extend(knex, prototype, Object.assign(nestedset({
     columns: {
         l       : 'tl',
         r       : 'tr',

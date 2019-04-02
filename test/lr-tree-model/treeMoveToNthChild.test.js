@@ -42,7 +42,7 @@ const prepare = async (file = 'tree-fixture-test-set-3') => {
     await fixtures.reset();
 }
 
-it('lrtree - treeMoveToNthChild last', async done => {
+it('nestedset - treeMoveToNthChild last', async done => {
 
     await prepare();
 
@@ -61,14 +61,14 @@ it('lrtree - treeMoveToNthChild last', async done => {
     }
     catch (e) {
 
-        expect(e.message).toEqual(`lr-tree.js: treeMoveToNthChild: can't move last element to the end, because it's already at the end because it's "last"`);
+        expect(e.message).toEqual(`nestedset.js: treeMoveToNthChild: can't move last element to the end, because it's already at the end because it's "last"`);
 
         done();
     }
 });
 
 
-it('lrtree - treeMoveToNthChild same-index', async done => {
+it('nestedset - treeMoveToNthChild same-index', async done => {
 
     await prepare();
 
@@ -88,13 +88,13 @@ it('lrtree - treeMoveToNthChild same-index', async done => {
     }
     catch (e) {
 
-        expect(e.message).toEqual(`lr-tree.js: treeMoveToNthChild: can't move element as a child of the same parent '16' and to the same index '3'`);
+        expect(e.message).toEqual(`nestedset.js: treeMoveToNthChild: can't move element as a child of the same parent '16' and to the same index '3'`);
 
         done();
     }
 });
 
-it('lrtree - treeMoveToNthChild child of itself', async done => {
+it('nestedset - treeMoveToNthChild child of itself', async done => {
 
     await prepare();
 
@@ -114,7 +114,7 @@ it('lrtree - treeMoveToNthChild child of itself', async done => {
     }
     catch (e) {
 
-        expect(e.message).toEqual(`lr-tree.js: treeMoveToNthChild: #8 can't move element as a child of itself`);
+        expect(e.message).toEqual(`nestedset.js: treeMoveToNthChild: #8 can't move element as a child of itself`);
 
         done();
     }

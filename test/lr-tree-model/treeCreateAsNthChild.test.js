@@ -42,7 +42,7 @@ const prepare = async (file = 'tree-fixture-test-set-1') => {
     await fixtures.reset();
 }
 
-it('lrtree - treeCreateAsNthChild 76', async done => {
+it('nestedset - treeCreateAsNthChild 76', async done => {
 
     let tmp;
 
@@ -93,7 +93,7 @@ it('lrtree - treeCreateAsNthChild 76', async done => {
     }
 });
 
-it('lrtree - treeCreateAsNthChild 9', async done => {
+it('nestedset - treeCreateAsNthChild 9', async done => {
 
     let tmp;
 
@@ -148,7 +148,7 @@ it('lrtree - treeCreateAsNthChild 9', async done => {
 });
 
 
-it('lrtree - treeCreateAsNthChild rowUnderIndex', async done => {
+it('nestedset - treeCreateAsNthChild rowUnderIndex', async done => {
 
     let tmp;
 
@@ -202,7 +202,7 @@ it('lrtree - treeCreateAsNthChild rowUnderIndex', async done => {
         throw e;
     }
 });
-it('lrtree - treeCreateAsNthChild rowUnderIndex beyond', async done => {
+it('nestedset - treeCreateAsNthChild rowUnderIndex beyond', async done => {
 
     let tmp;
 

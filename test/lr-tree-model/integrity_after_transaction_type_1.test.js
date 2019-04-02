@@ -91,7 +91,7 @@ const test = async params => {
     });
 }
 
-it('lrtree - integrity after #1', async done => {
+it('nestedset - integrity after #1', async done => {
 
     await test({
         sourceId    : 5,
@@ -112,7 +112,7 @@ it('lrtree - integrity after #1', async done => {
     done()
 });
 
-it('lrtree - integrity after #1 1', async done => {
+it('nestedset - integrity after #1 1', async done => {
 
     await test({
         sourceId    : 15,

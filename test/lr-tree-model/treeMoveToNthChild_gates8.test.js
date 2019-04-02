@@ -72,7 +72,7 @@ const test = async (opt, equal) => {
     }, null, 4));
 }
 
-it('lrtree - treeMoveToNthChild #6', async done => {
+it('nestedset - treeMoveToNthChild #6', async done => {
 
     await test({
         sourceId    : 17,

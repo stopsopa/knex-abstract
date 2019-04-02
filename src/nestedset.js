@@ -13,7 +13,7 @@ const prototype         = abstract.prototype;
 
 const a                 = prototype.a;
 
-const th = msg => new Error(`lr-tree.js: ${msg}`);
+const th = msg => new Error(`nestedset.js: ${msg}`);
 
 const toString = data => {
 
@@ -26,9 +26,9 @@ const toString = data => {
 
 
 /**
- * const lrtree = require('./lr-tree');
+ * const nestedset = require('./nestedset');
  *
- * lrtree({
+ * nestedset({
  *     columns: {
  *          l       : 'l',
  *          r       : 'r',

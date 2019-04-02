@@ -42,7 +42,7 @@ const prepare = async (file = 'tree-fixture-test-set-1') => {
     await fixtures.reset();
 }
 
-it('lrtree - basic', async done => {
+it('nestedset - basic', async done => {
 
     try {
 
@@ -62,7 +62,7 @@ it('lrtree - basic', async done => {
     }
 });
 
-it('lrtree - fix', async done => {
+it('nestedset - fix', async done => {
 
     try {
 

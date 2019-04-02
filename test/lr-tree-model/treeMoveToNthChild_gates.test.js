@@ -72,7 +72,7 @@ const test = async (opt, equal) => {
     }, null, 4));
 }
 
-it('lrtree - treeMoveToNthChild #1 mid', async done => {
+it('nestedset - treeMoveToNthChild #1 mid', async done => {
 
     await test({
         sourceId    : 12,
@@ -83,7 +83,7 @@ it('lrtree - treeMoveToNthChild #1 mid', async done => {
     done()
 });
 
-it('lrtree - treeMoveToNthChild #1 last (implicit)', async done => {
+it('nestedset - treeMoveToNthChild #1 last (implicit)', async done => {
 
     await test({
         sourceId    : 12,
@@ -94,7 +94,7 @@ it('lrtree - treeMoveToNthChild #1 last (implicit)', async done => {
     done()
 });
 
-it('lrtree - treeMoveToNthChild #1 last (explicit)', async done => {
+it('nestedset - treeMoveToNthChild #1 last (explicit)', async done => {
 
     await test({
         sourceId    : 12,
@@ -105,7 +105,7 @@ it('lrtree - treeMoveToNthChild #1 last (explicit)', async done => {
     done()
 });
 
-it('lrtree - treeMoveToNthChild #1 last (beyond range)', async done => {
+it('nestedset - treeMoveToNthChild #1 last (beyond range)', async done => {
 
     await test({
         sourceId    : 12,
@@ -116,7 +116,7 @@ it('lrtree - treeMoveToNthChild #1 last (beyond range)', async done => {
     done()
 });
 
-it('lrtree - treeMoveToNthChild #same-index', async done => {
+it('nestedset - treeMoveToNthChild #same-index', async done => {
 
     await test({
         sourceId    : 5,
@@ -127,7 +127,7 @@ it('lrtree - treeMoveToNthChild #same-index', async done => {
     done()
 });
 
-it('lrtree - treeMoveToNthChild #2 regular', async done => {
+it('nestedset - treeMoveToNthChild #2 regular', async done => {
 
     await test({
         sourceId    : 12,
@@ -138,7 +138,7 @@ it('lrtree - treeMoveToNthChild #2 regular', async done => {
     done()
 });
 
-it('lrtree - treeMoveToNthChild #2', async done => {
+it('nestedset - treeMoveToNthChild #2', async done => {
 
     await test({
         sourceId    : 35,
@@ -149,7 +149,7 @@ it('lrtree - treeMoveToNthChild #2', async done => {
     done()
 });
 
-it('lrtree - treeMoveToNthChild #2 - minus', async done => {
+it('nestedset - treeMoveToNthChild #2 - minus', async done => {
 
     await test({
         sourceId    : 35,
