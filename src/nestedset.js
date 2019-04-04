@@ -77,6 +77,61 @@ module.exports = topt => {
     });
 
     return {
+        /**
+         * Method to ensure that there is valid root node in the database
+         */
+        treeInit: async function (...args) {
+
+            let [debug, trx, data] = a(args);
+
+            const root = await this.queryOne(`select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: where :level: = 1`, {
+                ...topt.columns,
+            });
+
+            const count = await this.count();
+
+            if (root) {
+
+                if (root.level !== 1) {
+
+                    throw new Error(`treeInit(): current root element level value is incorrect: ` + toString(root));
+                }
+
+                if (root.sort !== 1) {
+
+                    throw new Error(`treeInit(): current root element sort value is incorrect: ` + toString(root));
+                }
+
+                if (root.l !== 1) {
+
+                    throw new Error(`treeInit(): current root element l value is incorrect: ` + toString(root));
+                }
+
+                const expectedR = count * 2;
+
+                if (root.r !== expectedR) {
+
+                    throw new Error(`treeInit(): current root element r value is incorrect, should be (${expectedR}): ` + toString(root));
+                }
+
+                return root;
+            }
+
+            if (count) {
+
+                throw new Error(`treeInit(): if there is no root element then table should be empty but '${count}' elements found in table`);
+            }
+
+            const id = await this.insert({
+                ...data,
+                [level]: 1,
+                [sort]: 1,
+                [l]: 1,
+                [r]: 2,
+            });
+
+            return await this.treeFindOne(id);
+        },
         treeSkeleton: async function (...args) {
 
             let [debug, trx, select = ''] = a(args);
@@ -104,12 +159,11 @@ module.exports = topt => {
                 id,
             });
         },
-        assemble: list => {
+        assemble: async function (...args) {
 
-            if ( ! isArray(list) ) {
+            let [debug, trx, select] = a(args);
 
-                throw th(`assemble: list is not array`);
-            }
+            const list = await this.treeSkeleton(debug, trx, select);
 
             const obj = list.reduce((acc, row) => {
 
@@ -197,9 +251,7 @@ module.exports = topt => {
 
                 let [debug, trx, select = ''] = a(args);
 
-                let tree = await this.treeSkeleton(debug, trx, select);
-
-                tree = this.assemble(tree);
+                let tree = await this.assemble(debug, trx, select);
 
                 let valid = true;
 
@@ -291,9 +343,7 @@ module.exports = topt => {
 
                 const logic = async trx => {
 
-                    let tree = await this.treeSkeleton(...args);
-
-                    tree = this.assemble(tree);
+                    let tree = await this.assemble(debug, trx);
 
                     await fix.call(this, debug, trx, tree);
 

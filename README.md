@@ -43,6 +43,71 @@ Follow:
 
  - [test cases](https://github.com/stopsopa/knex-abstract/blob/master/test/knex/mysql/mysql-insert.test.js)
  - [test script](https://github.com/stopsopa/knex-abstract/blob/master/example/test.js)
+ 
+# Nested set
+
+```javascript
+
+// tags.js
+const abstract          = require('knex-abstract');
+
+const extend            = abstract.extend;
+
+const prototype         = abstract.prototype;
+
+const a                 = prototype.a;
+
+const nestedset         = require('knex-abstract/nestedset');
+
+const table             = 'tags';
+
+const id                = 'id';
+
+module.exports = knex => extend(knex, prototype, Object.assign(nestedset({
+    columns: {
+        l       : 'l',
+        r       : 'r',
+        level   : 'level',
+        pid     : 'parent_id',
+        sort    : 'sort',
+    }
+}), {
+    initialize: () => {} // other custom methods
+}), table, id);
+
+``` 
+
+And from now on manager will have extra available methods:
+
+```javascript
+
+const knex          = require('knex-abstract');
+
+(async function () {
+    
+
+    const man = knex().model.tags;
+        
+    // this method will initialize columns level, sort, l, r
+    // and if root already exist this method will check if it's valid
+    const root = await man.treeInit({ 
+        title: 'root'
+    });
+    
+    // will find element with only id, parent_id, level, sort, l, r columns
+    // columns will be normalized to regular names pid, level, sort, l, r even if real columns in 
+    // database are different
+    const node = await man.treeFindOne();
+    
+    // ... and others
+    
+    
+    
+        
+    
+})()
+
+```
 
 # Dev notes
 
