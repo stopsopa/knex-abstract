@@ -84,53 +84,63 @@ module.exports = topt => {
 
             let [debug, trx, data] = a(args);
 
-            const root = await this.queryOne(`select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: where :level: = 1`, {
-                ...topt.columns,
-            });
+            const logic = async trx => {
 
-            const count = await this.count();
+                const root = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: where :level: = 1`, {
+                    ...topt.columns,
+                });
 
-            if (root) {
+                const count = await this.count(debug, trx);
 
-                if (root.level !== 1) {
+                if (root) {
 
-                    throw new Error(`treeInit(): current root element level value is incorrect: ` + toString(root));
+                    if (root.level !== 1) {
+
+                        throw new Error(`treeInit(): current root element level value is incorrect: ` + toString(root));
+                    }
+
+                    if (root.sort !== 1) {
+
+                        throw new Error(`treeInit(): current root element sort value is incorrect: ` + toString(root));
+                    }
+
+                    if (root.l !== 1) {
+
+                        throw new Error(`treeInit(): current root element l value is incorrect: ` + toString(root));
+                    }
+
+                    const expectedR = count * 2;
+
+                    if (root.r !== expectedR) {
+
+                        throw new Error(`treeInit(): current root element r value is incorrect, should be (${expectedR}): ` + toString(root));
+                    }
+
+                    return root;
                 }
 
-                if (root.sort !== 1) {
+                if (count) {
 
-                    throw new Error(`treeInit(): current root element sort value is incorrect: ` + toString(root));
+                    throw new Error(`treeInit(): if there is no root element then table should be empty but '${count}' elements found in table`);
                 }
 
-                if (root.l !== 1) {
+                const id = await this.insert(debug, trx, {
+                    ...data,
+                    [level]: 1,
+                    [sort]: 1,
+                    [l]: 1,
+                    [r]: 2,
+                });
 
-                    throw new Error(`treeInit(): current root element l value is incorrect: ` + toString(root));
-                }
+                return await this.treeFindOne(debug, trx, id);
+            };
 
-                const expectedR = count * 2;
+            if (trx) {
 
-                if (root.r !== expectedR) {
-
-                    throw new Error(`treeInit(): current root element r value is incorrect, should be (${expectedR}): ` + toString(root));
-                }
-
-                return root;
+                return await logic.call(this, trx);
             }
 
-            if (count) {
-
-                throw new Error(`treeInit(): if there is no root element then table should be empty but '${count}' elements found in table`);
-            }
-
-            const id = await this.insert({
-                ...data,
-                [level]: 1,
-                [sort]: 1,
-                [l]: 1,
-                [r]: 2,
-            });
-
-            return await this.treeFindOne(id);
+            return await this.knex.transaction(logic);
         },
         treeSkeleton: async function (...args) {
 
