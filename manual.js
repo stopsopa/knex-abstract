@@ -485,24 +485,24 @@ io.on('connection', socket => {
 
                 await knex().transaction(async trx => {
 
-                    // const source = await man.queryOne(trx, `SELECT * FROM :table: t WHERE t.tlevel > 1 ORDER BY rand() LIMIT 1 FOR UPDATE`);
-                    const source = await man.queryOne(trx, `
-(
-    SELECT *, '1' origin
-    FROM tree t
-    WHERE
-	    (t.tr - t.tl < 2)
-	    AND (SELECT (tt.tr - tt.tl) diff FROM tree tt WHERE tt.tl = (t.tr + 1) FOR update) < 2
-	    AND (SELECT (ttt.tr - ttt.tl) diff FROM tree ttt WHERE ttt.tr = (t.tl - 1) FOR update) < 2
-    ORDER BY rand()
-)
-UNION 
-(
-    SELECT *, '2' origin FROM tree FOR update
-)
-ORDER BY origin, RAND()
-LIMIT 1
-`);
+                    const source = await man.queryOne(trx, `SELECT * FROM :table: t WHERE t.tlevel > 1 ORDER BY rand() LIMIT 1 FOR UPDATE`);
+//                     const source = await man.queryOne(trx, `
+// (
+//     SELECT *, '1' origin
+//     FROM tree t
+//     WHERE
+// 	    (t.tr - t.tl < 2)
+// 	    AND (SELECT (tt.tr - tt.tl) diff FROM tree tt WHERE tt.tl = (t.tr + 1) FOR update) < 2
+// 	    AND (SELECT (ttt.tr - ttt.tl) diff FROM tree ttt WHERE ttt.tr = (t.tl - 1) FOR update) < 2
+//     ORDER BY rand()
+// )
+// UNION
+// (
+//     SELECT *, '2' origin FROM tree FOR update
+// )
+// ORDER BY origin, RAND()
+// LIMIT 1
+// `);
 
                     if ( ! source) {
 
