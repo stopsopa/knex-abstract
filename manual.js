@@ -523,28 +523,28 @@ io.on('connection', socket => {
                         }
                         else {
 
-                            // target = await man.queryOne(trx, `select * FROM tree t where t.tlevel > 1 AND not (t.tl >= :l AND t.tr <= :r) ORDER BY RAND() LIMIT 1 FOR UPDATE`, {
-                            //     l: source.tl,
-                            //     r: source.tr,
-                            // });
-
-                            target = await man.queryOne(trx, `
-(
-SELECT *, '1' origin 
-FROM tree t 
-where t.tlevel > 1 
-AND not (t.tl >= :l AND t.tr <= :r)
-AND (t.tr - t.tl) < 2
-ORDER BY RAND()  
-) UNION (
-SELECT *, '2' origin FROM tree ORDER BY RAND()
-)
-ORDER BY origin, RAND()
-LIMIT 1
-`, {
+                            target = await man.queryOne(trx, `select * FROM tree t where t.tlevel > 1 AND not (t.tl >= :l AND t.tr <= :r) ORDER BY RAND() LIMIT 1 FOR UPDATE`, {
                                 l: source.tl,
                                 r: source.tr,
                             });
+
+//                             target = await man.queryOne(trx, `
+// (
+// SELECT *, '1' origin
+// FROM tree t
+// where t.tlevel > 1
+// AND not (t.tl >= :l AND t.tr <= :r)
+// AND (t.tr - t.tl) < 2
+// ORDER BY RAND()
+// ) UNION (
+// SELECT *, '2' origin FROM tree ORDER BY RAND()
+// )
+// ORDER BY origin, RAND()
+// LIMIT 1
+// `, {
+//                                 l: source.tl,
+//                                 r: source.tr,
+//                             });
                         }
 
                         // log.dump({
@@ -568,7 +568,8 @@ LIMIT 1
 
                         const operation = {
                             sourceId    : source.tid,
-                            parentId    : target.tparent_id || 1,
+                            // parentId    : target.tparent_id || 1,
+                            parentId    : target.tid || 1,
                             nOneIndexed : index
                         }
 
