@@ -261,14 +261,9 @@ io.on('connection', socket => {
                 });
 
                 switch(method) {
-                    case 'before':
-                        await mtree.treeCreateBefore(trx, {
-                            sourceId,
-                            targetId,
-                        });
-                        break;
-                    case 'after':
-                        await mtree.treeCreateAfter(trx, {
+                    case 'treeCreateBefore':
+                    case 'treeCreateAfter':
+                        await mtree[method](trx, {
                             sourceId,
                             targetId,
                         });
@@ -316,10 +311,6 @@ io.on('connection', socket => {
             extra = {}
         } = data;
 
-        log.dump({
-            onPaste_params: data,
-        }, 3);
-
         try {
 
             // await knex().transaction(async trx => {
@@ -327,14 +318,9 @@ io.on('connection', socket => {
                 const trx = false;
 
                 switch(method) {
-                    case 'before':
-                        await mtree.treeCreateBefore(trx, {
-                            sourceId,
-                            targetId,
-                        });
-                        break;
-                    case 'after':
-                        await mtree.treeCreateAfter(trx, {
+                    case 'treeMoveBefore':
+                    case 'treeMoveAfter':
+                        await mtree[method](trx, {
                             sourceId,
                             targetId,
                         });

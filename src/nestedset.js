@@ -526,6 +526,71 @@ module.exports = topt => {
 
             return await this.knex.transaction(logic);
         },
+        treeMoveBefore: async function (...args) {
+
+            let [debug, trx, opt = {}] = a(args);
+
+            const {sourceId, targetId} = opt;
+
+            const logic = async trx => {
+
+                if ( targetId === undefined) {
+
+                    throw th(`treeMoveBefore: targetId can't be undefined`);
+                }
+
+                const target = await this.treeFindOne(debug, trx, targetId);
+
+                if ( ! target ) {
+
+                    throw th(`treeMoveBefore: target not found by id: ${targetId}`);
+                }
+
+                if ( target.level === 1 ) {
+
+                    throw th(`Can't use method treeMoveBefore() with root element of the tree`);
+                }
+
+                if ( sourceId === undefined) {
+
+                    throw th(`treeMoveBefore: sourceId can't be undefined`);
+                }
+
+                const source = await this.treeFindOne(debug, trx, sourceId);
+
+                if ( ! source ) {
+
+                    throw th(`treeMoveBefore: source not found by id: ${sourceId}`);
+                }
+
+                if ( target.pid === undefined) {
+
+                    throw th(`treeMoveBefore: target.pid can't be undefined`);
+                }
+
+                const parent = await this.treeFindOne(debug, trx, target.pid);
+
+                if ( ! parent ) {
+
+                    throw th(`treeMoveBefore: parent not found by id: ${target.pid}`);
+                }
+
+                const params = {
+                    sourceId    : source.id,
+                    parentId    : parent.id,
+                    nOneIndexed : target.sort,
+                };
+
+                return await this.treeMoveToNthChild(debug, trx, params);
+            };
+
+            if (trx) {
+
+                return await logic.call(this, trx);
+            }
+
+            return await this.knex.transaction(logic);
+        },
         treeCreateBefore: async function (...args) {
 
             let [debug, trx, opt = {}] = a(args);
@@ -582,6 +647,71 @@ module.exports = topt => {
                 };
 
                 return await this.treeCreateAsNthChild(debug, trx, params);
+            };
+
+            if (trx) {
+
+                return await logic.call(this, trx);
+            }
+
+            return await this.knex.transaction(logic);
+        },
+        treeMoveAfter: async function (...args) {
+
+            let [debug, trx, opt = {}] = a(args);
+
+            const {sourceId, targetId} = opt;
+
+            const logic = async trx => {
+
+                if ( targetId === undefined) {
+
+                    throw th(`treeMoveAfter: targetId can't be undefined`);
+                }
+
+                const target = await this.treeFindOne(debug, trx, targetId);
+
+                if ( ! target ) {
+
+                    throw th(`treeMoveAfter: target not found by id: ${targetId}`);
+                }
+
+                if ( target.level === 1 ) {
+
+                    throw th(`Can't use method treeMoveAfter() with root element of the tree`);
+                }
+
+                if ( sourceId === undefined) {
+
+                    throw th(`treeMoveAfter: sourceId can't be undefined`);
+                }
+
+                const source = await this.treeFindOne(debug, trx, sourceId);
+
+                if ( ! source ) {
+
+                    throw th(`treeMoveAfter: source not found by id: ${sourceId}`);
+                }
+
+                if ( target.pid === undefined) {
+
+                    throw th(`treeMoveAfter: target.pid can't be undefined`);
+                }
+
+                const parent = await this.treeFindOne(debug, trx, target.pid);
+
+                if ( ! parent ) {
+
+                    throw th(`treeMoveAfter: parent not found by id: ${target.pid}`);
+                }
+
+                const params = {
+                    sourceId    : source.id,
+                    parentId    : parent.id,
+                    nOneIndexed : target.sort + 1,
+                };
+
+                return await this.treeMoveToNthChild(debug, trx, params);
             };
 
             if (trx) {
