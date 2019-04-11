@@ -171,9 +171,21 @@ module.exports = topt => {
         },
         assemble: async function (...args) {
 
-            let [debug, trx, select] = a(args);
+            let [debug, trx, select, normalize = false] = a(args);
 
-            const list = await this.treeSkeleton(debug, trx, select);
+            let list = await this.treeSkeleton(debug, trx, select);
+
+            if (normalize !== false) {
+
+                if (typeof normalize === 'function') {
+
+                    list = await Promise.all(list.map(d => normalize(d)))
+                }
+                else {
+
+                    list = await Promise.all(list.map(d => this.fromDb(d)))
+                }
+            }
 
             const obj = list.reduce((acc, row) => {
 
@@ -259,9 +271,12 @@ module.exports = topt => {
 
             return async function (...args) {
 
-                let [debug, trx, select = ''] = a(args);
+                let [
+                    debug, trx, select = '',
+                    normalize = false, // string || function
+                ] = a(args);
 
-                let tree = await this.assemble(debug, trx, select);
+                let tree = await this.assemble(debug, trx, select, normalize);
 
                 let valid = true;
 
