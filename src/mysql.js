@@ -302,9 +302,7 @@ prototype.prototype.find = function (...args) {
 };
 
 prototype.prototype.findAll = function (debug, trx) {
-    return this.query(debug, trx, `select * from :table: order by :id:`)
-        .then(data => Promise.all(data.map(d => this.fromDb(d))))
-    ;
+    return this.fetch(debug, trx, `select * from :table: order by :id:`);
 }
 /**
  * @param entity - object

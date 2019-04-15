@@ -44,6 +44,132 @@ Follow:
  - [test cases](https://github.com/stopsopa/knex-abstract/blob/master/test/knex/mysql/mysql-insert.test.js)
  - [test script](https://github.com/stopsopa/knex-abstract/blob/master/example/test.js)
  
+# Api
+
+```javascript
+
+import knex from 'knex-abstract';
+
+const man = knex().model.registered_manager_name;
+
+(async function () {
+    
+    /**
+     * Just helper to process parameters, return raw data as it is returned from native knex
+     */
+    const result = await man.raw(`select * from ...`, {...params});
+    
+    /**
+     * The same like .raw() but it extracts proper response data
+     * 
+     * NOTE: Uses .raw() internally
+     */
+    const data1 = await man.query(`select * from ...`, {...params});
+    
+    /**    
+     * the same like query but ... 
+     * ... it will also pass data trhough fromDb()
+     * 
+     * uses internally fromDb();
+     * 
+     * NOTE: Uses .query() internally
+     * 
+     * uses: fromDb     
+     */
+    const data2 = await man.fetch(`select * from ...`, {...params});
+    
+    /**
+     * Extract data 
+     * @throws Error - if found more then one
+     * @return undefined - if nothing found, object if found one
+     * 
+     * NOTE: Uses .query() internally
+     * 
+     * uses: fromDb     
+     */
+    const row1 = await man.queryOne(`select * from ...`, {...params});
+    
+    /**
+     * Returns value from first column of first found row 
+     * 
+     * Extract data 
+     * @throws Error - if found more then one
+     * @return undefined - if nothing found, object if found one
+     * 
+     * NOTE: Uses .queryOne() internally - inherites .queryOne() throws
+     * 
+     * uses: fromDb 
+     */
+    const count1 = await man.queryColumn(`select count(*) c from ...`, {...params});
+    
+    /**
+     * Count all rows in table
+     * 
+     * NOTE: Uses .queryColumn() internally - inherites .queryOne() throws
+     */
+    const count2 = await man.count();
+    
+    /**
+     * Different version of queryOne that accept only 'select' of query and id in parameters
+     * 
+     * NOTE: Uses .queryOne() internally - inherites .queryOne() throws
+     * 
+     * uses: fromDb 
+     */
+    const row2 = await man.find(`id, title, ...`);
+    
+    /**
+     * Returns all rows from table - quite ofthen useful if there is not many rows in table
+     * 
+     * NOTE: Uses .queryOne() internally - inherites .queryOne() throws
+     * 
+     * uses: fromDb 
+     */
+    const list1 = await man.findAll();
+    
+    /**
+     * uses: toDb     
+     */
+    const newRowId = await man.insert({
+        col1: 'col1 value',
+        col2: 'col2 value',
+        ...
+    });
+    
+    /**
+     * @param object entity
+     * @param string|integer|object id
+     * @return affectedRows
+     * uses: toDb     
+     */
+    const affectedRows1 = await man.update({
+        col1: 'col1 value',
+        col2: 'col2 value',
+        ...
+    }, {id: 'idvalue'});
+    
+    /**
+     * @param string|integer|object id
+     * @return affectedRows
+     */
+    const affectedRows2 = await man.delete({id: 'idvalue'});
+    
+    /**
+     * Create transaction internally if there is no trx object given in first parameter
+     */
+    await this.transactify(trx, async trx => {
+
+        const id = await this.insert(debug, trx, {
+            title,
+        });
+    });
+    
+}());
+
+
+
+``` 
+ 
 # Nested set
 
 ```javascript
