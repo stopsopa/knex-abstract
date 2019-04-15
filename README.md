@@ -168,6 +168,16 @@ const man = knex().model.registered_manager_name;
         });
     });
     
+    /**
+     * This way you are using internally .transaction() method on native knex object 
+     */
+    await this.transactify(async trx => {
+
+        const id = await this.insert(debug, trx, {
+            title,
+        });
+    });
+    
 }());
 
 
