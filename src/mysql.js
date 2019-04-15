@@ -427,26 +427,32 @@ prototype.prototype.destroy = function () {
 
 prototype.prototype.transactify = async function (...args) {
 
-    let [debug, trx, logic, ...rest] = a(args);
+    const list = args.filter(a => typeof a === 'function');
 
-    if (typeof logic !== 'function') {
+    let logic, trx = undefined;
 
-        logic   = trx;
+    if (list.length > 1) {
 
-        trx     = false;
+        trx     = list[0];
+
+        logic   = list[1];
+    }
+    else {
+
+        logic   = list[0];
     }
 
-    if (typeof logic !== 'function') {
+    if ( typeof logic !== 'function') {
 
-        throw `transactify: logic function is not a function`;
+        throw new Error(`transactify: logic is not a function`);
     }
 
     if (trx) {
 
-        return await logic(debug, trx, ...rest);
+        return await logic(trx);
     }
 
-    return await this.knex.transaction(trx => logic(debug, trx, ...rest));
+    return await this.knex.transaction(trx => logic(trx));
 }
 
 prototype.a = a;
