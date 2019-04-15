@@ -116,7 +116,7 @@ it(`knex - transactify - not function given`, async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual('transactify: logic function is not a function');
+        expect(e + '').toEqual('Error: transactify: logic is not a function');
 
         done();
     }

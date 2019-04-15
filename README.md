@@ -163,7 +163,7 @@ const man = knex().model.registered_manager_name;
      */
     await this.transactify(trx, async trx => {
 
-        const id = await this.insert(debug, trx, {
+        const id = await this.insert(trx, {
             title,
         });
     });
@@ -173,7 +173,7 @@ const man = knex().model.registered_manager_name;
      */
     await this.transactify(async trx => {
 
-        const id = await this.insert(debug, trx, {
+        const id = await this.insert(trx, {
             title,
         });
     });
