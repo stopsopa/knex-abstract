@@ -175,6 +175,8 @@ const man = knex().model.registered_manager_name;
 
 
 ``` 
+
+For more informations see [source code](src/mysql.js)
  
 # Nested set
 
