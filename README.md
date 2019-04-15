@@ -68,7 +68,7 @@ const man = knex().model.registered_manager_name;
     
     /**    
      * the same like query but ... 
-     * ... it will also pass data trhough fromDb()
+     * ... it will also pass data through fromDb()
      * 
      * uses internally fromDb();
      * 
