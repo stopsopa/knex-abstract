@@ -248,6 +248,10 @@ prototype.prototype.query = function (...args) {
     return this.raw(...args).then(result => result[0])
 };
 
+prototype.prototype.fetch = function (...args) {
+    return this.query(...args).then(data => Promise.all(data.map(d => this.fromDb(d))));
+};
+
 prototype.prototype.queryOne = function (...args) {
     return this.query(...args)
         .then(rows => {
