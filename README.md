@@ -121,13 +121,15 @@ const man = knex().model.registered_manager_name;
     /**
      * Returns all rows from table - quite ofthen useful if there is not many rows in table
      * 
-     * NOTE: Uses .queryOne() internally - inherites .queryOne() throws
+     * NOTE: Uses .fetch() internally 
      * 
      * uses: fromDb 
      */
     const list1 = await man.findAll();
     
     /**
+     * NOTE: Uses .query() internally
+     * 
      * uses: toDb     
      */
     const newRowId = await man.insert({
@@ -137,6 +139,8 @@ const man = knex().model.registered_manager_name;
     });
     
     /**
+     * NOTE: Uses .query() internally
+     * 
      * @param object entity
      * @param string|integer|object id
      * @return affectedRows
@@ -149,6 +153,8 @@ const man = knex().model.registered_manager_name;
     }, {id: 'idvalue'});
     
     /**
+     * NOTE: Uses .query() internally
+     * 
      * @param string|integer|object id
      * @return affectedRows
      */
