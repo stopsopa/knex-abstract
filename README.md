@@ -34,8 +34,6 @@
     })();
     
 # examples:
-    
-- [transactions](migrations/src/migration/1545125154513-auto.ts)
 
 See example of [config](models/config.js)
 
@@ -177,6 +175,22 @@ const man = knex().model.registered_manager_name;
 ``` 
 
 For more informations see [source code](src/mysql.js)
+
+# Debugging and transactions
+
+All above methods accept additional extra parameters:
+ - debug - boolean (default false)
+    parameter force to pring internal queries to the cli console
+ - trx - function (default empty)
+    optional parameter to pass outher transaction object in order to execute logic of specific method inside external transaction
+    
+types function and boolean are reserved for this two parameters in all above methods
+
+Example use case: 
+    
+- [transactions](migrations/src/migration/1545125154513-auto.ts)
+
+    
  
 # Nested set
 
