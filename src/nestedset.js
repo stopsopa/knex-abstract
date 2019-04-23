@@ -135,12 +135,7 @@ module.exports = topt => {
                 return await this.treeFindOne(debug, trx, id);
             };
 
-            if (trx) {
-
-                return await logic.call(this, trx);
-            }
-
-            return await this.knex.transaction(logic);
+            await this.transactify(trx, logic);
         },
         treeSkeleton: async function (...args) {
 
@@ -375,12 +370,7 @@ module.exports = topt => {
                     return tree;
                 };
 
-                if (trx) {
-
-                    return await logic.call(this, trx);
-                }
-
-                return await this.knex.transaction(logic);
+                await this.transactify(trx, logic);
             }
         }()),
         treeDelete: async function (...args) {
@@ -421,7 +411,7 @@ module.exports = topt => {
 
                 if ( ! found ) {
 
-                    throw th(`treeDelete: found not found by id: ${id}`);
+                    throw th(`treeDelete: node not found by id: ${id}`);
                 }
 
                 if ( found.level === 1 ) {
@@ -534,18 +524,17 @@ module.exports = topt => {
                 });
             };
 
-            if (trx) {
-
-                return await logic.call(this, trx);
-            }
-
-            return await this.knex.transaction(logic);
+            await this.transactify(trx, logic);
         },
         treeMoveBefore: async function (...args) {
 
             let [debug, trx, opt = {}] = a(args);
 
-            const {sourceId, targetId} = opt;
+            const {
+                sourceId,
+                targetId,
+                strict  = false,
+            } = opt;
 
             const logic = async trx => {
 
@@ -594,23 +583,22 @@ module.exports = topt => {
                     sourceId    : source.id,
                     parentId    : parent.id,
                     nOneIndexed : target.sort,
+                    strict,
                 };
 
                 return await this.treeMoveToNthChild(debug, trx, params);
             };
 
-            if (trx) {
-
-                return await logic.call(this, trx);
-            }
-
-            return await this.knex.transaction(logic);
+            await this.transactify(trx, logic);
         },
         treeCreateBefore: async function (...args) {
 
             let [debug, trx, opt = {}] = a(args);
 
-            const {sourceId, targetId} = opt;
+            const {
+                sourceId, targetId,
+                strict  = false,
+            } = opt;
 
             const logic = async trx => {
 
@@ -659,23 +647,23 @@ module.exports = topt => {
                     sourceId    : source,
                     parentId    : parent.id,
                     nOneIndexed : target.sort,
+                    strict,
                 };
 
                 return await this.treeCreateAsNthChild(debug, trx, params);
             };
 
-            if (trx) {
-
-                return await logic.call(this, trx);
-            }
-
-            return await this.knex.transaction(logic);
+            await this.transactify(trx, logic);
         },
         treeMoveAfter: async function (...args) {
 
             let [debug, trx, opt = {}] = a(args);
 
-            const {sourceId, targetId} = opt;
+            const {
+                sourceId,
+                targetId,
+                strict  = false,
+            } = opt;
 
             const logic = async trx => {
 
@@ -724,23 +712,23 @@ module.exports = topt => {
                     sourceId    : source.id,
                     parentId    : parent.id,
                     nOneIndexed : target.sort + 1,
+                    strict,
                 };
 
                 return await this.treeMoveToNthChild(debug, trx, params);
             };
 
-            if (trx) {
-
-                return await logic.call(this, trx);
-            }
-
-            return await this.knex.transaction(logic);
+            await this.transactify(trx, logic);
         },
         treeCreateAfter: async function (...args) {
 
             let [debug, trx, opt = {}] = a(args);
 
-            const {sourceId, targetId} = opt;
+            const {
+                sourceId,
+                targetId,
+                strict  = false,
+            } = opt;
 
             const logic = async trx => {
 
@@ -789,17 +777,13 @@ module.exports = topt => {
                     sourceId    : source,
                     parentId    : parent.id,
                     nOneIndexed : target.sort + 1,
+                    strict,
                 };
 
                 return await this.treeCreateAsNthChild(debug, trx, params);
             };
 
-            if (trx) {
-
-                return await logic.call(this, trx);
-            }
-
-            return await this.knex.transaction(logic);
+            await this.transactify(trx, logic);
         },
         treeCreateAsNthChild: async function (...args) {
 
@@ -1055,12 +1039,7 @@ where             (
                 });
             };
 
-            if (trx) {
-
-                return await logic.call(this, trx);
-            }
-
-            return await this.knex.transaction(logic);
+            await this.transactify(trx, logic);
         },
         treeMoveToNthChild: async function (...args) {
 
@@ -1068,7 +1047,8 @@ where             (
 
             let {
                 sourceId, parentId, nOneIndexed,    // standard parameters
-                gate = false,                       // parameters for internal use - usually optimalization
+                gate    = false,                       // parameters for internal use - usually optimalization
+                strict  = false,
             } = opt;
 
             gate = gate ?
@@ -1175,7 +1155,12 @@ where             (
 
                     gate('same-index');
 
-                    throw th(`treeMoveToNthChild: can't move element as a child of the same parent '${parent.id}' and to the same index '${nOneIndexed}'`);
+                    if (strict) {
+
+                        throw th(`treeMoveToNthChild: can't move element as a child of the same parent '${parent.id}' and to the same index '${nOneIndexed}'`);
+                    }
+
+                    return;
                 }
 
                 // let rowUnderIndex = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s FOR UPDATE`, {
@@ -1202,7 +1187,12 @@ where             (
 
                             gate('already-last');
 
-                            throw th(`treeMoveToNthChild: can't move last element to the end, because it's already at the end because it's "last"`);
+                            if (strict) {
+
+                                throw th(`treeMoveToNthChild: can't move last element to the end, because it's already at the end because it's "last"`);
+                            }
+
+                            return;
                         }
 
                         gate(1);
@@ -1246,12 +1236,7 @@ where             (
 
             };
 
-            if (trx) {
-
-                return await logic.call(this, trx);
-            }
-
-            return await this.knex.transaction(logic);
+            await this.transactify(trx, logic);
         },
     }
 }

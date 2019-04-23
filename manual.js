@@ -323,6 +323,7 @@ io.on('connection', socket => {
                         await mtree[method](trx, {
                             sourceId,
                             targetId,
+                            // strict: true,
                         });
                         break;
                     case 'treeMoveToNthChild':
@@ -330,6 +331,7 @@ io.on('connection', socket => {
                             sourceId,
                             parentId: targetId,
                             // gate: true,
+                            // strict: true,
                         };
 
                         if (n) {

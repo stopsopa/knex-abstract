@@ -57,7 +57,8 @@ it('move last to the end - throw', async done => {
         expect(tmp.valid).toBeTruthy();
 
             await mtree.treeMoveToNthChild({
-                sourceId: 15, parentId: 14
+                sourceId: 15, parentId: 14,
+                strict: true,
             });
 
     }
@@ -91,7 +92,8 @@ it('move last to the end', async done => {
         }
 
         await mtree.treeMoveToNthChild({
-            sourceId: 15, parentId: 16
+            sourceId: 15, parentId: 16,
+            strict: true,
         });
 
         expect(await mtree.count()).toEqual(68);

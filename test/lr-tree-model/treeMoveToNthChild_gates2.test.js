@@ -59,6 +59,7 @@ const test = async (opt, equal) => {
         await mtree.treeMoveToNthChild({
             ...opt,
             gate        : true,
+            strict: true,
         });
     }
     catch (e) {

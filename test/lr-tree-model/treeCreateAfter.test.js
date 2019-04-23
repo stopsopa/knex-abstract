@@ -61,7 +61,8 @@ it('nestedset - treeCreateAfter 76', async done => {
         });
 
         await mtree.treeCreateAfter({
-            sourceId: id, targetId: 12
+            sourceId: id, targetId: 12,
+            strict: true,
         });
 
         expect(await mtree.count()).toEqual(76);
@@ -115,6 +116,7 @@ it('nestedset - treeCreateAfter 9', async done => {
             await mtree.treeCreateAfter(trx, {
                 sourceId: id,
                 targetId: 12,
+                strict: true,
             });
 
             expect(await mtree.count(trx)).toEqual(76);

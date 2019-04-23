@@ -44,11 +44,16 @@ const prepare = async (file = 'tree-fixture-test-set-3') => {
 
 const test = async params => {
 
-    const {
+    let {
         nodes,
         after,
         ...opt,
     } = params;
+
+    opt = {
+        ...opt,
+        strict: true,
+    }
 
     await prepare();
 

@@ -59,7 +59,8 @@ it('nestedset - treeMoveToNthChild 76', async done => {
         await mtree.treeMoveToNthChild({
             sourceId    : 12,
             parentId    : 3,
-            nOneIndexed : 11
+            nOneIndexed : 11,
+            strict: true,
         });
 
         expect(await mtree.count()).toEqual(85);
@@ -109,7 +110,8 @@ it('nestedset - treeMoveToNthChild 9', async done => {
             await mtree.treeMoveToNthChild(trx, {
                 sourceId    : 12,
                 parentId    : 3,
-                nOneIndexed : 11
+                nOneIndexed : 11,
+                strict: true,
             });
 
             expect(await mtree.count(trx)).toEqual(85);

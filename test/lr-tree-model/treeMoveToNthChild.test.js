@@ -57,6 +57,7 @@ it('nestedset - treeMoveToNthChild last', async done => {
         await mtree.treeMoveToNthChild({
             sourceId: 23,
             parentId: 19,
+            strict: true,
         });
     }
     catch (e) {
@@ -84,6 +85,7 @@ it('nestedset - treeMoveToNthChild same-index', async done => {
             sourceId: 19,
             parentId: 16,
             nOneIndexed: 3,
+            strict: true,
         });
     }
     catch (e) {
@@ -110,6 +112,7 @@ it('nestedset - treeMoveToNthChild child of itself', async done => {
             sourceId: 16,
             parentId: 19,
             // nOneIndexed: 3,
+            strict: true,
         });
     }
     catch (e) {
