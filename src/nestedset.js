@@ -1196,7 +1196,7 @@ where             (
                 // }
 
                 switch(true) {
-                    case ( source.level === (parent.level + 1) && ( source.sort < nOneIndexed ) ): // #1
+                    case ( (source.pid === parent.id) && ( source.sort < nOneIndexed ) ): // #1
 
                         if (source.sort >= (maxIndex - 1)) {
 
