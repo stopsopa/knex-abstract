@@ -48,7 +48,7 @@ knex.init(require('./test/lr-tree-model/config'));
 
 const fixtures = fixturesTool({
     // yamlFile: path.resolve(__dirname, './test/lr-tree-model/tree-fixture-sm.yml'),
-    yamlFile: path.resolve(__dirname, './test/lr-tree-model/tree-fixture-big.yml'),
+    yamlFile: path.resolve(__dirname, './test/lr-tree-model/tree-fixture-server-test-set.yml'),
     knex,
 });
 
