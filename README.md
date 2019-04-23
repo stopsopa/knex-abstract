@@ -10,6 +10,7 @@
 # Installation:
 
     npx knex-abstract
+    # follow instruction on the screen
     cd knex-project
     cat test.js
     # and see Makefile
