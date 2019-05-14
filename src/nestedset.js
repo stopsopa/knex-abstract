@@ -84,7 +84,7 @@ module.exports = topt => {
 
             let [debug, trx, data] = a(args);
 
-            const logic = async trx => {
+            return await this.transactify(trx, async trx => {
 
                 const root = await this.queryOne(debug, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: where :level: = 1`, {
                     ...topt.columns,
@@ -133,9 +133,7 @@ module.exports = topt => {
                 });
 
                 return await this.treeFindOne(debug, trx, id);
-            };
-
-            await this.transactify(trx, logic);
+            });
         },
         treeSkeleton: async function (...args) {
 
@@ -361,16 +359,14 @@ module.exports = topt => {
 
                 let [debug, trx] = a(args);
 
-                const logic = async trx => {
+                return await this.transactify(trx, async trx => {
 
                     let tree = await this.assemble(debug, trx);
 
                     await fix.call(this, debug, trx, tree);
 
                     return tree;
-                };
-
-                await this.transactify(trx, logic);
+                });
             }
         }()),
         treeDelete: async function (...args) {
@@ -389,7 +385,7 @@ module.exports = topt => {
                 id = id.id;
             }
 
-            const logic = async trx => {
+            return await this.transactify(trx, async trx => {
 
                 let found;
 
@@ -522,9 +518,7 @@ module.exports = topt => {
                     id      : parent.id,
                     l
                 });
-            };
-
-            await this.transactify(trx, logic);
+            });
         },
         treeMoveBefore: async function (...args) {
 
@@ -536,7 +530,7 @@ module.exports = topt => {
                 strict  = false,
             } = opt;
 
-            const logic = async trx => {
+            return await this.transactify(trx, async trx => {
 
                 if ( targetId === undefined) {
 
@@ -587,9 +581,7 @@ module.exports = topt => {
                 };
 
                 return await this.treeMoveToNthChild(debug, trx, params);
-            };
-
-            await this.transactify(trx, logic);
+            });
         },
         treeCreateBefore: async function (...args) {
 
@@ -600,7 +592,7 @@ module.exports = topt => {
                 strict  = false,
             } = opt;
 
-            const logic = async trx => {
+            return await this.transactify(trx, async trx => {
 
                 if ( targetId === undefined) {
 
@@ -651,9 +643,7 @@ module.exports = topt => {
                 };
 
                 return await this.treeCreateAsNthChild(debug, trx, params);
-            };
-
-            await this.transactify(trx, logic);
+            });
         },
         treeMoveAfter: async function (...args) {
 
@@ -665,7 +655,7 @@ module.exports = topt => {
                 strict  = false,
             } = opt;
 
-            const logic = async trx => {
+            return await this.transactify(trx, async trx => {
 
                 if ( targetId === undefined) {
 
@@ -716,9 +706,7 @@ module.exports = topt => {
                 };
 
                 return await this.treeMoveToNthChild(debug, trx, params);
-            };
-
-            await this.transactify(trx, logic);
+            });
         },
         treeCreateAfter: async function (...args) {
 
@@ -730,7 +718,7 @@ module.exports = topt => {
                 strict  = false,
             } = opt;
 
-            const logic = async trx => {
+            return await this.transactify(trx, async trx => {
 
                 if ( targetId === undefined) {
 
@@ -781,9 +769,7 @@ module.exports = topt => {
                 };
 
                 return await this.treeCreateAsNthChild(debug, trx, params);
-            };
-
-            await this.transactify(trx, logic);
+            });
         },
         treeCreateAsNthChild: async function (...args) {
 
@@ -794,7 +780,7 @@ module.exports = topt => {
                 moveMode = false                    // parameters for internal use - usually optimalization
             } = opt;
 
-            const logic = async trx => {
+            return await this.transactify(trx, async trx => {
 
                 let source;
 
@@ -1037,9 +1023,7 @@ where             (
                     id      : parent.id,
                     l
                 });
-            };
-
-            await this.transactify(trx, logic);
+            });
         },
         treeMoveToNthChild: async function (...args) {
 
@@ -1058,7 +1042,7 @@ where             (
                 () => {}
             ;
 
-            const logic = async trx => {
+            return await this.transactify(trx, async trx => {
 
                 if ( sourceId === undefined) {
 
@@ -1234,9 +1218,7 @@ where             (
                         });
                 }
 
-            };
-
-            await this.transactify(trx, logic);
+            });
         },
     }
 }
