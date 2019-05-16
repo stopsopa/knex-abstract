@@ -157,7 +157,7 @@ module.exports = topt => {
 
             return this
                 .stopBoth(true, 'treeSkeleton')
-                .query(true, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort${select} FROM :table: t ORDER BY l, sort FOR UPDATE`, {
+                .query(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort${select} FROM :table: t ORDER BY l, sort FOR UPDATE`, {
                     ...topt.columns,
                 })
                 .then(data => {
