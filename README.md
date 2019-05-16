@@ -180,12 +180,13 @@ const man = knex().model.registered_manager_name;
     });
     
     /**
-     * In order to stop passing data before and after fetching and puting to database through toDb and fromDb
+     * In order to stop passing data before and after fetching 
+     * and puting to database through toDb and fromDb
      * There is 3 methods that can be called before and after each call
      */    
-    await this.stopBoth().query(...).stopBoth(false);
     await this.stopToDb().update(...).stopToDb(false);
     await this.stopFromDb().find(...).stopFromDb(false);
+    await this.stopBoth().query(...).stopBoth(false);
     // .stopBoth(false) is automatically called when any method return rejected promise, 
     // in order to reenable by default internal processing through toDb & fromDb
     
