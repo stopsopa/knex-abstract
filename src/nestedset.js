@@ -141,7 +141,7 @@ module.exports = topt => {
                 return promise;
             });
         },
-        treeSkeleton: async function (...args) {
+        treeSkeleton: function (...args) {
 
             let [debug, trx, select = ''] = a(args);
 
@@ -155,13 +155,18 @@ module.exports = topt => {
                 }
             }
 
-            const promise = await this.stopBoth(true, 'treeSkeleton').query(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort${select} FROM :table: t ORDER BY l, sort FOR UPDATE`, {
-                ...topt.columns,
-            });
+            return this
+                .stopBoth(true, 'treeSkeleton')
+                .query(true, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort${select} FROM :table: t ORDER BY l, sort FOR UPDATE`, {
+                    ...topt.columns,
+                })
+                .then(data => {
 
-            this.stopBoth(false, 'treeSkeleton');
+                    this.stopBoth(false, 'treeSkeleton');
 
-            return promise;
+                    return data;
+                })
+            ;
         },
         treeFindOne: async function (...args) {
 
