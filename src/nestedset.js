@@ -191,12 +191,10 @@ module.exports = topt => {
 
                 if (typeof normalize === 'function') {
 
-                    list = await Promise.all(list.map(d => normalize(d)))
+                    list = list.map(d => normalize(d));
                 }
-                else {
 
-                    list = await Promise.all(list.map(d => this.fromDb(d)))
-                }
+                list = await Promise.all(list)
             }
 
             const obj = list.reduce((acc, row) => {
