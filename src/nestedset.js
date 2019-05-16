@@ -82,6 +82,8 @@ module.exports = topt => {
          */
         treeInit: async function (...args) {
 
+            this.stopBoth();
+
             let [debug, trx, data] = a(args);
 
             return await this.transactify(trx, async trx => {
@@ -116,6 +118,8 @@ module.exports = topt => {
                         throw new Error(`treeInit(): current root element r value is incorrect, should be (${expectedR}): ` + toString(root));
                     }
 
+                    this.stopBoth(false);
+
                     return root;
                 }
 
@@ -132,10 +136,16 @@ module.exports = topt => {
                     [r]: 2,
                 });
 
-                return await this.treeFindOne(debug, trx, id);
+                const promise = await this.treeFindOne(debug, trx, id);
+
+                this.stopBoth(false);
+
+                return promise;
             });
         },
         treeSkeleton: async function (...args) {
+
+            this.stopBoth()
 
             let [debug, trx, select = ''] = a(args);
 
@@ -149,18 +159,28 @@ module.exports = topt => {
                 }
             }
 
-            return await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort${select} FROM :table: t ORDER BY l, sort FOR UPDATE`, {
+            const promise = await this.query(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort${select} FROM :table: t ORDER BY l, sort FOR UPDATE`, {
                 ...topt.columns,
             });
+
+            this.stopBoth(false);
+
+            return promise;
         },
         treeFindOne: async function (...args) {
 
+            this.stopBoth()
+
             let [debug, trx, id] = a(args);
 
-            return await this.queryOne(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort FROM :table: t WHERE :id: = :id FOR UPDATE`, {
+            const promise = await this.queryOne(debug, trx, `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort FROM :table: t WHERE :id: = :id FOR UPDATE`, {
                 ...topt.columns,
                 id,
             });
+
+            this.stopBoth(false);
+
+            return promise;
         },
         assemble: async function (...args) {
 
@@ -345,7 +365,11 @@ module.exports = topt => {
 
                         if (Object.keys(toFix).length) {
 
+                            this.stopBoth()
+
                             await this.update(debug, trx, toFix, t.id);
+
+                            this.stopBoth(false);
                         }
 
                         k += 1;
@@ -386,6 +410,8 @@ module.exports = topt => {
             }
 
             return await this.transactify(trx, async trx => {
+
+                this.stopBoth()
 
                 let found;
 
@@ -518,6 +544,8 @@ module.exports = topt => {
                     id      : parent.id,
                     l
                 });
+
+                this.stopBoth(false);
             });
         },
         treeMoveBefore: async function (...args) {
@@ -531,6 +559,8 @@ module.exports = topt => {
             } = opt;
 
             return await this.transactify(trx, async trx => {
+
+                this.stopBoth()
 
                 if ( targetId === undefined) {
 
@@ -580,7 +610,11 @@ module.exports = topt => {
                     strict,
                 };
 
-                return await this.treeMoveToNthChild(debug, trx, params);
+                const promise = await this.treeMoveToNthChild(debug, trx, params);
+
+                this.stopBoth(false);
+
+                return promise;
             });
         },
         treeCreateBefore: async function (...args) {
@@ -593,6 +627,8 @@ module.exports = topt => {
             } = opt;
 
             return await this.transactify(trx, async trx => {
+
+                this.stopBoth()
 
                 if ( targetId === undefined) {
 
@@ -642,7 +678,11 @@ module.exports = topt => {
                     strict,
                 };
 
-                return await this.treeCreateAsNthChild(debug, trx, params);
+                const promise = await this.treeCreateAsNthChild(debug, trx, params);
+
+                this.stopBoth(false);
+
+                return promise;
             });
         },
         treeMoveAfter: async function (...args) {
@@ -656,6 +696,8 @@ module.exports = topt => {
             } = opt;
 
             return await this.transactify(trx, async trx => {
+
+                this.stopBoth()
 
                 if ( targetId === undefined) {
 
@@ -705,7 +747,11 @@ module.exports = topt => {
                     strict,
                 };
 
-                return await this.treeMoveToNthChild(debug, trx, params);
+                const promise = await this.treeMoveToNthChild(debug, trx, params);
+
+                this.stopBoth(false);
+
+                return promise;
             });
         },
         treeCreateAfter: async function (...args) {
@@ -719,6 +765,8 @@ module.exports = topt => {
             } = opt;
 
             return await this.transactify(trx, async trx => {
+
+                this.stopBoth()
 
                 if ( targetId === undefined) {
 
@@ -768,7 +816,11 @@ module.exports = topt => {
                     strict,
                 };
 
-                return await this.treeCreateAsNthChild(debug, trx, params);
+                const promise = await this.treeCreateAsNthChild(debug, trx, params);
+
+                this.stopBoth(false);
+
+                return promise;
             });
         },
         treeCreateAsNthChild: async function (...args) {
@@ -781,6 +833,8 @@ module.exports = topt => {
             } = opt;
 
             return await this.transactify(trx, async trx => {
+
+                this.stopBoth()
 
                 let source;
 
@@ -1023,6 +1077,8 @@ where             (
                     id      : parent.id,
                     l
                 });
+
+                this.stopBoth(false);
             });
         },
         treeMoveToNthChild: async function (...args) {
@@ -1043,6 +1099,8 @@ where             (
             ;
 
             return await this.transactify(trx, async trx => {
+
+                this.stopBoth()
 
                 if ( sourceId === undefined) {
 
@@ -1216,6 +1274,8 @@ where             (
                             nOneIndexed,
                             moveMode    : true,
                         });
+
+                        this.stopBoth(false);
                 }
 
             });

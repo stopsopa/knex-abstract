@@ -56,6 +56,26 @@ function prototype(knex, table, id) {
     this.knex           = knex;
     this.__table        = table;
     this.__id           = id;
+    this.__stopToDb       = false;
+    this.__stopFromDb     = false;
+}
+
+prototype.prototype.stopToDb = function (value = true) {
+    this.__stopToDb = !!value;
+    return this;
+}
+
+prototype.prototype.stopFromDb = function (value = true) {
+    this.__stopFromDb = !!value;
+    return this;
+}
+prototype.prototype.stopBoth = function (value = true) {
+
+    this.stopToDb(value);
+
+    this.stopFromDb(value);
+
+    return this;
 }
 
 prototype.prototype.initial = function () {
@@ -69,7 +89,7 @@ prototype.prototype.toDb = async function (row) {
     return row;
 }
 
-prototype.prototype.raw = function (...args) {
+prototype.prototype.raw = async function (...args) {
 
     let [debug, trx, query, params] = a(args);
 
@@ -145,6 +165,8 @@ prototype.prototype.raw = function (...args) {
             error.toString = function () {
                 return JSON.stringify(this, null, 4);
             };
+
+            this.stopBoth(false);
 
             return Promise.reject(error);
         });
@@ -240,6 +262,8 @@ prototype.prototype.raw = function (...args) {
             return JSON.stringify(this, null, 4);
         };
 
+        this.stopBoth(false);
+
         return Promise.reject(error);
     });
 }
@@ -249,11 +273,20 @@ prototype.prototype.query = function (...args) {
 };
 
 prototype.prototype.fetch = function (...args) {
-    return this.query(...args).then(data => Promise.all(data.map(d => this.fromDb(d))));
+
+    let promise = this.query(...args);
+
+    if ( ! this.__stopFromDb ) {
+
+        promise = promise.then(data => Promise.all(data.map(d => this.fromDb(d))));
+    }
+
+    return promise;
 };
 
 prototype.prototype.queryOne = function (...args) {
-    return this.query(...args)
+
+    let promise = this.query(...args)
         .then(rows => {
 
             if (rows.length < 2) {
@@ -263,8 +296,14 @@ prototype.prototype.queryOne = function (...args) {
 
             return Promise.reject('found ' + rows.length + ' rows, queryOne is designed to fetch first from only one row');
         })
-            .then(d => this.fromDb(d))
-        ;
+    ;
+
+    if ( ! this.__stopFromDb ) {
+
+        promise = promise.then(d => this.fromDb(d));
+    }
+
+    return promise;
 }
 prototype.prototype.queryColumn = function (...args) {
     return this.queryOne(...args)
@@ -294,11 +333,16 @@ prototype.prototype.find = function (...args) {
         throw 'second argument of find method should be string';
     }
 
-    return this.queryOne(debug, trx, `SELECT ${select} FROM :table: WHERE :id: = :id`, {
+    let promise = this.queryOne(debug, trx, `SELECT ${select} FROM :table: WHERE :id: = :id`, {
         id,
-    })
-        .then(d => this.fromDb(d))
-    ;
+    });
+
+    if ( ! this.__stopFromDb ) {
+
+        promise.then(d => this.fromDb(d));
+    }
+
+    return promise;
 };
 
 prototype.prototype.findAll = function (debug, trx) {
@@ -312,7 +356,10 @@ prototype.prototype.insert = async function (...args) {
 
     let [debug, trx, entity] = a(args);
 
-    entity = await this.toDb(entity);
+    if ( ! this.__stopToDb ) {
+
+        entity = await this.toDb(entity);
+    }
 
     var query = 'INSERT INTO :table: ';
 
@@ -344,7 +391,10 @@ prototype.prototype.update = async function (...args) {
 
     let [debug, trx, entity, id] = a(args);
 
-    entity = await this.toDb(entity);
+    if ( ! this.__stopToDb ) {
+
+        entity = await this.toDb(entity);
+    }
 
     if ( ! id ) {
 
@@ -427,32 +477,42 @@ prototype.prototype.destroy = function () {
 
 prototype.prototype.transactify = async function (...args) {
 
-    const list = args.filter(a => typeof a === 'function');
+    try {
 
-    let logic, trx = undefined;
+        const list = args.filter(a => typeof a === 'function');
 
-    if (list.length > 1) {
+        let logic, trx = undefined;
 
-        trx     = list[0];
+        if (list.length > 1) {
 
-        logic   = list[1];
+            trx     = list[0];
+
+            logic   = list[1];
+        }
+        else {
+
+            logic   = list[0];
+        }
+
+        if ( typeof logic !== 'function') {
+
+            throw new Error(`transactify: logic is not a function`);
+        }
+
+        if (trx) {
+
+            return await logic(trx);
+        }
+
+        return await this.knex.transaction(trx => logic(trx));
     }
-    else {
+    catch (e) {
 
-        logic   = list[0];
+        this.stopBoth(false);
+
+        throw e;
     }
 
-    if ( typeof logic !== 'function') {
-
-        throw new Error(`transactify: logic is not a function`);
-    }
-
-    if (trx) {
-
-        return await logic(trx);
-    }
-
-    return await this.knex.transaction(trx => logic(trx));
 }
 
 prototype.a = a;
