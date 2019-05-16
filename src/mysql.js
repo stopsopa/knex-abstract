@@ -60,20 +60,26 @@ function prototype(knex, table, id) {
     this.__stopFromDb     = false;
 }
 
-prototype.prototype.stopToDb = function (value = true) {
+prototype.prototype.stopToDb = function (value = true, flag) {
     this.__stopToDb = !!value;
+
+    // console.log(`==============stopToDb ${!!value}=== ${flag} ==========`);
+
     return this;
 }
 
-prototype.prototype.stopFromDb = function (value = true) {
+prototype.prototype.stopFromDb = function (value = true, flag) {
     this.__stopFromDb = !!value;
+
+    // console.log(`==============stopFromDb ${!!value}=== ${flag} ==========`);
+
     return this;
 }
-prototype.prototype.stopBoth = function (value = true) {
+prototype.prototype.stopBoth = function (value = true, flag) {
 
-    this.stopToDb(value);
+    this.stopToDb(value, flag);
 
-    this.stopFromDb(value);
+    this.stopFromDb(value, flag);
 
     return this;
 }
@@ -166,7 +172,7 @@ prototype.prototype.raw = async function (...args) {
                 return JSON.stringify(this, null, 4);
             };
 
-            this.stopBoth(false);
+            this.stopBoth(false, 'raw');
 
             return Promise.reject(error);
         });
@@ -262,7 +268,7 @@ prototype.prototype.raw = async function (...args) {
             return JSON.stringify(this, null, 4);
         };
 
-        this.stopBoth(false);
+        this.stopBoth(false, 'raw');
 
         return Promise.reject(error);
     });
@@ -477,42 +483,32 @@ prototype.prototype.destroy = function () {
 
 prototype.prototype.transactify = async function (...args) {
 
-    try {
+    const list = args.filter(a => typeof a === 'function');
 
-        const list = args.filter(a => typeof a === 'function');
+    let logic, trx = undefined;
 
-        let logic, trx = undefined;
+    if (list.length > 1) {
 
-        if (list.length > 1) {
+        trx     = list[0];
 
-            trx     = list[0];
-
-            logic   = list[1];
-        }
-        else {
-
-            logic   = list[0];
-        }
-
-        if ( typeof logic !== 'function') {
-
-            throw new Error(`transactify: logic is not a function`);
-        }
-
-        if (trx) {
-
-            return await logic(trx);
-        }
-
-        return await this.knex.transaction(trx => logic(trx));
+        logic   = list[1];
     }
-    catch (e) {
+    else {
 
-        this.stopBoth(false);
-
-        throw e;
+        logic   = list[0];
     }
 
+    if ( typeof logic !== 'function') {
+
+        throw new Error(`transactify: logic is not a function`);
+    }
+
+    if (trx) {
+
+        return await logic(trx);
+    }
+
+    return await this.knex.transaction(trx => logic(trx));
 }
 
 prototype.a = a;
