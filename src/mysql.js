@@ -6,41 +6,99 @@ function isObject(a) {
     return Object.prototype.toString.call(a) === "[object Object]";
 };
 
-function a(args, noSingle = true) {
+/**
+ * http://2ality.com/2014/12/es6-proxies.html
+ *
+ * isProxy field introduced because util.types.isProxy is only available from node 10:
+ *      https://nodejs.org/api/util.html#util_util_types_isproxy_value
+ */
+function Opt(opt) {
 
-    let debug       = false;
+    if ( this instanceof Opt ) {
+
+        throw new Error(`knex-abstract: don't use 'new' operator with Opt() object, just use it as a function`);
+    }
+
+    if ( isObject(opt) ) {
+
+        if (opt.isProxy) {
+
+            return opt;
+        }
+    }
+    else {
+
+        if ( typeof opt !== 'boolean' ) {
+
+            throw new Error(`knex-abstract: new Opt(opt) opt is not object nor boolean`);
+        }
+
+        opt = {
+            debug: opt,
+        }
+    }
+
+    return {
+        ...opt,
+        debug   : !!opt.debug,
+        isProxy : true,
+    };
+}
+
+function a(args) {
+
+    args = [...args];
 
     let trx         = false;
 
-    let fntoromove  = false;
+    for (let i = 0, l = args.length, a ; i < l ; i += 1 ) {
 
-    args.forEach((a, i) => {
+        a = args[i];
 
-        const t = typeof a;
+        if (trx === false && typeof a === 'function') {
 
-        if (debug === false && t === 'boolean') {
+            trx         = a;
 
-            debug = a;
+            args.splice(i, 1);
 
-            if (noSingle && args.length === 1) {
+            break;
+        }
+    }
 
-                throw `First argument is bool but it shouldn't be the only argument`;
+    let opt         = false;
+
+    for (let i = 0, l = args.length, a ; i < l ; i += 1 ) {
+
+        a = args[i];
+
+        if (opt === false && isObject(a) && a.isProxy) {
+
+            opt         = a;
+
+            args.splice(i, 1);
+
+            break;
+        }
+    }
+
+    if ( ! opt ) {
+
+        for (let i = 0, l = args.length, a ; i < l ; i += 1 ) {
+
+            a = args[i];
+
+            if (opt === false && typeof a === 'boolean') {
+
+                opt         = Opt(a);
+
+                break;
             }
-
-            return;
         }
+    }
 
-        if (trx === false && t === 'function') {
+    if ( ! opt ) {
 
-            fntoromove = i;
-
-            trx = a;
-        }
-    });
-
-    if (fntoromove !== false) {
-
-        args.splice(fntoromove, 1);
+        opt = Opt(false);
     }
 
     args = args
@@ -49,39 +107,13 @@ function a(args, noSingle = true) {
         .filter(a => a !== undefined)
     ;
 
-    return [debug, trx, ...args];
+    return [opt, trx, ...args];
 }
 
 function prototype(knex, table, id) {
     this.knex           = knex;
     this.__table        = table;
     this.__id           = id;
-    this.__stopToDb       = false;
-    this.__stopFromDb     = false;
-}
-
-prototype.prototype.stopToDb = function (value = true, flag) {
-    this.__stopToDb = !!value;
-
-    // console.log(`==============stopToDb ${!!value}=== ${flag} ==========`);
-
-    return this;
-}
-
-prototype.prototype.stopFromDb = function (value = true, flag) {
-    this.__stopFromDb = !!value;
-
-    // console.log(`==============stopFromDb ${!!value}=== ${flag} ==========`);
-
-    return this;
-}
-prototype.prototype.stopBoth = function (value = true, flag) {
-
-    this.stopToDb(value, flag);
-
-    this.stopFromDb(value, flag);
-
-    return this;
 }
 
 prototype.prototype.initial = function () {
@@ -97,7 +129,7 @@ prototype.prototype.toDb = async function (row) {
 
 prototype.prototype.raw = async function (...args) {
 
-    let [debug, trx, query, params] = a(args);
+    let [opt, trx, query, params] = a(args);
 
     if (typeof query !== 'string') {
 
@@ -154,7 +186,7 @@ prototype.prototype.raw = async function (...args) {
             return '??';
         });
 
-        debug && log.dump({
+        opt.debug && log.dump({
             query,
             params,
         });
@@ -171,8 +203,6 @@ prototype.prototype.raw = async function (...args) {
             error.toString = function () {
                 return JSON.stringify(this, null, 4);
             };
-
-            this.stopBoth(false, 'raw');
 
             return Promise.reject(error);
         });
@@ -248,7 +278,7 @@ prototype.prototype.raw = async function (...args) {
         }
     });
 
-    debug && log.dump({
+    opt.debug && log.dump({
         query,
         params,
         queryParams,
@@ -268,21 +298,22 @@ prototype.prototype.raw = async function (...args) {
             return JSON.stringify(this, null, 4);
         };
 
-        this.stopBoth(false, 'raw');
-
         return Promise.reject(error);
     });
 }
 
 prototype.prototype.query = function (...args) {
+
     return this.raw(...args).then(result => result[0])
 };
 
 prototype.prototype.fetch = function (...args) {
 
+    let [opt, trx] = a(args);
+
     let promise = this.query(...args);
 
-    if ( ! this.__stopFromDb ) {
+    if ( opt.fromDb !== false && opt.both !== false ) {
 
         promise = promise.then(data => Promise.all(data.map(d => this.fromDb(d))));
     }
@@ -291,6 +322,8 @@ prototype.prototype.fetch = function (...args) {
 };
 
 prototype.prototype.queryOne = function (...args) {
+
+    let [opt, trx] = a(args);
 
     let promise = this.query(...args)
         .then(rows => {
@@ -304,7 +337,7 @@ prototype.prototype.queryOne = function (...args) {
         })
     ;
 
-    if ( ! this.__stopFromDb ) {
+    if ( opt.fromDb !== false && opt.both !== false ) {
 
         promise = promise.then(d => this.fromDb(d));
     }
@@ -332,18 +365,18 @@ prototype.prototype.count = function (...args) {
 
 prototype.prototype.find = function (...args) {
 
-    let [debug, trx, id, select = '*'] = a(args);
+    let [opt, trx, id, select = '*'] = a(args);
 
     if (typeof select !== 'string') {
 
         throw 'second argument of find method should be string';
     }
 
-    let promise = this.queryOne(debug, trx, `SELECT ${select} FROM :table: WHERE :id: = :id`, {
+    let promise = this.queryOne(opt, trx, `SELECT ${select} FROM :table: WHERE :id: = :id`, {
         id,
     });
 
-    if ( ! this.__stopFromDb ) {
+    if ( opt.fromDb !== false && opt.both !== false ) {
 
         promise.then(d => this.fromDb(d));
     }
@@ -351,8 +384,11 @@ prototype.prototype.find = function (...args) {
     return promise;
 };
 
-prototype.prototype.findAll = function (debug, trx) {
-    return this.fetch(debug, trx, `select * from :table: order by :id:`);
+prototype.prototype.findAll = function (...args) {
+
+    let [opt, trx] = a(args);
+
+    return this.fetch(opt, trx, `select * from :table: order by :id:`);
 }
 /**
  * @param entity - object
@@ -360,9 +396,9 @@ prototype.prototype.findAll = function (debug, trx) {
  */
 prototype.prototype.insert = async function (...args) {
 
-    let [debug, trx, entity] = a(args);
+    let [opt, trx, entity] = a(args);
 
-    if ( ! this.__stopToDb ) {
+    if ( opt.toDb !== false && opt.both !== false ) {
 
         entity = await this.toDb(entity);
     }
@@ -385,7 +421,7 @@ prototype.prototype.insert = async function (...args) {
 
     query += '(' + columns.join(', ') + ') values (' + marks.join(', ') + ')';
 
-    return this.query(debug, trx, query, values)
+    return this.query(opt, trx, query, values)
         .then(result => result.insertId);
 }
 
@@ -395,9 +431,9 @@ prototype.prototype.insert = async function (...args) {
  */
 prototype.prototype.update = async function (...args) {
 
-    let [debug, trx, entity, id] = a(args);
+    let [opt, trx, entity, id] = a(args);
 
-    if ( ! this.__stopToDb ) {
+    if ( opt.toDb !== false && opt.both !== false ) {
 
         entity = await this.toDb(entity);
     }
@@ -448,13 +484,13 @@ prototype.prototype.update = async function (...args) {
         query += ' WHERE ' + ids.join(' AND ');
     }
 
-    return this.query(debug, trx, query, values)
+    return this.query(opt, trx, query, values)
         .then(result => result.affectedRows);
 }
 
 prototype.prototype.delete = async function (...args) {
 
-    let [debug, trx, id] = a(args);
+    let [opt, trx, id] = a(args);
 
     let where = ' ';
 
@@ -467,7 +503,7 @@ prototype.prototype.delete = async function (...args) {
         where += ':id: = :id';
     }
 
-    return await this.query(debug, trx, `delete from :table: where ` + where, {
+    return await this.query(opt, trx, `delete from :table: where ` + where, {
         id,
     })
         .then(result => result.affectedRows)
@@ -511,6 +547,8 @@ prototype.prototype.transactify = async function (...args) {
     return await this.knex.transaction(trx => logic(trx));
 }
 
-prototype.a = a;
+prototype.a     = a;
+
+prototype.Opt   = Opt;
 
 module.exports = prototype;
