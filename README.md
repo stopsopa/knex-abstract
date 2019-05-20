@@ -49,6 +49,8 @@ Follow:
 
 import knex from 'knex-abstract';
 
+const { Opt } = knex.prototype;
+
 const man = knex().model.registered_manager_name;
 
 (async function () {
@@ -183,8 +185,12 @@ const man = knex().model.registered_manager_name;
      * In order to stop passing data before and after fetching 
      * and puting to database through toDb and fromDb
      * there is a way to tell to ignore those functions
-     */    
-     
+     */
+    await this.find(Opt({
+        fromDb  : false, // by default is true so always data are passed through fromDB if it's defined
+        toDb    : false, // by default is true so always data are passed through toDb if it's defined
+        both    : false, // disable passing through fromDb & toDb using one flag
+    }), 1)
     
     
 }());
