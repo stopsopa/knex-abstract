@@ -9,6 +9,8 @@ const log               = require('inspc');
 
 const a                 = prototype.a;
 
+const isObject          = require('../../src/utils/isObject');
+
 module.exports = knex => extend(knex, prototype, {
     initial: async function () {
 
@@ -39,11 +41,37 @@ select r.id from roles r where r.name = ?
             roles,
         }
     },
-    fromDb: row => {
+    fromDb: async function (row, opt, trx) {
 
-        if ( ! row ) {
+        if ( ! isObject(row) ) {
 
-            return;
+            return row;
+        }
+
+        if (opt.test1) {
+
+            delete row.created;
+
+            delete row.updated;
+
+            delete row.id;
+
+            if ( ! opt.created ) {
+
+                opt.created = true,
+
+                await abstract().model.users.insert(trx, {
+                    firstName: opt.test1,
+                    lastName: 'test',
+                    password: 'psw',
+                    email: 'emailfdsafds',
+                })
+            }
+
+
+            row.extraFromDb = true;
+
+            return row;
         }
 
         if (typeof row.roles === 'string') {
@@ -75,7 +103,17 @@ select r.id from roles r where r.name = ?
 
         return row;
     },
-    toDb: row => {
+    toDb: async function (row, opt, trx) {
+
+        if ( ! isObject(row) ) {
+
+            return row;
+        }
+
+        if (opt.test1) {
+
+            row.lastName = 'test1-lastName';
+        }
 
         if (typeof row.roles !== 'undefined') {
 
@@ -117,7 +155,7 @@ select r.id from roles r where r.name = ?
     },
     insert: async function (...args) {
 
-        let [debug, trx, entity] = a(args);
+        let [opt, trx, entity] = a(args);
 
         let roles = null;
 
@@ -126,9 +164,9 @@ select r.id from roles r where r.name = ?
             roles = entity.roles;
         }
 
-        entity = await this.toDb(Object.assign({}, entity));
+        entity = await this.toDb(Object.assign({}, entity), opt, trx);
 
-        const id = await prototype.prototype.insert.call(this, debug, trx, entity);
+        const id = await prototype.prototype.insert.call(this, opt, trx, entity);
 
         if (roles) {
 
@@ -162,14 +200,14 @@ select r.id from roles r where r.name = ?
     },
 //     find: function (...args) {
 //
-//         let [debug, trx, id] = a(args);
+//         let [opt, trx, id] = a(args);
 //
 //         if ( ! id ) {
 //
 //             throw `user.js::find(): id not specified or invalid`;
 //         }
 //
-//         const data = this.raw(debug, trx, `
+//         const data = this.raw(opt, trx, `
 // SELECT          u.*, GROUP_CONCAT(r.id) roles
 // FROM            users u
 // LEFT JOIN       user_role ur
@@ -181,15 +219,15 @@ select r.id from roles r where r.name = ?
 // ORDER BY        id desc
 //         `, [id]).then(data => {
 //             return data[0][0];
-//         }).then(d => this.fromDb(d));
+//         }).then(d => this.fromDb(d, opt, trx));
 //
 //         return data;
 //     },
 //     findAll: function (...args) {
 //
-//         let [debug, trx] = a(args);
+//         let [opt, trx] = a(args);
 //
-//         const data = this.raw(debug, trx, `
+//         const data = this.raw(opt, trx, `
 // SELECT          u.*, GROUP_CONCAT(r.name) roles
 // FROM            users u
 // LEFT JOIN       user_role ur
@@ -200,7 +238,7 @@ select r.id from roles r where r.name = ?
 // ORDER BY        id desc
 //         `).then(data => {
 //             return data[0];
-//         }).then(list => list.map(d => this.fromDb(d)));
+//         }).then(list => list.map(d => this.fromDb(d, opt, trx)));
 //
 //         return data;
 //     },

@@ -9,6 +9,8 @@ const log               = require('inspc');
 
 const a                 = prototype.a;
 
+const isObject          = require('../../../src/utils/isObject');
+
 // const validator         = eval('require')('@stopsopa/validator');
 
 // const {
@@ -67,9 +69,9 @@ select r.id from roles r where r.name = ?
     },
     fromDb: (row, from) => {
 
-        if ( ! row ) {
+        if ( ! isObject(row) ) {
 
-            return;
+            return row;
         }
 
         if (typeof row.roles === 'string') {
@@ -102,6 +104,11 @@ select r.id from roles r where r.name = ?
         return row;
     },
     toDb: row => {
+
+        if ( ! isObject(row) ) {
+
+            return row;
+        }
 
         if (typeof row.roles !== 'undefined') {
 

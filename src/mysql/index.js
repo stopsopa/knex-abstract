@@ -80,10 +80,10 @@ prototype.prototype.initial = function () {
     return {prototype:'MYSQL: prototype.initial()'};
 }
 
-prototype.prototype.fromDb = async function (row) {
+prototype.prototype.fromDb = async function (row, opt, trx) {
     return row;
 }
-prototype.prototype.toDb = async function (row) {
+prototype.prototype.toDb = async function (row, opt, trx) {
     return row;
 }
 
@@ -275,7 +275,7 @@ prototype.prototype.fetch = function (...args) {
 
     if ( opt.fromDb !== false && opt.both !== false ) {
 
-        promise = promise.then(data => Promise.all(data.map(d => this.fromDb(d))));
+        promise = promise.then(data => Promise.all(data.map(d => this.fromDb(d, opt, trx))));
     }
 
     return promise;
@@ -299,7 +299,7 @@ prototype.prototype.queryOne = function (...args) {
 
     if ( opt.fromDb !== false && opt.both !== false ) {
 
-        promise = promise.then(d => this.fromDb(d));
+        promise = promise.then(d => this.fromDb(d, opt, trx));
     }
 
     return promise;
@@ -338,7 +338,7 @@ prototype.prototype.find = function (...args) {
 
     if ( opt.fromDb !== false && opt.both !== false ) {
 
-        promise.then(d => this.fromDb(d));
+        promise.then(d => this.fromDb(d, opt, trx));
     }
 
     return promise;
@@ -360,7 +360,7 @@ prototype.prototype.insert = async function (...args) {
 
     if ( opt.toDb !== false && opt.both !== false ) {
 
-        entity = await this.toDb(entity);
+        entity = await this.toDb(entity, opt, trx);
     }
 
     var query = 'INSERT INTO :table: ';
@@ -395,7 +395,7 @@ prototype.prototype.update = async function (...args) {
 
     if ( opt.toDb !== false && opt.both !== false ) {
 
-        entity = await this.toDb(entity);
+        entity = await this.toDb(entity, opt, trx);
     }
 
     if ( ! id ) {
