@@ -50,6 +50,7 @@ Follow:
 import knex from 'knex-abstract';
 
 const { Opt } = knex.prototype;
+// or import { Opt } from 'knex-abstract';
 
 const man = knex().model.registered_manager_name;
 
