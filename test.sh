@@ -81,6 +81,7 @@ cat << EOF
 
     /bin/bash $0 --help
     /bin/bash $0 --watchAll
+    /bin/bash $0 -t 'filter test'
 
 EOF
 

@@ -163,7 +163,7 @@ it('nestedset - integrity after #5 2', async done => {
 });
 
 
-it('nestedset - integrity after #5 2', async done => {
+it('nestedset - integrity after #5 3', async done => {
 
     await test({
         sourceId    : 16,

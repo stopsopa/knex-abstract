@@ -26,6 +26,6 @@ module.exports = new Proxy(managers, {
 
         const keys = Object.keys(target).filter(a => a !== 'props');
 
-        throw `No such manager '${propKey}', registered managers are: ` + keys.join(', ');
+        throw new Error(`No such manager '${propKey}', registered managers are: ` + keys.join(', '));
     }
 });

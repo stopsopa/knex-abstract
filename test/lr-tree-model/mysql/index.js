@@ -24,7 +24,7 @@ module.exports = new Proxy(managers, {
 
         const keys = Object.keys(target);
 
-        throw `No such mysql manager '${propKey}', registered managers are: ` + keys.join(', ');
+        throw new Error(`No such mysql manager '${propKey}', registered managers are: ` + keys.join(', '));
     },
 });
 

@@ -73,20 +73,6 @@ it('knex - mysql', async done => {
     }
 });
 
-it(`knex - mysql - shouldn't be alone`, async done => {
-
-    try {
-
-        await man.query(true);
-    }
-    catch (e) {
-
-        expect(e + '').toEqual(`First argument is bool but it shouldn't be the only argument`);
-
-        done();
-    }
-});
-
 it(`knex - mysql - init`, async done => {
 
     const init = await manc.initial();
