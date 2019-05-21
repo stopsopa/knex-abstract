@@ -15,7 +15,7 @@ const a                 = prototype.a;
 
 const Opt               = prototype.Opt;
 
-const promiseall        = require('./utils/promiseall');
+const promiseall        = require('nlab/promiseall');
 
 const th = msg => new Error(`nestedset.js: ${msg}`);
 

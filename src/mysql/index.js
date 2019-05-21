@@ -1,9 +1,9 @@
 
 const log           = require('inspc');
 
-const isObject      = require('../utils/isObject');
+const isObject          = require('nlab/isObject');
 
-const promiseall    = require('../utils/promiseall');
+const promiseall        = require('nlab/promiseall');
 
 const Opt = require('../Opt');
 

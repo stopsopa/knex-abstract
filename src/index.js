@@ -7,7 +7,7 @@ const mysql         = require('./mysql');
 
 const Opt           = require('./Opt');
 
-const promiseall    = require('./utils/promiseall');
+const promiseall    = require('nlab/promiseall');
 
 knex.extend         = extend;
 

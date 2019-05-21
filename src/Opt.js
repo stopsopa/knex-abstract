@@ -1,5 +1,6 @@
 
-const isObject = require('./utils/isObject');
+
+const isObject          = require('nlab/isObject');
 
 /**
  * http://2ality.com/2014/12/es6-proxies.html

@@ -120,6 +120,11 @@ chalk@2.4.1:
     escape-string-regexp "^1.0.5"
     supports-color "^5.3.0"
 
+charenc@~0.0.1:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
+  integrity sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=
+
 class-utils@^0.3.5:
   version "0.3.6"
   resolved "https://registry.yarnpkg.com/class-utils/-/class-utils-0.3.6.tgz#f93369ae8b9a7ce02fd41faad0ca83033190c463"
@@ -174,6 +179,11 @@ core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
   integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
+
+crypt@~0.0.1:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/crypt/-/crypt-0.0.2.tgz#88d7ff7ec0dfb86f713dc87bbb42d044d3e6c41b"
+  integrity sha1-iNf/fsDfuG9xPch7u0LQRNPmxBs=
 
 debug@4.1.0:
   version "4.1.0"
@@ -423,6 +433,11 @@ inspc@^0.0.15:
   resolved "https://registry.yarnpkg.com/inspc/-/inspc-0.0.15.tgz#ada94528c55b27b43440db8ec08aa65cab1dae67"
   integrity sha512-GlGzjftwA05fefpGqwatRejfguSYlGmF3ZJept5b6KQuVguPKiWtoKipHxkWiIewKVHOoOpklM+yAKVcPHZSGw==
 
+inspc@^0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/inspc/-/inspc-0.0.16.tgz#5e279df3e30615f969787dadf8841f45c00a8ff4"
+  integrity sha512-ClM+kJZW5WO6Ej2NiPuleS76tUH9v4HdsA5LWJAtSeViVmiiPo1ShLOc8kTc6vxCOyWZllXtoX+I5Wz3d2Axjg==
+
 interpret@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.1.0.tgz#7ed1b1410c6a0e0f78cf95d3b8440c63f78b8614"
@@ -450,7 +465,7 @@ is-accessor-descriptor@^1.0.0:
   dependencies:
     kind-of "^6.0.0"
 
-is-buffer@^1.1.5:
+is-buffer@^1.1.5, is-buffer@~1.1.1:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
   integrity sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
@@ -650,6 +665,15 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+md5@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/md5/-/md5-2.2.1.tgz#53ab38d5fe3c8891ba465329ea23fac0540126f9"
+  integrity sha1-U6s41f48iJG6RlMp6iP6wFQBJvk=
+  dependencies:
+    charenc "~0.0.1"
+    crypt "~0.0.1"
+    is-buffer "~1.1.1"
+
 micromatch@^3.0.4:
   version "3.1.10"
   resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-3.1.10.tgz#70859bc95c9840952f359a068a3fc49f9ecfac23"
@@ -730,6 +754,14 @@ nanomatch@^1.2.9:
     regex-not "^1.0.0"
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
+
+nlab@^0.0.53:
+  version "0.0.53"
+  resolved "https://registry.yarnpkg.com/nlab/-/nlab-0.0.53.tgz#f84122cf82f22674de9c8193373e9b2eea22fa4b"
+  integrity sha512-+eA0DiFsZksqcn4L7qMYHI2tG5+0R7SvMuhfAludFiHadYdLQm6AvL1DCvNwbR7TJtD+dlQqmr3cXwvBXEPidw==
+  dependencies:
+    inspc "^0.0.16"
+    md5 "^2.2.1"
 
 object-copy@^0.1.0:
   version "0.1.0"

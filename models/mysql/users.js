@@ -1,4 +1,6 @@
 
+const path              = require('path');
+
 const abstract          = require('knex-abstract');
 
 const extend            = abstract.extend;
@@ -9,7 +11,7 @@ const log               = require('inspc');
 
 const a                 = prototype.a;
 
-const isObject          = require('../../src/utils/isObject');
+const isObject          = require('nlab/isObject');
 
 module.exports = knex => extend(knex, prototype, {
     initial: async function () {

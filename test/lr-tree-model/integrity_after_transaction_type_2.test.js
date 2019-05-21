@@ -47,7 +47,7 @@ const test = async params => {
     let {
         nodes,
         after,
-        ...opt,
+        ...opt
     } = params;
 
     opt = {

@@ -9,7 +9,7 @@ const log               = require('inspc');
 
 const a                 = prototype.a;
 
-const isObject          = require('../../../src/utils/isObject');
+const isObject          = require('nlab/isObject');
 
 // const validator         = eval('require')('@stopsopa/validator');
 
