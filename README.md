@@ -49,8 +49,12 @@ Follow:
 
 import knex from 'knex-abstract';
 
-const { Opt } = knex.prototype;
+const { Opt }           = knex.prototype;
 // or import { Opt } from 'knex-abstract';
+
+const prototype         = knex.prototype;
+
+const a                 = prototype.a;
 
 const man = knex().model.registered_manager_name;
 
@@ -195,10 +199,43 @@ const man = knex().model.registered_manager_name;
         both    : false, // disable passing through fromDb & toDb using one flag
     }), 1)
     
+    /**
+     * Flag to print all queries to the console 
+     */
+    await this.find(Opt({
+        debug: true, // def: false
+    }), 1);
+    
+    /**
+     * If debug flag is the only parameter that you want to pass use shortcut
+     */
+    await this.find(true, 1);
+    
+    
+    
+    /**
+     * Example method of manager with cascading transaction
+     */
+    {
+        // ...
+        update: async function (...args) {
+    
+            let [debug, trx, entity, id] = a(args);
+                
+            return await this.transactify(trx, async trx => {
+    
+                if (Array.isArray(entity.roles)) {
+        
+                    await this.updateRoles(trx, id, entity.roles)
+                }
+        
+                return prototype.prototype.update.call(this, debug, trx, entity, id);
+            });
+        },
+        // ...
+    }
     
 }());
-
-
 
 ``` 
 
