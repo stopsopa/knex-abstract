@@ -1,7 +1,9 @@
 
-const log = require('inspc');
+const log           = require('inspc');
 
-const isObject = require('../utils/isObject');
+const isObject      = require('../utils/isObject');
+
+const promiseall    = require('../utils/promiseall');
 
 const Opt = require('../Opt');
 
@@ -80,10 +82,10 @@ prototype.prototype.initial = function () {
     return {prototype:'MYSQL: prototype.initial()'};
 }
 
-prototype.prototype.fromDb = async function (row, opt, trx) {
+prototype.prototype.fromDb = function (row, opt, trx) {
     return row;
 }
-prototype.prototype.toDb = async function (row, opt, trx) {
+prototype.prototype.toDb = function (row, opt, trx) {
     return row;
 }
 
@@ -275,7 +277,7 @@ prototype.prototype.fetch = function (...args) {
 
     if ( opt.fromDb !== false && opt.both !== false ) {
 
-        promise = promise.then(data => Promise.all(data.map(d => this.fromDb(d, opt, trx))));
+        return promise.then(data => promiseall(data.map(d => this.fromDb(d, opt, trx))));
     }
 
     return promise;
@@ -299,7 +301,7 @@ prototype.prototype.queryOne = function (...args) {
 
     if ( opt.fromDb !== false && opt.both !== false ) {
 
-        promise = promise.then(d => this.fromDb(d, opt, trx));
+        return promise.then(d => this.fromDb(d, opt, trx));
     }
 
     return promise;
@@ -318,9 +320,12 @@ prototype.prototype.queryColumn = function (...args) {
 
 prototype.prototype.count = function (...args) {
 
-    const query = 'SELECT COUNT(*) AS c FROM :table:';
+    let [opt, trx, ...rest] = a(args);
 
-    return this.queryColumn(...args, query);
+    return this.queryColumn({
+        ...opt,
+        fromDb: false,
+    }, trx, 'SELECT COUNT(*) AS c FROM :table:', ...rest);
 }
 
 prototype.prototype.find = function (...args) {
@@ -338,7 +343,7 @@ prototype.prototype.find = function (...args) {
 
     if ( opt.fromDb !== false && opt.both !== false ) {
 
-        promise.then(d => this.fromDb(d, opt, trx));
+        return promise.then(d => this.fromDb(d, opt, trx));
     }
 
     return promise;
@@ -382,7 +387,8 @@ prototype.prototype.insert = async function (...args) {
     query += '(' + columns.join(', ') + ') values (' + marks.join(', ') + ')';
 
     return this.query(opt, trx, query, values)
-        .then(result => result.insertId);
+        .then(result => result.insertId)
+    ;
 }
 
 /**
@@ -445,10 +451,11 @@ prototype.prototype.update = async function (...args) {
     }
 
     return this.query(opt, trx, query, values)
-        .then(result => result.affectedRows);
+        .then(result => result.affectedRows)
+    ;
 }
 
-prototype.prototype.delete = async function (...args) {
+prototype.prototype.delete = function (...args) {
 
     let [opt, trx, id] = a(args);
 
@@ -463,7 +470,7 @@ prototype.prototype.delete = async function (...args) {
         where += ':id: = :id';
     }
 
-    return await this.query(opt, trx, `delete from :table: where ` + where, {
+    return this.query(opt, trx, `delete from :table: where ` + where, {
         id,
     })
         .then(result => result.affectedRows)

@@ -108,6 +108,8 @@ const man = knex().model.registered_manager_name;
      * Count all rows in table
      * 
      * NOTE: Uses .queryColumn() internally - inherites .queryOne() throws
+     * 
+     * IT'S NOT USING: fromDb 
      */
     const count2 = await man.count();
     

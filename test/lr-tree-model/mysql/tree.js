@@ -25,7 +25,7 @@ module.exports = knex => extend(knex, prototype, Object.assign(nestedset({
     }
 }), {
 
-    // fromDb: (row, from) => {
+    // fromDb: async function (row, opt, trx) {
     //
     //     if ( ! row ) {
     //
@@ -61,7 +61,7 @@ module.exports = knex => extend(knex, prototype, Object.assign(nestedset({
     //
     //     return row;
     // },
-    // toDb: row => {
+    // toDb: async function (row, opt, trx) {
     //
     //     if (typeof row.roles !== 'undefined') {
     //

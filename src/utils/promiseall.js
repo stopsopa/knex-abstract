@@ -10,6 +10,11 @@ var promiseall = list => {
 
     let counter = list.length;
 
+    if (counter === 0) {
+
+        return Promise.resolve([]);
+    }
+
     let resolved = true;
 
     const errors = [];
@@ -27,7 +32,7 @@ var promiseall = list => {
 
             if (counter === 0) {
 
-                resolved ? resolve(list) : reject(errors);
+                resolved ? resolve(errors.map(x => x.data)) : reject(errors);
             }
         }
 

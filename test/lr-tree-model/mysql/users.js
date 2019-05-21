@@ -67,7 +67,7 @@ select r.id from roles r where r.name = ?
             roles,
         }
     },
-    fromDb: (row, from) => {
+    fromDb: async function (row, opt, trx) {
 
         if ( ! isObject(row) ) {
 
@@ -103,7 +103,7 @@ select r.id from roles r where r.name = ?
 
         return row;
     },
-    toDb: row => {
+    toDb: async function (row, opt, trx) {
 
         if ( ! isObject(row) ) {
 
