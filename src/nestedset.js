@@ -189,9 +189,14 @@ module.exports = topt => {
 
             if (normalize !== false) {
 
+                if (typeof this[normalize] !== 'function') {
+
+                    throw new Error(`knex-abstract, nextedset.js, assemble(): normalize function '${normalize}' is defined but there is no such method in '${this.__table}' manager`);
+                }
+
                 if (typeof normalize === 'function') {
 
-                    list = list.map(d => normalize(d));
+                    list = list.map(d => this[normalize](d, opt, trx));
                 }
 
                 list = await promiseall(list)
