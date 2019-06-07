@@ -187,21 +187,6 @@ module.exports = topt => {
 
             let list = await this.treeSkeleton(opt, trx, select);
 
-            if (normalize !== false) {
-
-                if (typeof this[normalize] !== 'function') {
-
-                    throw new Error(`knex-abstract, nextedset.js, assemble(): normalize function '${normalize}' is defined but there is no such method in '${this.__table}' manager`);
-                }
-
-                if (typeof normalize === 'function') {
-
-                    list = list.map(d => this[normalize](d, opt, trx));
-                }
-
-                list = await promiseall(list)
-            }
-
             const obj = list.reduce((acc, row) => {
 
                 acc[row.id] = row;
@@ -222,7 +207,10 @@ module.exports = topt => {
                 }
             }
 
-            return list.filter(l => !l.pid);
+            return {
+                tree: list.filter(l => !l.pid),
+                list,
+            };
         },
         /**
          * For manual inspection in DB:
@@ -291,7 +279,7 @@ module.exports = topt => {
                     normalize = false, // string || function
                 ] = a(args);
 
-                let tree = await this.assemble(opt, trx, select, normalize);
+                let { tree, list } = await this.assemble(opt, trx, select, normalize);
 
                 let valid = true;
 
@@ -310,6 +298,16 @@ module.exports = topt => {
                     log.dump({
                         checkError: e.message,
                     })
+                }
+
+                if (normalize !== false) {
+
+                    if (typeof this[normalize] !== 'function') {
+
+                        throw new Error(`knex-abstract, nextedset.js, treeCheckIntegrity(): normalize function '${normalize}' is defined but there is no such method in '${this.__table}' manager`);
+                    }
+
+                    await promiseall(list.map(d => this[normalize](d, opt, trx)))
                 }
 
                 return {
@@ -388,7 +386,7 @@ module.exports = topt => {
 
                 return await this.transactify(trx, async trx => {
 
-                    let tree = await this.assemble(opt, trx);
+                    let { tree } = await this.assemble(opt, trx);
 
                     await fix.call(this, opt, trx, tree);
 
