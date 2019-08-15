@@ -151,7 +151,7 @@ prototype.prototype.raw = async function (...args) {
         opt.debug && log.dump({
             query,
             params,
-        });
+        }, opt.deep);
 
         return instance.raw(query, params).catch(e => {
 
@@ -244,7 +244,7 @@ prototype.prototype.raw = async function (...args) {
         query,
         params,
         queryParams,
-    });
+    }, opt.deep);
 
     return instance.raw(query, queryParams).catch(e => {
 

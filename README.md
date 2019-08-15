@@ -197,6 +197,7 @@ const man = knex().model.registered_manager_name;
         fromDb  : false, // by default is true so always data are passed through fromDB if it's defined
         toDb    : false, // by default is true so always data are passed through toDb if it's defined
         both    : false, // disable passing through fromDb & toDb using one flag
+        deep    : 2, // how deep go with log.dump() in debug mode 
     }), 1)
     
     /**

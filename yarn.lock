@@ -428,15 +428,15 @@ ini@^1.3.4:
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
   integrity sha512-RZY5huIKCMRWDUqZlEi72f/lmXKMvuszcMBduliQ3nnWbx9X/ZBQO7DijMEYS9EhHBb2qacRUMtC7svLwe0lcw==
 
-inspc@^0.0.15:
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/inspc/-/inspc-0.0.15.tgz#ada94528c55b27b43440db8ec08aa65cab1dae67"
-  integrity sha512-GlGzjftwA05fefpGqwatRejfguSYlGmF3ZJept5b6KQuVguPKiWtoKipHxkWiIewKVHOoOpklM+yAKVcPHZSGw==
-
 inspc@^0.0.16:
   version "0.0.16"
   resolved "https://registry.yarnpkg.com/inspc/-/inspc-0.0.16.tgz#5e279df3e30615f969787dadf8841f45c00a8ff4"
   integrity sha512-ClM+kJZW5WO6Ej2NiPuleS76tUH9v4HdsA5LWJAtSeViVmiiPo1ShLOc8kTc6vxCOyWZllXtoX+I5Wz3d2Axjg==
+
+inspc@^0.0.17:
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/inspc/-/inspc-0.0.17.tgz#7f2fb56cfbdaa1f6a88a62a3e63abd3ca15b7619"
+  integrity sha512-72GsJCsmXjHsV5tVz7KtmZGDXhRMz+yTc/kL9PxqvOhciTiYXnzKxkgxK97ssBDa3I97QIQmkS3hX5IVWFMPpQ==
 
 interpret@^1.1.0:
   version "1.1.0"
