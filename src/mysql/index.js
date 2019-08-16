@@ -93,6 +93,8 @@ prototype.prototype.raw = async function (...args) {
 
     let [opt, trx, query, params] = a(args);
 
+    const deep = ( (Number.isInteger(opt.deep) && opt.deep > 1) ? opt.deep : undefined);
+
     if (typeof query !== 'string') {
 
         throw `query '${query}' is not a string`;
@@ -151,7 +153,7 @@ prototype.prototype.raw = async function (...args) {
         opt.debug && log.dump({
             query,
             params,
-        }, opt.deep);
+        }, deep);
 
         return instance.raw(query, params).catch(e => {
 
@@ -244,7 +246,7 @@ prototype.prototype.raw = async function (...args) {
         query,
         params,
         queryParams,
-    }, opt.deep);
+    }, deep);
 
     return instance.raw(query, queryParams).catch(e => {
 
