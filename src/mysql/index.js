@@ -93,7 +93,7 @@ prototype.prototype.raw = async function (...args) {
 
     let [opt, trx, query, params] = a(args);
 
-    const deep = ( (Number.isInteger(opt.deep) && opt.deep > 1) ? opt.deep : undefined);
+    const deep = ( (Number.isInteger(opt.debug) && opt.debug > 1) ? opt.debug : undefined);
 
     if (typeof query !== 'string') {
 
