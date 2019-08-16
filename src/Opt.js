@@ -36,7 +36,6 @@ function Opt(opt) {
 
     return {
         ...opt,
-        debug   : !!opt.debug,
         isProxy : true,
     };
 }
