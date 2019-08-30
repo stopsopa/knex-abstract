@@ -203,7 +203,8 @@ const man = knex().model.registered_manager_name;
      * Flag to print all queries to the console 
      */
     await this.find(Opt({
-        debug: true, // def: false, might be also number it will then define how deep log.dump() should inspect objects
+        debug: true, // def: false, might be also number it will then 
+        // define how deep log.dump() should inspect objects
     }), 1);
     
     /**
