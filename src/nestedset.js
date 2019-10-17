@@ -746,7 +746,7 @@ module.exports = topt => {
                 const params = {
                     sourceId    : source.id,
                     parentId    : parent.id,
-                    nOneIndexed : target.sort + 1,
+                    nOneIndexed : target.sort + (source.level == target.level ? 0 : 1),
                     strict,
                 };
 
