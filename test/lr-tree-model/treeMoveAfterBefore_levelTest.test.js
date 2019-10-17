@@ -53,8 +53,10 @@ it('nestedset - treeMoveAfter the same level', async done => {
     expect(tmp.valid).toBeTruthy();
 
     try {
+
         let sourceId = 32,
             targetId = 34;
+
         await mtree.treeMoveAfter({
             sourceId,
             targetId,
@@ -62,8 +64,8 @@ it('nestedset - treeMoveAfter the same level', async done => {
         });
 
         tmp = await mtree.treeCheckIntegrity();
-        expect(tmp.valid).toBeTruthy();
 
+        expect(tmp.valid).toBeTruthy();
     
         const { created, updated, ...entity } = await mtree.find(sourceId);
 
@@ -97,8 +99,10 @@ it('nestedset - treeMoveBefore the same level', async done => {
     expect(tmp.valid).toBeTruthy();
 
     try {
+
         let sourceId = 35,
             targetId = 34;
+
         await mtree.treeMoveBefore({
             sourceId,
             targetId,
@@ -106,8 +110,8 @@ it('nestedset - treeMoveBefore the same level', async done => {
         });
 
         tmp = await mtree.treeCheckIntegrity();
-        expect(tmp.valid).toBeTruthy();
 
+        expect(tmp.valid).toBeTruthy();
     
         const { created, updated, ...entity } = await mtree.find(sourceId);
 
@@ -141,8 +145,10 @@ it('nestedset - treeMoveAfter with childen diferent level', async done => {
     expect(tmp.valid).toBeTruthy();
 
     try {
+
         let sourceId = 3,
             targetId = 27;
+
         await mtree.treeMoveAfter({
             sourceId,
             targetId,
@@ -150,8 +156,8 @@ it('nestedset - treeMoveAfter with childen diferent level', async done => {
         });
 
         tmp = await mtree.treeCheckIntegrity();
-        expect(tmp.valid).toBeTruthy();
 
+        expect(tmp.valid).toBeTruthy();
     
         const { created, updated, ...entity } = await mtree.find(sourceId);
 
@@ -164,7 +170,9 @@ it('nestedset - treeMoveAfter with childen diferent level', async done => {
             "tr": 51,
             "tsort": 9,
         });
+
         expect(await mtree.count()).toEqual(72);
+        
         done();
     }
     catch (e) {
@@ -183,8 +191,10 @@ it('nestedset - treeMoveBefore with childen diferent level', async done => {
     expect(tmp.valid).toBeTruthy();
 
     try {
+
         let sourceId = 37,
             targetId = 4;
+
         await mtree.treeMoveBefore({
             sourceId,
             targetId,
@@ -192,10 +202,11 @@ it('nestedset - treeMoveBefore with childen diferent level', async done => {
         });
 
         tmp = await mtree.treeCheckIntegrity();
-        expect(tmp.valid).toBeTruthy();
 
+        expect(tmp.valid).toBeTruthy();
     
-        const { created, updated, ...entity } = await mtree.find(sourceId);        
+        const { created, updated, ...entity } = await mtree.find(sourceId);  
+
         expect(entity).toEqual({
             "tid": 37,
             "title": "r2 a1",
@@ -205,7 +216,9 @@ it('nestedset - treeMoveBefore with childen diferent level', async done => {
             "tr": 49,
             "tsort": 1,
         }); 
+
         expect(await mtree.count()).toEqual(72);
+
         done();
     }
     catch (e) {
