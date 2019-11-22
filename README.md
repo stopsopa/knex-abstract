@@ -323,6 +323,62 @@ const knex          = require('knex-abstract');
 
 ```
 
+## Internal calls of methods
+
+```javascript
+
+    treeDelete: async function (...args) {
+
+        // standalone
+
+        let [opt, trx, id] = a(args);
+
+        return await this.transactify(trx, async trx => {
+
+            const ret = await prototype.prototype.treeDelete.call(this, opt, trx, id);
+
+            await this.generatePath(opt, trx, id);
+
+            return ret;
+        });
+    },
+
+    treeMoveBefore: async function (...args) {
+        // Calls internally treeMoveToNthChild 1-2
+    },
+    treeMoveAfter: async function (...args) {
+        // Calls internally treeMoveToNthChild 1-2
+    },
+
+
+        treeCreateBefore: async function (...args) {
+            // Calls internally treeCreateAsNthChild 1-3
+        },
+        treeCreateAfter: async function (...args) {
+            // Calls internally treeCreateAsNthChild 1-3
+        },
+
+
+        treeMoveToNthChild: async function (...args) {
+            // Calls internally treeCreateAsNthChild 2-3
+        },
+            treeCreateAsNthChild: async function (...args) {
+
+                // standalone
+
+                let [opt, trx, opt2 = {}] = a(args);
+
+                return await this.transactify(trx, async trx => {
+
+                    const ret = await prototype.prototype.treeCreateAsNthChild.call(this, opt, trx, opt2);
+
+                    await this.generatePath(opt, trx, opt2.sourceId);
+
+                    return ret;
+                });
+            },
+```
+
 # Dev notes
 
 ```bash
