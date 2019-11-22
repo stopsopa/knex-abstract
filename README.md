@@ -327,6 +327,32 @@ const knex          = require('knex-abstract');
 
 ```javascript
 
+const abstract          = require('knex-abstract');
+
+const { Opt }           = abstract;
+
+const extend            = abstract.extend;
+
+const prototype         = abstract.prototype;
+
+const a                 = prototype.a;
+
+const table             = 'tags';
+
+const id                = 'id';
+
+const ns = nestedset({
+    columns: {
+        l       : 'l',
+        r       : 'r',
+        level   : 'level',
+        pid     : 'parent_id',
+        sort    : 'sort',
+    }
+})
+
+module.exports = knex => extend(knex, prototype, Object.assign({}, ns, {
+
     treeDelete: async function (...args) {
 
         // standalone
@@ -334,8 +360,8 @@ const knex          = require('knex-abstract');
         let [opt, trx, id] = a(args);
 
         return await this.transactify(trx, async trx => {
-
-            const ret = await prototype.prototype.treeDelete.call(this, opt, trx, id);
+    
+            const ret = await ns.treeDelete.call(this, ...args);
 
             await this.generatePath(opt, trx, id);
 
@@ -370,13 +396,14 @@ const knex          = require('knex-abstract');
 
                 return await this.transactify(trx, async trx => {
 
-                    const ret = await prototype.prototype.treeCreateAsNthChild.call(this, opt, trx, opt2);
+                    const ret = await ns.treeCreateAsNthChild.call(this, ...args);
 
                     await this.generatePath(opt, trx, opt2.sourceId);
 
                     return ret;
                 });
             },
+}), table, id);
 ```
 
 # Dev notes
