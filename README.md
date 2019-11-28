@@ -352,6 +352,29 @@ const ns = nestedset({
 })
 
 module.exports = knex => extend(knex, prototype, Object.assign({}, ns, {
+    update: async function (...args) {
+
+        let [opt, trx, entity, id] = a(args);
+
+        const {
+            generatePathStop,
+        } = opt;
+
+        return await this.transactify(trx, async trx => {
+
+            const ret = await prototype.prototype.update.call(this, opt, trx, entity, id);
+            
+            if ( generatePathStop !== true ) {
+
+                await this.generatePath(Opt({
+                    ...opt,
+                    generatePathStop: true,
+                }), trx, id);
+            }
+
+            return ret;
+        });
+    },
 
     treeDelete: async function (...args) {
 
