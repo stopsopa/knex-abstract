@@ -37,7 +37,7 @@
   "dependencies": {
     "@babel/standalone": "^7.4.2",
     "express": "^4.16.4",
-    "inspc": "^0.0.15",
+    "inspc": "^0.0.19",
     "js-yaml": "^3.13.0",
     "knex": "0.20.15",
     "mysql": "^2.18.1",
