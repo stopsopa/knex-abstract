@@ -323,6 +323,112 @@ const knex          = require('knex-abstract');
 
 ```
 
+## Internal calls of methods
+
+```javascript
+
+const abstract          = require('knex-abstract');
+
+const { Opt }           = abstract;
+
+const extend            = abstract.extend;
+
+const prototype         = abstract.prototype;
+
+const a                 = prototype.a;
+
+const table             = 'tags';
+
+const id                = 'id';
+
+const ns = nestedset({
+    columns: {
+        l       : 'l',
+        r       : 'r',
+        level   : 'level',
+        pid     : 'parent_id',
+        sort    : 'sort',
+    }
+})
+
+module.exports = knex => extend(knex, prototype, Object.assign({}, ns, {
+    update: async function (...args) {
+
+        let [opt, trx, entity, id] = a(args);
+
+        const {
+            generatePathStop,
+        } = opt;
+
+        return await this.transactify(trx, async trx => {
+
+            const ret = await prototype.prototype.update.call(this, opt, trx, entity, id);
+            
+            if ( generatePathStop !== true ) {
+
+                await this.generatePath(Opt({
+                    ...opt,
+                    generatePathStop: true,
+                }), trx, id);
+            }
+
+            return ret;
+        });
+    },
+
+    treeDelete: async function (...args) {
+
+        // standalone
+
+        let [opt, trx, id] = a(args);
+
+        return await this.transactify(trx, async trx => {
+    
+            const ret = await ns.treeDelete.call(this, ...args);
+
+            await this.generatePath(opt, trx, id);
+
+            return ret;
+        });
+    },
+
+    treeMoveBefore: async function (...args) {
+        // Calls internally treeMoveToNthChild 1-2
+    },
+    treeMoveAfter: async function (...args) {
+        // Calls internally treeMoveToNthChild 1-2
+    },
+
+
+        treeCreateBefore: async function (...args) {
+            // Calls internally treeCreateAsNthChild 1-3
+        },
+        treeCreateAfter: async function (...args) {
+            // Calls internally treeCreateAsNthChild 1-3
+        },
+
+
+        treeMoveToNthChild: async function (...args) {
+            // Calls internally treeCreateAsNthChild 2-3
+        },
+            treeCreateAsNthChild: async function (...args) {
+
+                // standalone
+
+                let [opt, trx, opt2 = {}] = a(args);
+
+                return await this.transactify(trx, async trx => {
+
+                    const ret = await ns.treeCreateAsNthChild.call(this, ...args);
+
+                    await this.generatePath(opt, trx, opt2.sourceId);
+
+                    return ret;
+                });
+            },
+}), table, id);
+```
+
 # Dev notes
 
 ```bash
