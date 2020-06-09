@@ -7,3 +7,5 @@ yarn-error*
 *.tgz
 .env
 /testinstall/
+yarn.lock
+package-lock.json
