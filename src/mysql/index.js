@@ -65,7 +65,7 @@ function a(args) {
 
     args = args
         .filter(a => typeof a !== 'boolean')
-        .filter(a => a !== null)
+        // .filter(a => a !== null)
         .filter(a => a !== undefined)
     ;
 
