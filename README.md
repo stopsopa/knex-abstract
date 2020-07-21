@@ -429,6 +429,93 @@ module.exports = knex => extend(knex, prototype, Object.assign({}, ns, {
 }), table, id);
 ```
 
+# Single file example
+
+```js
+
+const path              = require('path');
+
+const log               = require('inspc');
+
+const knex              = require('knex-abstract');
+
+const extend            = knex.extend;
+
+const prototype         = knex.prototype;
+
+const config            = require(path.resolve(__dirname, '..', 'ormconfig.js'));
+
+knex.init({
+    def: 'mysql',
+    mysql: {
+        client: 'mysql',
+        connection: {
+            host: config.host,
+            port: config.port,
+            user: config.username,
+            password: config.password,
+            database: config.database,
+            charset: 'utf8',
+            multipleStatements: true,
+        },
+        pool: {
+            afterCreate: function (conn, cb) {
+                conn.query(`SET SESSION sql_mode=(SELECT REPLACE(@@SESSION.sql_mode,'ONLY_FULL_GROUP_BY',''))`, function (err) {
+                    cb(err, conn);
+                });
+            },
+            "min": 2,
+            "max": 6,
+            "createTimeoutMillis": 3000,
+            "acquireTimeoutMillis": 30000,
+            "idleTimeoutMillis": 30000,
+            "reapIntervalMillis": 1000,
+            "createRetryIntervalMillis": 100,
+        },
+        acquireConnectionTimeout: 60000,
+        models: new Proxy({
+            common: knex => extend(knex, prototype, {}),
+        }, {
+            get(target, propKey, receiver) {
+
+                if (typeof target[propKey] !== 'undefined') {
+
+                    return target[propKey];
+                }
+
+                const keys = Object.keys(target);
+
+                throw `No such mysql manager '${propKey}', registered managers are: ` + keys.join(', ');
+            },
+        }),
+    }
+});
+
+(async function(){
+
+    try {
+
+        const man = knex().model.common;
+
+        const migrationsTableName = config.migrationsTableName || 'migrations';
+
+        let count = await man.queryColumn('select count(*) c from ??', [migrationsTableName]);
+
+        process.stdout.write(String(count));
+    }
+    catch (e) {
+
+        log.dump({
+            mcountdb_catch_error: e,
+        });
+    }
+
+    process.exit(0);
+
+})();
+
+```
+
 # Dev notes
 
 ```bash
