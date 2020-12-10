@@ -416,7 +416,7 @@ let project = ((process.argv[2] || 'knex-project') + '').trim();
 
 if ( ! project ) {
 
-    throw `\n\n    target is not specified, give it in first argument\n\n`;
+    throw new Error(`\n\n    target is not specified, give it in first argument\n\n`);
 }
 
 project = path.resolve(process.cwd(), project);

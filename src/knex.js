@@ -62,7 +62,7 @@ const extend = (knex, name) => {
     }
     else {
 
-        throw `key '${name}' defined under server.config -> 'knex' config but there is no models defined for it`;
+        throw new Error(`key '${name}' defined under server.config -> 'knex' config but there is no models defined for it`);
     }
 }
 
@@ -74,7 +74,7 @@ const tool = name => {
 
     if (config === false) {
 
-        throw `Before use require('knex-abstract')() first use require('knex-abstract').init(config) and pass config`
+        throw new Error(`Before use require('knex-abstract')() first use require('knex-abstract').init(config) and pass config`)
     }
 
     if ( ! name ) {
@@ -84,7 +84,7 @@ const tool = name => {
 
     if ( ! config[name]) {
 
-        throw `knex-abstract: Connection '${name}' is not defined in config.js under 'knex' key`;
+        throw new Error(`knex-abstract: Connection '${name}' is not defined in config.js under 'knex' key`);
     }
 
     return connections[name];
@@ -99,19 +99,19 @@ tool.init = c => {
 
     if ( ! c || ! isObject(c) ) {
 
-        throw `knex-abstract: init(config), config has to be an object`;
+        throw new Error(`knex-abstract: init(config), config has to be an object`);
     }
 
     const keys = Object.keys(c);
 
     if ( ! keys.length ) {
 
-        throw `knex-abstract: key 'knex' is an object but there is not connections defined in it`;
+        throw new Error(`knex-abstract: key 'knex' is an object but there is not connections defined in it`);
     }
 
     if (typeof c.def !== 'string') {
 
-        throw `knex-abstract: Not 'def' connection specified: 'config.js' for knex key 'knex.def'`;
+        throw new Error(`knex-abstract: Not 'def' connection specified: 'config.js' for knex key 'knex.def'`);
     }
 
     config = c;

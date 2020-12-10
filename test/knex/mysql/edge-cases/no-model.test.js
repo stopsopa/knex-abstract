@@ -18,7 +18,7 @@ it('knex - no model defined', async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual("key 'mysql' defined under server.config -> 'knex' config but there is no models defined for it");
+        expect(String(e)).toEqual("Error: key 'mysql' defined under server.config -> 'knex' config but there is no models defined for it");
 
         done();
     }

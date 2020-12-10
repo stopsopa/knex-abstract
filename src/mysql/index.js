@@ -97,7 +97,7 @@ prototype.prototype.raw = async function (...args) {
 
     if (typeof query !== 'string') {
 
-        throw `query '${query}' is not a string`;
+        throw new Error(`query '${query}' is not a string`);
     }
 
     const instance = trx || this.knex;
@@ -138,7 +138,7 @@ prototype.prototype.raw = async function (...args) {
             }
             else {
 
-                throw `If params given as an array then you can't use other named binding then ':id:' and ':table:'`;
+                throw new Error(`If params given as an array then you can't use other named binding then ':id:' and ':table:'`);
             }
 
             params.splice(i, 0, this[name]);
@@ -176,7 +176,7 @@ prototype.prototype.raw = async function (...args) {
 
         if ( params && typeof params.__table !== 'undefined' ) {
 
-            throw `Binding name ':table:' is reserved, if you are using it then you shouldn't specify parameter '__table' manually`;
+            throw new Error(`Binding name ':table:' is reserved, if you are using it then you shouldn't specify parameter '__table' manually`);
         }
 
         if ( ! isObject(params) ) {
@@ -186,7 +186,7 @@ prototype.prototype.raw = async function (...args) {
 
         if ( ! this.__table ) {
 
-            throw `this.__table not specified`
+            throw new Error(`this.__table not specified`)
         }
 
         params.__table = this.__table;
@@ -196,7 +196,7 @@ prototype.prototype.raw = async function (...args) {
 
         if ( params && typeof params.__id !== 'undefined' ) {
 
-            throw `Binding name ':id:' is reserved, if you are using it then you shouldn't specify parameter '__id' manually`;
+            throw new Error(`Binding name ':id:' is reserved, if you are using it then you shouldn't specify parameter '__id' manually`);
         }
 
         if ( ! isObject(params) ) {
@@ -206,7 +206,7 @@ prototype.prototype.raw = async function (...args) {
 
         if ( ! this.__id ) {
 
-            throw `this.__id not specified`
+            throw new Error(`this.__id not specified`)
         }
 
         params.__id = this.__id;
@@ -223,7 +223,7 @@ prototype.prototype.raw = async function (...args) {
 
         if ( typeof params[name] === 'undefined') {
 
-            throw `Query: '${query}' error: value for parameter '${name}' is missing on the list of given parameters: ` + JSON.stringify(params);
+            throw new Error(`Query: '${query}' error: value for parameter '${name}' is missing on the list of given parameters: ` + JSON.stringify(params));
         }
 
         const placeholder = semi ? '??' : '?';
@@ -336,7 +336,7 @@ prototype.prototype.find = function (...args) {
 
     if (typeof select !== 'string') {
 
-        throw 'second argument of find method should be string';
+        throw new Error('second argument of find method should be string');
     }
 
     let promise = this.queryOne(opt, trx, `SELECT ${select} FROM :table: WHERE :id: = :id`, {

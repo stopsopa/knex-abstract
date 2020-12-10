@@ -47,7 +47,7 @@ it('knex - wrong mana', async done => {
     }
     catch (e) {
 
-        expect(e.message).toBe("No such mysql manager 'nonexisting', registered managers are: common, users, many, wrongTest");
+        expect(String(e)).toBe("Error: No such mysql manager 'nonexisting', registered managers are: common, users, many, wrongTest");
 
         done();
     }

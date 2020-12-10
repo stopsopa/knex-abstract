@@ -64,7 +64,7 @@ it('move last to the end - throw', async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual(`Error: nestedset.js: treeMoveToNthChild: can't move last element to the end, because it's already at the end because it's "last"`);
+        expect(String(e)).toEqual(`Error: nestedset.js: treeMoveToNthChild: can't move last element to the end, because it's already at the end because it's "last"`);
 
         done();
     }

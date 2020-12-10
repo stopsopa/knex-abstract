@@ -18,7 +18,7 @@ it('knex - no init', async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual("Before use require('knex-abstract')() first use require('knex-abstract').init(config) and pass config");
+        expect(String(e)).toEqual("Error: Before use require('knex-abstract')() first use require('knex-abstract').init(config) and pass config");
 
         done();
     }

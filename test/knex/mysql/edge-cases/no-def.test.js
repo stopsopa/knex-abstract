@@ -18,7 +18,7 @@ it('knex - no def', async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual("knex-abstract: Not 'def' connection specified: 'config.js' for knex key 'knex.def'");
+        expect(String(e)).toEqual("Error: knex-abstract: Not 'def' connection specified: 'config.js' for knex key 'knex.def'");
 
         done();
     }

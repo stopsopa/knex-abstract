@@ -17,7 +17,7 @@ const README_md = path.resolve(__dirname, 'README.md');
 
 if ( ! fs.existsSync(README_md) ) {
 
-    throw `File '${README_md}' doesn't exist`;
+    throw new Error(`File '${README_md}' doesn't exist`);
 
     process.exit(1);
 }
@@ -54,7 +54,7 @@ for (let i = 0, l = content.length ; i < l ; i += 1 ) {
 
 if ( done !== 2 ) {
 
-    throw `Badges not found, invalid badges or missing badges in file '${README_md}'`;
+    throw new Error(`Badges not found, invalid badges or missing badges in file '${README_md}'`);
 
     process.exit(2);
 }

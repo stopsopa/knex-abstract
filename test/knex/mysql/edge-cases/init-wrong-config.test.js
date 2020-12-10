@@ -16,7 +16,7 @@ it('knex - init wrong config - part 1', async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual('knex-abstract: init(config), config has to be an object');
+        expect(String(e)).toEqual('Error: knex-abstract: init(config), config has to be an object');
 
         done();
     }
@@ -31,7 +31,7 @@ it('knex - init wrong config - part 2', async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual('knex-abstract: init(config), config has to be an object');
+        expect(String(e)).toEqual('Error: knex-abstract: init(config), config has to be an object');
 
         done();
     }
@@ -47,7 +47,7 @@ it('knex - init wrong config - part 3', async done => {
     }
     catch (e) {
 
-        expect(e + '').toEqual("knex-abstract: key 'knex' is an object but there is not connections defined in it");
+        expect(String(e)).toEqual("Error: knex-abstract: key 'knex' is an object but there is not connections defined in it");
 
         done();
     }
