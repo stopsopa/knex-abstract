@@ -34,7 +34,7 @@ it('knex - mysql ec - no query', async done => {
     }
     catch (e) {
 
-        expect(String(e)).toEqual("Error: query 'undefined' is not a string");
+        expect(String(e)).toEqual("Error: users.js error: query 'undefined' is not a string");
 
         done();
     }
@@ -48,7 +48,7 @@ it(`knex - mysql - exc 1`, async done => {
     }
     catch (e) {
 
-        expect(String(e)).toEqual("Error: If params given as an array then you can't use other named binding then ':id:' and ':table:'");
+        expect(String(e)).toEqual("Error: users.js error: If params given as an array then you can't use other named binding then ':id:' and ':table:'");
 
         done();
     }
@@ -62,7 +62,7 @@ it(`knex - mysql - exc 2`, async done => {
     }
     catch (e) {
 
-        expect(String(e)).toEqual("Error: If params given as an array then you can't use other named binding then ':id:' and ':table:'");
+        expect(String(e)).toEqual("Error: users.js error: If params given as an array then you can't use other named binding then ':id:' and ':table:'");
 
         done();
     }
@@ -175,7 +175,7 @@ it(`knex - mysql - queryOne, table reserved`, async done => {
     }
     catch (e) {
 
-        expect(String(e)).toEqual(`Error: Binding name ':table:' is reserved, if you are using it then you shouldn't specify parameter '__table' manually`);
+        expect(String(e)).toEqual("Error: users.js error: Binding name ':table:' is reserved, if you are using it then you shouldn't specify parameter '__table' manually");
 
         done();
     }
@@ -189,7 +189,7 @@ it(`knex - mysql - queryOne, table used but on common`, async done => {
     }
     catch (e) {
 
-        expect(String(e)).toEqual("Error: this.__table not specified");
+        expect(String(e)).toEqual("Error: undefined.js error: this.__table not specified");
 
         done();
     }
@@ -204,7 +204,7 @@ it(`knex - mysql - queryOne, id reserved`, async done => {
     }
     catch (e) {
 
-        expect(String(e)).toEqual(`Error: Binding name ':id:' is reserved, if you are using it then you shouldn't specify parameter '__id' manually`);
+        expect(String(e)).toEqual("Error: users.js error: Binding name ':id:' is reserved, if you are using it then you shouldn't specify parameter '__id' manually");
 
         done();
     }
@@ -218,7 +218,7 @@ it(`knex - mysql - queryOne, id used but on common`, async done => {
     }
     catch (e) {
 
-        expect(String(e)).toEqual("Error: this.__id not specified");
+        expect(String(e)).toEqual("Error: undefined.js error: this.__id not specified");
 
         done();
     }
@@ -232,7 +232,7 @@ it(`knex - mysql - queryOne, missing param`, async done => {
     }
     catch (e) {
 
-        expect(String(e)).toEqual("Error: Query: 'select email from :table: where lastName = :p1' error: value for parameter 'p1' is missing on the list of given parameters: {\"__table\":\"users\"}");
+        expect(String(e)).toEqual("Error: users.js error: Query: 'select email from :table: where lastName = :p1' error: value for parameter 'p1' is missing on the list of given parameters: {\"__table\":\"users\"}");
 
         done();
     }
@@ -246,7 +246,7 @@ it(`knex - mysql - find, error - not string select`, async done => {
     }
     catch (e) {
 
-        expect(String(e)).toEqual("Error: second argument of find method should be string");
+        expect(String(e)).toEqual("Error: users.js error: second argument of find method should be string");
 
         done();
 

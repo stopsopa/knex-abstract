@@ -108,7 +108,7 @@ it(`knex - no transactify`, async done => {
     done();
 });
 
-it(`knex - transactify - not function given`, async done => {
+it(`knex - transactify - no function given`, async done => {
 
     try {
 
@@ -116,7 +116,7 @@ it(`knex - transactify - not function given`, async done => {
     }
     catch (e) {
 
-        expect(String(e)).toEqual('Error: transactify: logic is not a function');
+        expect(String(e)).toEqual("Error: many.js error: transactify: logic is not a function");
 
         done();
     }
