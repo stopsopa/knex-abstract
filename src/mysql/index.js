@@ -78,6 +78,10 @@ function prototype(knex, table, id) {
     this.__id           = id;
 }
 
+prototype.prototype.th = function (msg) {
+    return new Error(`${this.__table}.js error: ${msg}`);
+};
+
 prototype.prototype.initial = function () {
     return {prototype:'MYSQL: prototype.initial()'};
 }
@@ -97,7 +101,7 @@ prototype.prototype.raw = async function (...args) {
 
     if (typeof query !== 'string') {
 
-        throw new Error(`query '${query}' is not a string`);
+        throw this.th(`query '${query}' is not a string`);
     }
 
     const instance = trx || this.knex;
@@ -138,7 +142,7 @@ prototype.prototype.raw = async function (...args) {
             }
             else {
 
-                throw new Error(`If params given as an array then you can't use other named binding then ':id:' and ':table:'`);
+                throw this.th(`If params given as an array then you can't use other named binding then ':id:' and ':table:'`);
             }
 
             params.splice(i, 0, this[name]);
@@ -176,7 +180,7 @@ prototype.prototype.raw = async function (...args) {
 
         if ( params && typeof params.__table !== 'undefined' ) {
 
-            throw new Error(`Binding name ':table:' is reserved, if you are using it then you shouldn't specify parameter '__table' manually`);
+            throw this.th(`Binding name ':table:' is reserved, if you are using it then you shouldn't specify parameter '__table' manually`);
         }
 
         if ( ! isObject(params) ) {
@@ -186,7 +190,7 @@ prototype.prototype.raw = async function (...args) {
 
         if ( ! this.__table ) {
 
-            throw new Error(`this.__table not specified`)
+            throw this.th(`this.__table not specified`)
         }
 
         params.__table = this.__table;
@@ -196,7 +200,7 @@ prototype.prototype.raw = async function (...args) {
 
         if ( params && typeof params.__id !== 'undefined' ) {
 
-            throw new Error(`Binding name ':id:' is reserved, if you are using it then you shouldn't specify parameter '__id' manually`);
+            throw this.th(`Binding name ':id:' is reserved, if you are using it then you shouldn't specify parameter '__id' manually`);
         }
 
         if ( ! isObject(params) ) {
@@ -206,7 +210,7 @@ prototype.prototype.raw = async function (...args) {
 
         if ( ! this.__id ) {
 
-            throw new Error(`this.__id not specified`)
+            throw this.th(`this.__id not specified`)
         }
 
         params.__id = this.__id;
@@ -223,7 +227,7 @@ prototype.prototype.raw = async function (...args) {
 
         if ( typeof params[name] === 'undefined') {
 
-            throw new Error(`Query: '${query}' error: value for parameter '${name}' is missing on the list of given parameters: ` + JSON.stringify(params));
+            throw this.th(`Query: '${query}' error: value for parameter '${name}' is missing on the list of given parameters: ` + JSON.stringify(params));
         }
 
         const placeholder = semi ? '??' : '?';
@@ -336,7 +340,7 @@ prototype.prototype.find = function (...args) {
 
     if (typeof select !== 'string') {
 
-        throw new Error('second argument of find method should be string');
+        throw this.th('second argument of find method should be string');
     }
 
     let promise = this.queryOne(opt, trx, `SELECT ${select} FROM :table: WHERE :id: = :id`, {
@@ -505,7 +509,7 @@ prototype.prototype.transactify = async function (...args) {
 
     if ( typeof logic !== 'function') {
 
-        throw new Error(`transactify: logic is not a function`);
+        throw this.th(`transactify: logic is not a function`);
     }
 
     if (trx) {
@@ -516,7 +520,60 @@ prototype.prototype.transactify = async function (...args) {
     return await this.knex.transaction(trx => logic(trx));
 }
 
-prototype.a     = a;
+prototype.prototype.fetchColumnsFiltered = async function (...args) {
+
+    let [debug, trx, opt = {}] = a(args);
+
+    let {
+        filter = 'def',
+        format = false,
+    } = opt || {};
+
+    let list = await this.query(debug, trx, `SHOW COLUMNS FROM :table:`);
+
+    if ( typeof format !== 'string' ) {
+
+        throw this.th(`format is not a string`);
+    }
+
+    if ( ! isObject(this.filters) ) {
+
+        throw this.th(`! isObject(${this.__table}.js.filters)`);
+    }
+
+    if ( ! Array.isArray(this.filters.def) ) {
+
+        throw this.th(`! Array.isArray(man.js.filters.def)`);
+    }
+
+    if ( typeof filter !== 'string' ) {
+
+        throw this.th(`filter is not a string`);
+    }
+
+    if ( ! Array.isArray(this.filters[filter]) ) {
+
+        throw this.th(`there is no '${filter}' filter`);
+    }
+
+    const exclude = this.filters[filter];
+
+    list = list.filter(r => !exclude.includes(r.Field));
+
+    switch (format) {
+        case 'object':
+            return list.reduce((acc, {Field, ...rest}) => {
+                acc[Field] = rest;
+                return acc;
+            }, {});
+        case 'list':
+            return list.map(r => r.Field);
+        default:
+            return list;
+    }
+},
+
+  prototype.a     = a;
 
 prototype.Opt   = Opt;
 
