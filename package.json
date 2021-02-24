@@ -6,6 +6,9 @@
   "scripts": {
     "test": "/bin/bash test.sh"
   },
+  "engines": {
+    "node": ">=10"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stopsopa/knex-abstract.git"
