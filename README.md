@@ -533,7 +533,11 @@ make link
 make fixtures
 make manual
 
+# then if you run
+make cc
+# you can go to 
+http://localhost:8080/
+# to test manally
 
 ```
 
-.. and simply visit http://localhost:8080/
