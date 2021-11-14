@@ -17,8 +17,6 @@ set -x
 
 npm link
 
-make ct
-
 yarn
 
 npm link knex-abstract
