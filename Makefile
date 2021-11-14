@@ -33,6 +33,8 @@ nt: # test .npmignore
 
 yarn:
 	/bin/bash bash/swap-files.sh -m travis -- yarn
+	make -s link
+	npm install --global nodemon
 
 up: down
 	/bin/bash docker/docker-compose.sh up
@@ -44,8 +46,8 @@ islinked:
 	@cd dev && /bin/bash islinked.sh
 
 link:
-	npm link
-	npm link knex-abstract
+	/bin/bash bash/swap-files.sh -m travis -- npm link
+	/bin/bash bash/swap-files.sh -m travis -- npm link knex-abstract
 	(cd migrations && rm -rf node_modules && ln -s ../node_modules node_modules)
 
 unlink:

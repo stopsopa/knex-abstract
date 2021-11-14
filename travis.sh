@@ -9,7 +9,7 @@ function green {
 
 if [ ! -f "yarn.lock" ]; then
 
-  { red "\n\n    yarn.lock should exist - travis will install dependencies faster if it does\n\n\   It should also match to package.json (PROD)n\n"; } 2>&3
+  { red "\n\n    yarn.lock should exist - travis will install dependencies faster if it does\n\n   It should also match to package.json (PROD)n\n"; } 2>&3
 fi
 
 set -e

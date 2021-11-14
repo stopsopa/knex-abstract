@@ -526,9 +526,7 @@ cd knex-abstract
 make up
 sleep 10 # give little time for mysql docker to start
 rm -rf yarn.lock
-/bin/bash bash/swap-files.sh -m travis -- yarn
-/bin/bash bash/swap-files.sh -m travis -- make link
-npm install --global nodemon
+make yarn
 make fixtures
 make manual
 
