@@ -1,8 +1,6 @@
 
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-require("@babel/polyfill");
-
 require('dotenv-up')(5, true, 'migration-users');
 
 import debug from '../../CI/debug';

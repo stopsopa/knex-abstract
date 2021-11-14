@@ -47,6 +47,7 @@ islinked:
 link:
 	npm link
 	npm link knex-abstract
+	(cd migrations && rm -rf node_modules && ln -s ../node_modules node_modules)
 
 unlink:
 	@cd dev && /bin/bash unlink.sh
@@ -59,7 +60,7 @@ manual:
 
 fixtures:
 	(cd migrations && node recreate-db.js safe)
-	(cd migrations && make mrun)
+	(cd migrations && make migrate)
 
 diff:
 	(cd migrations && make diff)

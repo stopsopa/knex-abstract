@@ -663,6 +663,6 @@ server.listen( // ... we have to listen on server
     undefined, // io -- this extra parameter
     () => {
 
-        console.log(`\n 🌎  Server is running ${host}:${port}` + "\n")
+        console.log(`\n 🌎  Server is running http://${host}:${port}` + "\n")
     }
 );

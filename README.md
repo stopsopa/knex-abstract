@@ -524,12 +524,11 @@ git clone https://github.com/stopsopa/knex-abstract.git
 cd knex-abstract
 make doc
 sleep 10 # give little time for mysql docker to start
-make ct
+rm -rf yarn.lock
+/bin/bash bash/swap-files.sh -m travis -- yarn
+/bin/bash bash/swap-files.sh -m travis -- make link
 cp .env.dist .env
-cp migrations/ormconfig.js.dist migrations/ormconfig.js
-yarn
 npm install --global nodemon
-make link
 make fixtures
 make manual
 

@@ -7,7 +7,6 @@
     make doc
     sleep 15
     cp .env.dist .env
-    cp migrations/ormconfig.js.dist migrations/ormconfig.js
     yarn
     # for some reason first time it will crash - I don't care for development
     make fixtures 

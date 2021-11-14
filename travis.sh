@@ -25,8 +25,6 @@ npm link knex-abstract
 
 cp .env.travis .env
 
-cp migrations/ormconfig.js.dist migrations/ormconfig.js
-
 make fixtures
 
 EXECUTE="/bin/bash test.sh"
