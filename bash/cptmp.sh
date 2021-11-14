@@ -1,6 +1,6 @@
 
 # call with one argument, script will return value of environment variable from .env under ${1} name variable
-# /bin/bash bash/env.sh ../.env PROTECTED_MYSQL_HOST
+# /bin/bash bash/env.sh ../.env MYSQL_HOST
 
 if [ "${1}" = "--help" ]; then
 

@@ -69,11 +69,11 @@ PB="$(basename "$1")"
 set -e
 set -x
 
-SHOST="$(node "$_DIR/../node/env/getter.js" PROTECTED_MYSQL_HOST --env-file "$PB")"
-SUSER="$(node "$_DIR/../node/env/getter.js" PROTECTED_MYSQL_USER --env-file "$PB")"
-SPORT="$(node "$_DIR/../node/env/getter.js" PROTECTED_MYSQL_PORT --env-file "$PB")"
-SPASS="$(node "$_DIR/../node/env/getter.js" PROTECTED_MYSQL_PASS --env-file "$PB")"
-SDB="$(node "$_DIR/../node/env/getter.js" PROTECTED_MYSQL_DB --env-file "$PB")"
+SHOST="$(node "$_DIR/../node/env/getter.js" MYSQL_HOST --env-file "$PB")"
+SUSER="$(node "$_DIR/../node/env/getter.js" MYSQL_USER --env-file "$PB")"
+SPORT="$(node "$_DIR/../node/env/getter.js" MYSQL_PORT --env-file "$PB")"
+SPASS="$(node "$_DIR/../node/env/getter.js" MYSQL_PASS --env-file "$PB")"
+SDB="$(node "$_DIR/../node/env/getter.js" MYSQL_DB --env-file "$PB")"
 
 set +e
 set +x
@@ -92,7 +92,7 @@ set +x
 
 if [ "$SDB" = "" ]; then
 
-    { red "$0 error: Environment variable PROTECTED_MYSQL_DB is empty or not defined in $1"; } 2>&3
+    { red "$0 error: Environment variable MYSQL_DB is empty or not defined in $1"; } 2>&3
 
     help
 
@@ -104,11 +104,11 @@ PB="$(basename "$2")"
 set -e
 set -x
 
-THOST="$(node "$_DIR/../node/env/getter.js" PROTECTED_MYSQL_HOST --env-file "$PB")"
-TUSER="$(node "$_DIR/../node/env/getter.js" PROTECTED_MYSQL_USER --env-file "$PB")"
-TPORT="$(node "$_DIR/../node/env/getter.js" PROTECTED_MYSQL_PORT --env-file "$PB")"
-TPASS="$(node "$_DIR/../node/env/getter.js" PROTECTED_MYSQL_PASS --env-file "$PB")"
-TDB="$(node "$_DIR/../node/env/getter.js" PROTECTED_MYSQL_DB --env-file "$PB")"
+THOST="$(node "$_DIR/../node/env/getter.js" MYSQL_HOST --env-file "$PB")"
+TUSER="$(node "$_DIR/../node/env/getter.js" MYSQL_USER --env-file "$PB")"
+TPORT="$(node "$_DIR/../node/env/getter.js" MYSQL_PORT --env-file "$PB")"
+TPASS="$(node "$_DIR/../node/env/getter.js" MYSQL_PASS --env-file "$PB")"
+TDB="$(node "$_DIR/../node/env/getter.js" MYSQL_DB --env-file "$PB")"
 
 set +e
 set +x
@@ -127,7 +127,7 @@ set +x
 
 if [ "$TDB" = "" ]; then
 
-    { red "$0 error: Environment variable PROTECTED_MYSQL_DB is empty or not defined in $2"; } 2>&3
+    { red "$0 error: Environment variable MYSQL_DB is empty or not defined in $2"; } 2>&3
 
     help
 

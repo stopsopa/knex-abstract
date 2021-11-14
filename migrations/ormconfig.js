@@ -11,38 +11,38 @@ if (!fs.existsSync(env)) {
 
 require('dotenv').config({path: env})
 
-if (typeof process.env.PROTECTED_MYSQL_HOST === 'undefined') {
+if (typeof process.env.MYSQL_HOST === 'undefined') {
 
-  throw new Error(`PROTECTED_MYSQL_HOST in undefined`);
+  throw new Error(`MYSQL_HOST in undefined`);
 }
 
-if (typeof process.env.PROTECTED_MYSQL_PORT === 'undefined') {
+if (typeof process.env.MYSQL_PORT === 'undefined') {
 
-  throw new Error(`PROTECTED_MYSQL_PORT in undefined`);
+  throw new Error(`MYSQL_PORT in undefined`);
 }
 
-if (typeof process.env.PROTECTED_MYSQL_USER === 'undefined') {
+if (typeof process.env.MYSQL_USER === 'undefined') {
 
-  throw new Error(`PROTECTED_MYSQL_USER in undefined`);
+  throw new Error(`MYSQL_USER in undefined`);
 }
 
-if (typeof process.env.PROTECTED_MYSQL_PASS === 'undefined') {
+if (typeof process.env.MYSQL_PASS === 'undefined') {
 
-  throw new Error(`PROTECTED_MYSQL_PASS in undefined`);
+  throw new Error(`MYSQL_PASS in undefined`);
 }
 
-if (typeof process.env.PROTECTED_MYSQL_DB === 'undefined') {
+if (typeof process.env.MYSQL_DB === 'undefined') {
 
-  throw new Error(`PROTECTED_MYSQL_DB in undefined`);
+  throw new Error(`MYSQL_DB in undefined`);
 }
 
 const config = {
   "type": "mysql",
-  "host": process.env.PROTECTED_MYSQL_HOST,
-  "port": process.env.PROTECTED_MYSQL_PORT,
-  "username": process.env.PROTECTED_MYSQL_USER,
-  "password": process.env.PROTECTED_MYSQL_PASS,
-  "database": process.env.PROTECTED_MYSQL_DB,
+  "host": process.env.MYSQL_HOST,
+  "port": process.env.MYSQL_PORT,
+  "username": process.env.MYSQL_USER,
+  "password": process.env.MYSQL_PASS,
+  "database": process.env.MYSQL_DB,
   "synchronize": false,
   "logging": false,
   "exclude": [

@@ -34,12 +34,11 @@ nt: # test .npmignore
 yarn:
 	/bin/bash bash/swap-files.sh -m travis -- yarn
 
-doc: docs
-	(cd docker && docker-compose build)
-	(cd docker && docker-compose up -d --build)
+up: down
+	/bin/bash docker/docker-compose.sh up
 
-docs:
-	cd docker && docker-compose stop
+down:
+	/bin/bash docker/docker-compose.sh down
 
 islinked:
 	@cd dev && /bin/bash islinked.sh

@@ -1,5 +1,5 @@
 
-// node bash/node/env/getter.js PROTECTED_MYSQL_PASS
+// node bash/node/env/getter.js MYSQL_PASS
 
 
 const args = (function (obj, tmp) {

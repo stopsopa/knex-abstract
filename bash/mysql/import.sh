@@ -47,11 +47,11 @@ fi
 set -e
 set -x
 
-HOST="$(node "${_DIR}/../node/env/getter.js" PROTECTED_MYSQL_HOST --env-file "${FILE}")"
-USER="$(node "${_DIR}/../node/env/getter.js" PROTECTED_MYSQL_USER --env-file "${FILE}")"
-PORT="$(node "${_DIR}/../node/env/getter.js" PROTECTED_MYSQL_PORT --env-file "${FILE}")"
-PASS="$(node "${_DIR}/../node/env/getter.js" PROTECTED_MYSQL_PASS --env-file "${FILE}")"
-DB="$(node "${_DIR}/../node/env/getter.js" PROTECTED_MYSQL_DB --env-file "${FILE}")"
+HOST="$(node "${_DIR}/../node/env/getter.js" MYSQL_HOST --env-file "${FILE}")"
+USER="$(node "${_DIR}/../node/env/getter.js" MYSQL_USER --env-file "${FILE}")"
+PORT="$(node "${_DIR}/../node/env/getter.js" MYSQL_PORT --env-file "${FILE}")"
+PASS="$(node "${_DIR}/../node/env/getter.js" MYSQL_PASS --env-file "${FILE}")"
+DB="$(node "${_DIR}/../node/env/getter.js" MYSQL_DB --env-file "${FILE}")"
 
 PASS="$(echo "${PASS}" | sed -E 's# #\\ #g')"
 

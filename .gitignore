@@ -5,7 +5,6 @@ yarn-error*
 /coverage/
 /stopsopa-validator*
 *.tgz
-.env
 /testinstall/
 yarn.lock
 package-lock.json

@@ -1,7 +1,8 @@
-[![Build Status](https://travis-ci.org/stopsopa/knex-abstract.svg?branch=v0.0.117)](https://travis-ci.org/stopsopa/knex-abstract)
-[![npm version](https://badge.fury.io/js/knex-abstract.svg)](https://badge.fury.io/js/knex-abstract)
-[![codecov](https://codecov.io/gh/stopsopa/knex-abstract/branch/v0.0.117/graph/badge.svg)](https://codecov.io/gh/stopsopa/knex-abstract/tree/v0.0.117)
-[![NpmLicense](https://img.shields.io/npm/l/knex-abstract.svg)](https://github.com/knex-abstract/blob/master/LICENSE)
+[![Build Status](https://app.travis-ci.com/stopsopa/knex-abstract.svg?branch=v0.0.117)](https://app.travis-ci.com/stopsopa/knex-abstract)
+[![npm version](https://badge.fury.io/js/nlab.svg)](https://badge.fury.io/js/nlab)
+[![codecov](https://codecov.io/gh/stopsopa/knex-abstract/branch/v0.0.117/graph/badge.svg?token=guaYpL4vYL)](https://codecov.io/gh/stopsopa/knex-abstract/tree/v0.0.117)
+[![NpmLicense](https://img.shields.io/npm/l/nlab.svg)](https://github.com/stopsopa/knex-abstract/blob/master/LICENSE)
+
 
 
 [![knex-abstract youtube demo - nested set example](yt.png)](https://youtu.be/d8k98noOR5c)
@@ -522,12 +523,11 @@ knex.init({
 
 git clone https://github.com/stopsopa/knex-abstract.git 
 cd knex-abstract
-make doc
+make up
 sleep 10 # give little time for mysql docker to start
 rm -rf yarn.lock
 /bin/bash bash/swap-files.sh -m travis -- yarn
 /bin/bash bash/swap-files.sh -m travis -- make link
-cp .env.dist .env
 npm install --global nodemon
 make fixtures
 make manual

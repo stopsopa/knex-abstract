@@ -259,7 +259,7 @@ it('knex - mysql, log.dump but in array params case', async done => {
 
     let tmp = list.map(x => Object.values(x)[0]);
 
-    const db = process.env.PROTECTED_MYSQL_DB;
+    const db = process.env.MYSQL_DB;
 
     if (db) {
 

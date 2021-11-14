@@ -525,11 +525,11 @@ module.exports = topt => {
                  * Require config like:
                  *
                     connection: {
-                        host                : process.env.PROTECTED_MYSQL_HOST,
-                        port                : process.env.PROTECTED_MYSQL_PORT,
-                        user                : process.env.PROTECTED_MYSQL_USER,
-                        password            : process.env.PROTECTED_MYSQL_PASS,
-                        database            : process.env.PROTECTED_MYSQL_DB,
+                        host                : process.env.MYSQL_HOST,
+                        port                : process.env.MYSQL_PORT,
+                        user                : process.env.MYSQL_USER,
+                        password            : process.env.MYSQL_PASS,
+                        database            : process.env.MYSQL_DB,
                         multipleStatements  : true,
                     },
                  */
@@ -1064,11 +1064,11 @@ where             (
                  * Require config like:
                  *
                  connection: {
-                        host        : process.env.PROTECTED_MYSQL_HOST,
-                        port        : process.env.PROTECTED_MYSQL_PORT,
-                        user        : process.env.PROTECTED_MYSQL_USER,
-                        password    : process.env.PROTECTED_MYSQL_PASS,
-                        database    : process.env.PROTECTED_MYSQL_DB,
+                        host        : process.env.MYSQL_HOST,
+                        port        : process.env.MYSQL_PORT,
+                        user        : process.env.MYSQL_USER,
+                        password    : process.env.MYSQL_PASS,
+                        database    : process.env.MYSQL_DB,
                         multipleStatements: true,
                     },
                  */

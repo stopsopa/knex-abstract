@@ -1,6 +1,6 @@
 
 # call with one argument, script will return value of environment variable from .env under ${1} name variable
-# /bin/bash bash/env.sh ../.env PROTECTED_MYSQL_HOST
+# /bin/bash bash/env.sh ../.env MYSQL_HOST
 
 _SHELL="$(ps "${$}" | grep "${$} " | grep -v grep | sed -rn "s/.*[-\/]+(bash|z?sh) .*/\1/p")"; # bash || sh || zsh
 case ${_SHELL} in

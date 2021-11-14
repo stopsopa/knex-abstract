@@ -1,14 +1,33 @@
-version: '3.1'
-
+version: '3.5'
 services:
     mysql:
-        image: mysql/mysql-server:5.7
-        ports:
-            - "1060:3306"
-        environment:
-            - MYSQL_ROOT_PASSWORD=docker_super_secret_passwd
-            - MYSQL_ROOT_HOST=%
-        #networks:
-        #    - code-network
-        volumes:
-            - ./mysql:/var/lib/mysql
+      image: mysql/mysql-server:8.0.27
+      container_name: ${PROJECT_NAME}_mysql
+      ports:
+        - "${MYSQL_PORT}:3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: ${MYSQL_PASS}
+        MYSQL_ROOT_HOST: "%"
+      volumes:
+        - ${MYSQL_DOCKER_DIR:-./mysql_db}/${PROJECT_NAME}:/var/lib/mysql
+      networks:
+        - network-${PROJECT_NAME}
+
+    phpmyadmin:
+      depends_on:
+        - mysql
+      image: phpmyadmin/phpmyadmin:5.1.1
+      container_name: ${PROJECT_NAME}_pma
+      ports:
+        - '${PHPMYADMIN_PORT}:80'
+      environment:
+        PMA_HOST: mysql
+        PMA_USER: root
+        PMA_PASSWORD: ${MYSQL_PASS}
+      networks:
+        - network-${PROJECT_NAME}
+
+networks:
+  network-${PROJECT_NAME}:
+    name: network-${PROJECT_NAME}
+
