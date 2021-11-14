@@ -15,11 +15,7 @@ fi
 set -e
 set -x
 
-npm link
-
-yarn
-
-npm link knex-abstract
+make yarn
 
 cp .env.travis .env
 
