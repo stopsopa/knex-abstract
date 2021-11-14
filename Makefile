@@ -31,11 +31,8 @@ cc: # run local server to general testing
 nt: # test .npmignore
 	@npm pack
 
-ct: # travis parameters.json
-	@/bin/bash update.sh --dev
-
-cp: # jest parameters.json
-	@/bin/bash update.sh --prod
+yarn:
+	/bin/bash bash/swap-files.sh -m travis -- yarn
 
 doc: docs
 	(cd docker && docker-compose build)

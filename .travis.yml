@@ -40,7 +40,7 @@ before_script:
   - tree src || true
 
 script:
-  - /bin/bash travis.sh
+  - /bin/bash bash/swap-files.sh -m travis -- /bin/bash travis.sh
 
 #after_success:
 #  - cat ./coverage/lcov.info | node node_modules/coveralls/bin/coveralls.js
