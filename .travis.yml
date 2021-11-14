@@ -6,12 +6,6 @@ services:
 
 matrix:
   include:
-    - node_js: '10'
-      env: MODE=jest
-      dist: trusty
-    - node_js: '11'
-      env: MODE=jest
-      dist: trusty
     - node_js: '12'
       env: MODE=jest
       dist: trusty
@@ -19,6 +13,12 @@ matrix:
       env: MODE=jest
       dist: trusty
     - node_js: '14'
+      env: MODE=jest
+      dist: trusty
+    - node_js: '15'
+      env: MODE=jest
+      dist: trusty
+    - node_js: '16'
       env: MODE=jest
       dist: trusty
 
