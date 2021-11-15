@@ -36,9 +36,7 @@ function green {
             set -e
             set -x
 
-            yarn
-
-            npm link
+            make yarn
 
             if [[ "$(knex-abstract --is-linked)" != "$LOCVER" ]]; then
 
