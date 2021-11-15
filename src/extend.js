@@ -1,26 +1,22 @@
-
 module.exports = function extend(knex, prototype, more = {}, ...rest) {
+  if (typeof prototype !== 'function') {
+    throw new Error(`extend: prototype is not a function, it is: ` + typeof prototype);
+  }
 
-    if (typeof prototype !== 'function') {
+  function cache() {
+    prototype.apply(this, arguments);
+  }
 
-        throw new Error(`extend: prototype is not a function, it is: ` + (typeof prototype));
-    }
+  cache.prototype = Object.create(prototype.prototype);
 
-    function cache() {
+  cache.prototype.constructor = cache;
 
-        prototype.apply(this, arguments);
-    }
+  Object.assign(cache.prototype, more);
 
-    cache.prototype = Object.create(prototype.prototype);
+  cache.prototype.props = Object.keys(cache.prototype).reduce((acc, key) => {
+    acc[key] = typeof cache.prototype[key];
+    return acc;
+  }, {});
 
-    cache.prototype.constructor = cache;
-
-    Object.assign(cache.prototype, more);
-
-    cache.prototype.props = Object.keys(cache.prototype).reduce((acc, key) => {
-        acc[key] = typeof cache.prototype[key];
-        return acc;
-    }, {});
-
-    return new cache(knex, ...rest);
-}
+  return new cache(knex, ...rest);
+};

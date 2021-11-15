@@ -1,26 +1,27 @@
 'use strict';
 
-const log               = require('inspc');
+const log = require('inspc');
 
-const knex              = require('knex-abstract');
+const knex = require('knex-abstract');
 
 require('dotenv-up')(5, false, 'tests');
 
-const config            = require('../../../../models/config');
+const config = require('../../../../models/config');
 
-it('knex - init twice', async done => {
+it('knex - init twice', (done) => {
+  (async function () {
+    const first = knex.init(config);
 
-    const first     = knex.init(config);
-
-    const second    = knex.init(config);
+    const second = knex.init(config);
 
     expect({
-        first,
-        second,
+      first,
+      second,
     }).toEqual({
-        first: 0,
-        second: "knex-abstract: Connections are already initialized, no need to call init() again",
+      first: 0,
+      second: 'knex-abstract: Connections are already initialized, no need to call init() again',
     });
 
     done();
+  })();
 });

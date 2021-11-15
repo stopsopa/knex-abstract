@@ -1,26 +1,25 @@
 'use strict';
 
-const log               = require('inspc');
+const log = require('inspc');
 
-const knex              = require('knex-abstract');
+const knex = require('knex-abstract');
 
 require('dotenv-up')(5, false, 'tests');
 
-const config            = require('../../../../models/config');
+const config = require('../../../../models/config');
 
 delete config.def;
 
-it('knex - no def', async done => {
-
+it('knex - no def', (done) => {
+  (async function () {
     try {
+      knex.init(config);
+    } catch (e) {
+      expect(String(e)).toEqual(
+        "Error: knex-abstract: Not 'def' connection specified: 'config.js' for knex key 'knex.def'"
+      );
 
-        knex.init(config);
+      done();
     }
-    catch (e) {
-
-        expect(String(e)).toEqual("Error: knex-abstract: Not 'def' connection specified: 'config.js' for knex key 'knex.def'");
-
-        done();
-    }
-
+  })();
 });

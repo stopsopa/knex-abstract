@@ -1,14 +1,14 @@
 'use strict';
 
-const log               = require('inspc');
+const log = require('inspc');
 
-const knex              = require('knex-abstract');
+const knex = require('knex-abstract');
 
-const { Opt }           = knex;
+const {Opt} = knex;
 
 require('dotenv-up')(4, false, 'tests');
 
-const config            = require('../../../models/config');
+const config = require('../../../models/config');
 
 knex.init(config);
 
@@ -19,167 +19,162 @@ let manc;
 let manm;
 
 beforeAll(async () => {
+  manc = knex().model.common;
 
-    manc    = knex().model.common;
+  man = knex().model.users;
 
-    man     = knex().model.users;
+  manm = knex().model.many;
 
-    manm    = knex().model.many;
-
-    await clear();
+  await clear();
 });
 
 const firstName = 'mysql-opt-test';
 
 afterAll(async () => {
+  await clear();
 
-    await clear();
-
-    await man.destroy();
+  await man.destroy();
 });
 
 const clear = async () => {
+  await manc.raw({}, `truncate many`);
 
-    await manc.raw(`truncate many`);
-
-    await man.query(`delete from :table: where firstName = :firstName`, {
-        firstName,
-    });
+  await man.query({}, `delete from :table: where firstName = :firstName`, {
+    firstName,
+  });
 };
 
 beforeEach(clear);
 
-it(`knex - mysql - opt`, async done => {
+it(`knex - mysql - opt`, (done) => {
+  (async function () {
+    await man.transactify(async (trx) => {
+      const opt = {
+        test1: firstName,
+        trx,
+      };
 
-    await man.transactify(async trx => {
+      const id = await man.insert(opt, {
+        firstName,
+        lastName: 'a',
+        password: 'p',
+        email: 'e',
+      });
 
-        const opt = Opt({
-            test1: firstName,
-        });
+      const entity = await man.find(opt, id);
 
-        const id = await man.insert(trx, opt, {
-            firstName,
-            lastName: 'a',
-            password: 'p',
-            email: 'e',
-        });
+      expect(entity).toEqual({
+        config: null,
+        email: 'e',
+        enabled: 0,
+        extraFromDb: true,
+        firstName,
+        lastName: 'test1-lastName',
+        password: 'p',
+      });
 
-        const entity = await man.find(opt, trx, id);
+      const count = await man.queryColumn(opt, 'select count(id) c from :table: where firstName = :firstName', {
+        firstName,
+      });
 
-        expect(entity).toEqual({
-            "config": null,
-            "email": "e",
-            "enabled": 0,
-            "extraFromDb": true,
-            firstName,
-            "lastName": "test1-lastName",
-            "password": "p"
-        });
-
-        const count = await man.queryColumn(opt, trx, 'select count(id) c from :table: where firstName = :firstName', {
-            firstName,
-        });
-
-        expect(count).toEqual(2);
+      expect(count).toEqual(2);
     });
 
     done();
+  })();
 });
 
-it(`knex - mysql - opt - beyond`, async done => {
+it(`knex - mysql - opt - beyond`, (done) => {
+  (async function () {
+    await man.transactify(async (trx) => {
+      const opt = {
+        test1: firstName,
+        trx,
+      };
 
-    await man.transactify(async trx => {
+      const id = await man.insert(opt, {
+        firstName,
+        lastName: 'a',
+        password: 'p',
+        email: 'e',
+      });
 
-        const opt = Opt({
-            test1: firstName,
-        });
+      const entity = await man.find(opt, id);
 
-        const id = await man.insert(trx, opt, {
-            firstName,
-            lastName: 'a',
-            password: 'p',
-            email: 'e',
-        });
+      expect(entity).toEqual({
+        config: null,
+        email: 'e',
+        enabled: 0,
+        extraFromDb: true,
+        firstName,
+        lastName: 'test1-lastName',
+        password: 'p',
+      });
 
-        const entity = await man.find(opt, trx, id);
+      const count = await man.queryColumn(opt, 'select count(id) c from :table: where firstName = :firstName', {
+        firstName,
+      });
 
-        expect(entity).toEqual({
-            "config": null,
-            "email": "e",
-            "enabled": 0,
-            "extraFromDb": true,
-            firstName,
-            "lastName": "test1-lastName",
-            "password": "p"
-        });
-
-        const count = await man.queryColumn(opt, trx, 'select count(id) c from :table: where firstName = :firstName', {
-            firstName,
-        });
-
-        expect(count).toEqual(2);
+      expect(count).toEqual(2);
     });
 
     // and now beyond transaction
-    const count = await man.queryColumn('select count(id) c from :table: where firstName = :firstName', {
-        firstName,
+    const count = await man.queryColumn({}, 'select count(id) c from :table: where firstName = :firstName', {
+      firstName,
     });
 
     expect(count).toEqual(2);
 
     done();
+  })();
 });
 
-it(`knex - mysql - opt - beyond with trans error`, async done => {
-
+it(`knex - mysql - opt - beyond with trans error`, (done) => {
+  (async function () {
     try {
+      await man.transactify(async (trx) => {
+        const opt = {
+          test1: firstName,
+          trx,
+        };
 
-        await man.transactify(async trx => {
-
-            const opt = Opt({
-                test1: firstName,
-            });
-
-            const id = await man.insert(trx, opt, {
-                firstName,
-                lastName: 'a',
-                password: 'p',
-                email: 'e',
-            });
-
-            const entity = await man.find(opt, trx, id);
-
-            expect(entity).toEqual({
-                "config": null,
-                "email": "e",
-                "enabled": 0,
-                "extraFromDb": true,
-                firstName,
-                "lastName": "test1-lastName",
-                "password": "p"
-            });
-
-            const count = await man.queryColumn(opt, trx, 'select count(id) c from :table: where firstName = :firstName', {
-                firstName,
-            });
-
-            expect(count).toEqual(2);
-
-            await man.query(trx, `select * from non_existing_table`);
+        const id = await man.insert(opt, {
+          firstName,
+          lastName: 'a',
+          password: 'p',
+          email: 'e',
         });
-    }
-    catch (e) {
 
-    }
+        const entity = await man.find(opt, id);
+
+        expect(entity).toEqual({
+          config: null,
+          email: 'e',
+          enabled: 0,
+          extraFromDb: true,
+          firstName,
+          lastName: 'test1-lastName',
+          password: 'p',
+        });
+
+        const count = await man.queryColumn(opt, 'select count(id) c from :table: where firstName = :firstName', {
+          firstName,
+        });
+
+        expect(count).toEqual(2);
+
+        await man.query({trx}, `select * from non_existing_table`);
+      });
+    } catch (e) {}
 
     // and now beyond transaction
-    const count = await man.queryColumn('select count(id) c from :table: where firstName = :firstName', {
-        firstName,
+    const count = await man.queryColumn({}, 'select count(id) c from :table: where firstName = :firstName', {
+      firstName,
     });
 
     // even rows create in fromDb have been removed
     expect(count).toEqual(0);
 
     done();
+  })();
 });
-

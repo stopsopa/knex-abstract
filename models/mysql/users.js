@@ -1,254 +1,186 @@
+const abstract = require('knex-abstract');
 
-const path              = require('path');
+const extend = abstract.extend;
 
-const abstract          = require('knex-abstract');
+const prototype = abstract.prototype_common;
 
-const extend            = abstract.extend;
+const log = require('inspc');
 
-const prototype         = abstract.prototype;
+const isObject = require('nlab/isObject');
 
-const log               = require('inspc');
-
-const a                 = prototype.a;
-
-const isObject          = require('nlab/isObject');
-
-module.exports = knex => extend(knex, prototype, {
-    initial: async function () {
-
-        const id = await this.raw(`
+module.exports = (knex) =>
+  extend(
+    knex,
+    prototype,
+    {
+      initial: async function () {
+        const id = await this.raw(
+          `
 select r.id from roles r where r.name = ?
-`, ['user']).then(role => {
-            try {
-                return role[0][0].id;
-            }
-            catch (e) {
-
-            }
+`,
+          ['user']
+        ).then((role) => {
+          try {
+            return role[0][0].id;
+          } catch (e) {}
         });
 
         const roles = [];
 
         if (id) {
-
-            roles.push(id);
+          roles.push(id);
         }
 
         return {
-            firstName   : '',
-            lastName    : '',
-            email       : '',
-            password    : '',
-            enabled     : false,
-            roles,
-        }
-    },
-    fromDb: async function (row, opt, trx) {
+          firstName: '',
+          lastName: '',
+          email: '',
+          password: '',
+          enabled: false,
+          roles,
+        };
+      },
+      fromDb: async function (opt, rows) {
+        const tmp = [];
 
-        if ( ! isObject(row) ) {
+        let i = -1;
+        for (const row of rows) {
+          i += 1;
 
-            return row;
-        }
-
-        if (opt.test1) {
-
+          if (opt.test1) {
             delete row.created;
 
             delete row.updated;
 
             delete row.id;
 
-            if ( ! opt.created ) {
-
-                opt.created = true,
-
-                await abstract().model.users.insert(trx, {
+            if (!opt.created) {
+              (opt.created = true),
+                await abstract().model.users.insert(
+                  {
+                    trx: opt.trx,
+                  },
+                  {
                     firstName: opt.test1,
                     lastName: 'test',
                     password: 'psw',
                     email: 'emailfdsafds',
-                })
+                  }
+                );
             }
-
 
             row.extraFromDb = true;
 
-            return row;
-        }
+            tmp.push(row);
 
-        if (typeof row.roles === 'string') {
+            return tmp;
+          }
 
-            row.roles = row.roles.split(',').map(r => /^\d+$/.test(r) ? parseInt(r, 10) : r);
-        }
+          if (typeof row.roles === 'string') {
+            row.roles = row.roles.split(',').map((r) => (/^\d+$/.test(r) ? parseInt(r, 10) : r));
+          }
 
-        if ( ! Array.isArray(row.roles) ) {
-
+          if (!Array.isArray(row.roles)) {
             row.roles = [];
-        }
+          }
 
-        if (typeof row.enabled !== 'undefined') {
-
+          if (typeof row.enabled !== 'undefined') {
             row.enabled = !!row.enabled;
-        }
+          }
 
-        if (typeof row.config === 'string') {
-
+          if (typeof row.config === 'string') {
             try {
-
-                row.config = JSON.parse(row.config);
+              row.config = JSON.parse(row.config);
+            } catch (e) {
+              row.config = {};
             }
-            catch (e) {
+          }
 
-                row.config = {};
-            }
+          tmp.push(row);
         }
 
-        return row;
-    },
-    toDb: async function (row, opt, trx) {
-
-        if ( ! isObject(row) ) {
-
-            return row;
+        return tmp;
+      },
+      toDb: async function (opt, row) {
+        if (!isObject(row)) {
+          return row;
         }
 
         if (opt.test1) {
-
-            row.lastName = 'test1-lastName';
+          row.lastName = 'test1-lastName';
         }
 
         if (typeof row.roles !== 'undefined') {
-
-            delete row.roles;
+          delete row.roles;
         }
 
         if (typeof row.created !== 'undefined') {
-
-            delete row.created;
+          delete row.created;
         }
 
         if (typeof row.updated !== 'undefined') {
-
-            delete row.updated;
+          delete row.updated;
         }
 
         if (!row.config) {
-
-            delete row.config;
+          delete row.config;
         }
 
         if (typeof row.config !== 'undefined' && typeof row.config !== 'string') {
-
-            row.config = JSON.stringify(row.config, null, 4);
+          row.config = JSON.stringify(row.config, null, 4);
         }
 
         return row;
-    },
-    update: function (...args) {
-
-        let [debug, trx, entity, id] = a(args);
-
+      },
+      update: function (opt, entity, id) {
         if (Array.isArray(entity.roles)) {
-
-            this.updateRoles(id, entity.roles)
+          this.updateRoles(opt, id, entity.roles);
         }
 
-        return prototype.prototype.update.call(this, debug, trx, entity, id);
-    },
-    insert: async function (...args) {
-
-        let [opt, trx, entity] = a(args);
-
+        return prototype.prototype.update.call(this, opt, entity, id);
+      },
+      insert: async function (opt, entity) {
         let roles = null;
 
         if (Array.isArray(entity.roles)) {
-
-            roles = entity.roles;
+          roles = entity.roles;
         }
 
-        entity = await this.toDb(Object.assign({}, entity), opt, trx);
+        entity = await this.toDb(opt, Object.assign({}, entity));
 
-        const id = await prototype.prototype.insert.call(this, opt, trx, entity);
+        const id = await prototype.prototype.insert.call(this, opt, entity);
 
         if (roles) {
-
-            await this.updateRoles(id, roles);
+          await this.updateRoles(opt, id, roles);
         }
 
         return id;
-    },
-    delete: async function (id, ...args) {
-
+      },
+      delete: async function (id, ...args) {
         await this.clearRoles(id);
 
         return await prototype.prototype.delete.call(this, id, ...args);
-    },
-    updateRoles: async function (userId, rolesIds) {
-
+      },
+      updateRoles: async function (opt, userId, rolesIds) {
         await this.clearRoles(userId);
 
         if (Array.isArray(rolesIds)) {
-
-            return await Promise.all(rolesIds.map(async role_id => {
-                return await knex.model.user_role.insert({
-                    user_id: userId,
-                    role_id,
-                })
-            }));
+          return await Promise.all(
+            rolesIds.map(async (role_id) => {
+              return await knex.model.user_role.insert(opt, {
+                user_id: userId,
+                role_id,
+              });
+            })
+          );
         }
-    },
-    clearRoles: async function(userId) {
-        return await this.query(`delete from user_role where user_id = :id`, userId);
-    },
-//     find: function (...args) {
-//
-//         let [opt, trx, id] = a(args);
-//
-//         if ( ! id ) {
-//
-//             throw `user.js::find(): id not specified or invalid`;
-//         }
-//
-//         const data = this.raw(opt, trx, `
-// SELECT          u.*, GROUP_CONCAT(r.id) roles
-// FROM            users u
-// LEFT JOIN       user_role ur
-// 		     ON ur.user_id = u.id
-// LEFT JOIN       roles r
-// 		     ON ur.role_id = r.id
-// WHERE           u.id = ?
-// GROUP BY        u.id
-// ORDER BY        id desc
-//         `, [id]).then(data => {
-//             return data[0][0];
-//         }).then(d => this.fromDb(d, opt, trx));
-//
-//         return data;
-//     },
-//     findAll: function (...args) {
-//
-//         let [opt, trx] = a(args);
-//
-//         const data = this.raw(opt, trx, `
-// SELECT          u.*, GROUP_CONCAT(r.name) roles
-// FROM            users u
-// LEFT JOIN       user_role ur
-// 		     ON ur.user_id = u.id
-// LEFT JOIN       roles r
-// 		     ON ur.role_id = r.id
-// GROUP BY        u.id
-// ORDER BY        id desc
-//         `).then(data => {
-//             return data[0];
-//         }).then(list => list.map(d => this.fromDb(d, opt, trx)));
-//
-//         return data;
-//     },
-    prepareToValidate: function (data = {}, mode) {
-
+      },
+      clearRoles: async function (opt, userId) {
+        return await this.query(opt, `delete from user_role where user_id = :id`, userId);
+      },
+      prepareToValidate: function (data = {}, mode) {
         if (typeof data.id !== 'undefined') {
-
-            delete data.id;
+          delete data.id;
         }
 
         delete data.created;
@@ -256,18 +188,19 @@ select r.id from roles r where r.name = ?
         delete data.updated;
 
         if (mode === 'create') {
-
-//            if (empty($data['shortname']) && !empty($data['name'])) {
-//
-//                $data['shortname'] = Urlizer::urlizeTrim($data['name']);
-//            }
+          //            if (empty($data['shortname']) && !empty($data['name'])) {
+          //
+          //                $data['shortname'] = Urlizer::urlizeTrim($data['name']);
+          //            }
         }
 
         if (data.config === null) {
-
-            delete data.config;
+          delete data.config;
         }
 
         return data;
+      },
     },
-}, 'users', 'id');
+    'users',
+    'id'
+  );

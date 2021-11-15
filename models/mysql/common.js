@@ -1,12 +1,7 @@
+const abstract = require('knex-abstract');
 
-const abstract          = require('knex-abstract');
+const extend = abstract.extend;
 
-const extend            = abstract.extend;
+const prototype = abstract.prototype_common;
 
-const prototype         = abstract.prototype;
-
-// const a             = prototype.a;
-
-module.exports = knex => extend(knex, prototype, {
-
-});
+module.exports = (knex) => extend(knex, prototype, {});

@@ -1,12 +1,12 @@
 'use strict';
 
-const log               = require('inspc');
+const log = require('inspc');
 
-const knex              = require('knex-abstract');
+const knex = require('knex-abstract');
 
 require('dotenv-up')(4, false, 'tests');
 
-const config            = require('../../../models/config');
+const config = require('../../../models/config');
 
 knex.init(config);
 
@@ -19,105 +19,101 @@ let manm;
 let connection;
 
 beforeAll(async () => {
+  connection = knex();
 
-    connection = knex();
+  manc = connection.model.common;
 
-    manc    = connection.model.common;
+  man = connection.model.users;
 
-    man     = connection.model.users;
+  manm = connection.model.many;
 
-    manm    = connection.model.many;
-
-    await clear();
+  await clear();
 });
 
 afterAll(async () => {
+  await clear();
 
-    await clear();
-
-    await man.destroy();
+  await man.destroy();
 });
 
 const clear = async () => {
-
-    await manc.raw(`truncate many`);
+  await manc.raw({}, `truncate many`);
 };
 
 beforeEach(clear);
 
-it(`knex - no transactify`, async done => {
-
-    const id = await manm.transactifytest('title1');
+it(`knex - no transactify`, (done) => {
+  (async function () {
+    const id = await manm.transactifytest({}, 'title1');
 
     expect(id).toEqual(1);
 
-    const list = await manm.findAll();
+    const list = await manm.findAll({});
 
     expect(list).toEqual([
-        {
-            title: 'title1',
-            id: 1,
-            user_id: null,
-        },
-        {
-            title: 'title1_l1',
-            id: 2,
-            user_id: null,
-        },
-        {
-            title: 'title1_l1_l2',
-            id: 3,
-            user_id: null,
-        },
+      {
+        title: 'title1',
+        id: 1,
+        user_id: null,
+      },
+      {
+        title: 'title1_l1',
+        id: 2,
+        user_id: null,
+      },
+      {
+        title: 'title1_l1_l2',
+        id: 3,
+        user_id: null,
+      },
     ]);
 
     done();
+  })();
 });
 
-it(`knex - no transactify`, async done => {
-
+it(`knex - no transactify`, (done) => {
+  (async function () {
     let id;
 
-    await connection.transaction(async trx => {
-
-        id = await manm.transactifytest(trx, 'title1');
+    await connection.transaction(async (trx) => {
+      id = await manm.transactifytest({trx}, 'title1');
     });
 
     expect(id).toEqual(1);
 
-    const list = await manm.findAll();
+    const list = await manm.findAll({});
 
     expect(list).toEqual([
-        {
-            title: 'title1',
-            id: 1,
-            user_id: null,
-        },
-        {
-            title: 'title1_l1',
-            id: 2,
-            user_id: null,
-        },
-        {
-            title: 'title1_l1_l2',
-            id: 3,
-            user_id: null,
-        },
+      {
+        title: 'title1',
+        id: 1,
+        user_id: null,
+      },
+      {
+        title: 'title1_l1',
+        id: 2,
+        user_id: null,
+      },
+      {
+        title: 'title1_l1_l2',
+        id: 3,
+        user_id: null,
+      },
     ]);
 
     done();
+  })();
 });
 
-it(`knex - transactify - no function given`, async done => {
-
+it(`knex - transactify - no function given`, (done) => {
+  (async function () {
     try {
+      await manm.transactify({}, 'test');
+    } catch (e) {
+      expect(String(e)).toEqual('Error: many.js error: transactify: logic is not a function');
 
-        await manm.transactify(false, 'test');
+      done();
     }
-    catch (e) {
-
-        expect(String(e)).toEqual("Error: many.js error: transactify: logic is not a function");
-
-        done();
-    }
+  })();
 });

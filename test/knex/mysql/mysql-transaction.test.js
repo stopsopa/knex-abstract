@@ -1,12 +1,12 @@
 'use strict';
 
-const log               = require('inspc');
+const log = require('inspc');
 
-const knex              = require('knex-abstract');
+const knex = require('knex-abstract');
 
 require('dotenv-up')(4, false, 'tests');
 
-const config            = require('../../../models/config');
+const config = require('../../../models/config');
 
 knex.init(config);
 
@@ -19,95 +19,103 @@ let manm;
 let connection;
 
 beforeAll(async () => {
+  connection = knex();
 
-    connection = knex();
+  manc = connection.model.common;
 
-    manc    = connection.model.common;
+  man = connection.model.users;
 
-    man     = connection.model.users;
+  manm = connection.model.many;
 
-    manm    = connection.model.many;
-
-    await clear();
+  await clear();
 });
 
 afterAll(async () => {
+  await clear();
 
-    await clear();
-
-    await man.destroy();
+  await man.destroy();
 });
 
 const clear = async () => {
+  await manc.raw({}, `truncate many`);
 
-    await manc.raw(`truncate many`);
-
-    await man.raw(`delete from :table: where password like 'trans%'`);
+  await man.raw({}, `delete from :table: where password like 'trans%'`);
 };
 
 beforeEach(clear);
 
 afterEach(clear);
 
-it(`knex - no transaction`, async done => {
-
-    await man.insert({
+it(`knex - no transaction`, (done) => {
+  (async function () {
+    await man.insert(
+      {},
+      {
         firstName: 'trans f a',
         lastName: 'trans l a',
-        email:   'transa@gmail.com',
-        password: 'transa'
-    });
+        email: 'transa@gmail.com',
+        password: 'transa',
+      }
+    );
 
     try {
+      await man.insert(
+        {},
+        {
+          firstName__k: 'trans f b',
+          lastName: 'trans l b',
+          email: 'transb@gmail.com',
+          password: 'transb',
+        }
+      );
+    } catch (e) {
+      expect(String(e)).toContain('Unknown column');
 
-        await man.insert({
+      const count = await man.queryColumn({}, `select count(*) c from :table: where password in (?)`, [
+        ['transa', 'transb'],
+      ]);
+
+      expect(count).toBe(1);
+
+      done();
+    }
+  })();
+});
+
+it(`knex - transaction ON`, (done) => {
+  (async function () {
+    try {
+      await connection.transaction(async (trx) => {
+        await man.insert(
+          {trx},
+          {
+            firstName: 'trans f a',
+            lastName: 'trans l a',
+            email: 'transa@gmail.com',
+            password: 'transa',
+          }
+        );
+
+        await man.insert(
+          {trx},
+          {
             firstName__k: 'trans f b',
             lastName: 'trans l b',
-            email:   'transb@gmail.com',
-            password: 'transb'
-        });
+            email: 'transb@gmail.com',
+            password: 'transb',
+          }
+        );
+      });
+    } catch (e) {
+      expect(String(e)).toContain('Unknown column');
+
+      const count = await man.queryColumn({}, `select count(*) c from :table: where password in (?)`, [
+        ['transa', 'transb'],
+      ]);
+
+      expect(count).toBe(0);
+
+      done();
     }
-    catch (e) {
-
-        expect(String(e)).toContain('Unknown column');
-
-        const count = await man.queryColumn(`select count(*) c from :table: where password in (?)`, [['transa', 'transb']]);
-
-        expect(count).toBe(1);
-
-        done();
-    }
+  })();
 });
-
-it(`knex - transaction ON`, async done => {
-
-    try {
-
-        await connection.transaction(async trx => {
-            await man.insert(trx, {
-                firstName: 'trans f a',
-                lastName: 'trans l a',
-                email:   'transa@gmail.com',
-                password: 'transa'
-            });
-
-            await man.insert(trx, {
-                firstName__k: 'trans f b',
-                lastName: 'trans l b',
-                email:   'transb@gmail.com',
-                password: 'transb'
-            });
-        });
-    }
-    catch (e) {
-
-        expect(String(e)).toContain('Unknown column');
-
-        const count = await man.queryColumn(`select count(*) c from :table: where password in (?)`, [['transa', 'transb']]);
-
-        expect(count).toBe(0);
-
-        done();
-    }
-});
-

@@ -1,12 +1,12 @@
 'use strict';
 
-const log               = require('inspc');
+const log = require('inspc');
 
-const knex              = require('knex-abstract');
+const knex = require('knex-abstract');
 
 require('dotenv-up')(4, false, 'tests');
 
-const config            = require('../../../models/config');
+const config = require('../../../models/config');
 
 knex.init(config);
 
@@ -17,51 +17,46 @@ let manc;
 let manm;
 
 beforeAll(async () => {
+  manc = knex().model.common;
 
-    manc    = knex().model.common;
+  man = knex().model.users;
 
-    man     = knex().model.users;
+  manm = knex().model.many;
 
-    manm    = knex().model.many;
-
-    await clear();
+  await clear();
 });
 
 afterAll(async () => {
+  await clear();
 
-    await clear();
-
-    await man.destroy();
+  await man.destroy();
 });
 
 const clear = async () => {
-
-    await manc.raw(`truncate many`);
+  await manc.raw({}, `truncate many`);
 };
 
-it(`knex - mysql - findAll`, async done => {
+it(`knex - mysql - findAll`, (done) => {
+  (async function () {
+    const data = await man.findAll({});
 
-    const data = await man.findAll();
+    const map = data.map((a) => {
+      const {created, updated, roles, config, enabled, id, firstName, lastName, password, ...rest} = a;
 
-    const map = data.map(a => {
-
-        const {created, updated, roles, config, enabled, id, firstName, lastName, password, ...rest} = a;
-
-        return rest;
+      return rest;
     });
 
     expect(map).toEqual([
-        {
-            "email": "admin@gmail.com",
-            // "password": "adminpass"
-        },
-        {
-            "email": "user@gmail.com",
-            // "password": "password1234"
-        },
+      {
+        email: 'admin@gmail.com',
+        // "password": "adminpass"
+      },
+      {
+        email: 'user@gmail.com',
+        // "password": "password1234"
+      },
     ]);
 
     done();
+  })();
 });
-
-

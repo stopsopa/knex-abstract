@@ -1,22 +1,27 @@
+const abstract = require('knex-abstract');
 
-const abstract          = require('knex-abstract');
+const extend = abstract.extend;
 
-const extend            = abstract.extend;
+const prototype = abstract.prototype_common;
 
-const prototype         = abstract.prototype;
+const log = require('inspc');
 
-const log               = require('inspc');
-
-const a                 = prototype.a;
-
-module.exports = knex => extend(knex, prototype, {
-    fromDb: async function (row, opt, trx) {
-
+module.exports = (knex) =>
+  extend(
+    knex,
+    prototype,
+    {
+      fromDb: async function (opt, rows) {
         if (opt.opt) {
-
-            row.fromDb = true;
+          return rows.map((r) => {
+            r.fromDb = true;
+            return r;
+          });
         }
 
         return null;
+      },
     },
-}, 'users', 'id');
+    'users',
+    'id'
+  );
