@@ -13,7 +13,7 @@ knex.init(config);
 
     try {
 
-        const databases = await man.query(`show databases`);
+        const databases = await man.query({}, `show databases`);
 
         console.log(JSON.stringify(databases, null, 4));
 
