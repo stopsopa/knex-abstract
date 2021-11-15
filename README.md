@@ -1,6 +1,6 @@
-[![Build Status](https://app.travis-ci.com/stopsopa/knex-abstract.svg?branch=v1.0.3)](https://app.travis-ci.com/stopsopa/knex-abstract)
+[![Build Status](https://app.travis-ci.com/stopsopa/knex-abstract.svg?branch=v1.0.4)](https://app.travis-ci.com/stopsopa/knex-abstract)
 [![npm version](https://badge.fury.io/js/nlab.svg)](https://badge.fury.io/js/nlab)
-[![codecov](https://codecov.io/gh/stopsopa/knex-abstract/branch/v1.0.3/graph/badge.svg?token=guaYpL4vYL)](https://codecov.io/gh/stopsopa/knex-abstract/tree/v1.0.3)
+[![codecov](https://codecov.io/gh/stopsopa/knex-abstract/branch/v1.0.4/graph/badge.svg?token=guaYpL4vYL)](https://codecov.io/gh/stopsopa/knex-abstract/tree/v1.0.4)
 [![NpmLicense](https://img.shields.io/npm/l/nlab.svg)](https://github.com/stopsopa/knex-abstract/blob/master/LICENSE)
 
 
