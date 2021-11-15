@@ -73,7 +73,9 @@ const test = async (opt, equal) => {
     }, null, 4));
 }
 
-it('nestedset - treeMoveToNthChild #2', async done => {
+it('nestedset - treeMoveToNthChild #2', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 12,
@@ -82,10 +84,13 @@ it('nestedset - treeMoveToNthChild #2', async done => {
     }, '#2');
 
     done()
+  }())
 });
 
 
-it('nestedset - treeMoveToNthChild #2 2', async done => {
+it('nestedset - treeMoveToNthChild #2 2', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 35,
@@ -94,10 +99,13 @@ it('nestedset - treeMoveToNthChild #2 2', async done => {
     }, '#2');
 
     done()
+  }())
 });
 
 
-it('nestedset - treeMoveToNthChild #2 3', async done => {
+it('nestedset - treeMoveToNthChild #2 3', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 5,
@@ -106,9 +114,12 @@ it('nestedset - treeMoveToNthChild #2 3', async done => {
     }, '#2');
 
     done()
+  }())
 });
 
-it('nestedset - treeMoveToNthChild #2 487', async done => {
+it('nestedset - treeMoveToNthChild #2 487', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 49,
@@ -117,6 +128,7 @@ it('nestedset - treeMoveToNthChild #2 487', async done => {
     }, '#2');
 
     done()
+  }())
 });
 
 

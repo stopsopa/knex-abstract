@@ -96,7 +96,9 @@ const test = async params => {
     });
 }
 
-it('nestedset - integrity after #6', async done => {
+it('nestedset - integrity after #6', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 21,
@@ -115,10 +117,13 @@ it('nestedset - integrity after #6', async done => {
     });
 
     done()
+  }())
 });
 
 
-it('nestedset - integrity after #6 1', async done => {
+it('nestedset - integrity after #6 1', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 16,
@@ -137,5 +142,6 @@ it('nestedset - integrity after #6 1', async done => {
     });
 
     done()
+  }())
 });
 

@@ -43,7 +43,9 @@ const prepare = async (file = 'tree-fixture-test-set-5') => {
 }
 
 
-it('nestedset - treeMoveAfter the same level, move up, without children', async done => {
+it('nestedset - treeMoveAfter the same level, move up, without children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -87,10 +89,13 @@ it('nestedset - treeMoveAfter the same level, move up, without children', async 
     catch (e) {
             
     }
+  }())
 });
 
 
-it('nestedset - treeMoveAfter the same level, move down, without children', async done => {
+it('nestedset - treeMoveAfter the same level, move down, without children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -134,10 +139,13 @@ it('nestedset - treeMoveAfter the same level, move down, without children', asyn
     catch (e) {
             
     }
+  }())
 });
 
 
-it('nestedset - treeMoveAfter the same level, move up, with children', async done => {
+it('nestedset - treeMoveAfter the same level, move up, with children', done => {
+
+  (async function () {    
 
     await prepare();
 
@@ -181,9 +189,12 @@ it('nestedset - treeMoveAfter the same level, move up, with children', async don
     catch (e) {
             
     }
+  }());
 });
 
-it('nestedset - treeMoveAfter the same level, move down, with children', async done => {
+it('nestedset - treeMoveAfter the same level, move down, with children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -227,11 +238,14 @@ it('nestedset - treeMoveAfter the same level, move down, with children', async d
     catch (e) {
             
     }
+  }())
 });
 
  
 
-it('nestedset - treeMoveAfter different level, move up, without children', async done => {
+it('nestedset - treeMoveAfter different level, move up, without children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -275,9 +289,12 @@ it('nestedset - treeMoveAfter different level, move up, without children', async
     catch (e) {
             
     }
+  }())
 });
 
-it('nestedset - treeMoveAfter different level, move down, without children', async done => {
+it('nestedset - treeMoveAfter different level, move down, without children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -321,10 +338,13 @@ it('nestedset - treeMoveAfter different level, move down, without children', asy
     catch (e) {
             
     }
+  }())
 });
 
 
-it('nestedset - treeMoveAfter different level, move up, with children', async done => {
+it('nestedset - treeMoveAfter different level, move up, with children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -368,9 +388,12 @@ it('nestedset - treeMoveAfter different level, move up, with children', async do
     catch (e) {
             
     }
+  }())
 });
 
-it('nestedset - treeMoveAfter different level, move down, with children', async done => {
+it('nestedset - treeMoveAfter different level, move down, with children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -414,10 +437,13 @@ it('nestedset - treeMoveAfter different level, move down, with children', async 
     catch (e) {
             
     }
+  }())
 });
 
 
-it('nestedset - treeMoveBefore the same level, move up, without children', async done => {
+it('nestedset - treeMoveBefore the same level, move up, without children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -461,10 +487,13 @@ it('nestedset - treeMoveBefore the same level, move up, without children', async
     catch (e) {
             
     }
+  }())
 });
 
 
-it('nestedset - treeMoveBefore the same level, move down, without children', async done => {
+it('nestedset - treeMoveBefore the same level, move down, without children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -508,10 +537,13 @@ it('nestedset - treeMoveBefore the same level, move down, without children', asy
     catch (e) {
             
     }
+  }())
 });
 
 
-it('nestedset - treeMoveBefore the same level, move up, with children', async done => {
+it('nestedset - treeMoveBefore the same level, move up, with children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -555,9 +587,12 @@ it('nestedset - treeMoveBefore the same level, move up, with children', async do
     catch (e) {
             
     }
+  }())
 });
 
-it('nestedset - treeMoveBefore the same level, move down, with children', async done => {
+it('nestedset - treeMoveBefore the same level, move down, with children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -601,11 +636,14 @@ it('nestedset - treeMoveBefore the same level, move down, with children', async 
     catch (e) {
             
     }
+  }())
 });
 
  
 
-it('nestedset - treeMoveBefore different level, move up, without children', async done => {
+it('nestedset - treeMoveBefore different level, move up, without children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -649,9 +687,12 @@ it('nestedset - treeMoveBefore different level, move up, without children', asyn
     catch (e) {
             
     }
+  }())
 });
 
-it('nestedset - treeMoveBefore different level, move down, without children', async done => {
+it('nestedset - treeMoveBefore different level, move down, without children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -695,10 +736,13 @@ it('nestedset - treeMoveBefore different level, move down, without children', as
     catch (e) {
             
     }
+  }())
 });
 
 
-it('nestedset - treeMoveBefore different level, move up, with children', async done => {
+it('nestedset - treeMoveBefore different level, move up, with children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -742,9 +786,12 @@ it('nestedset - treeMoveBefore different level, move up, with children', async d
     catch (e) {
             
     }
+  }())
 });
 
-it('nestedset - treeMoveBefore different level, move down, with children', async done => {
+it('nestedset - treeMoveBefore different level, move down, with children', done => {
+
+  (async function () {
 
     await prepare();
 
@@ -788,4 +835,5 @@ it('nestedset - treeMoveBefore different level, move down, with children', async
     catch (e) {
             
     }
+  }())
 });

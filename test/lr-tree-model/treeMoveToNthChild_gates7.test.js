@@ -73,7 +73,9 @@ const test = async (opt, equal) => {
     }, null, 4));
 }
 
-it('nestedset - treeMoveToNthChild #4', async done => {
+it('nestedset - treeMoveToNthChild #4', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 34,
@@ -82,10 +84,13 @@ it('nestedset - treeMoveToNthChild #4', async done => {
     }, '#4');
 
     done()
+  }())
 });
 
 
-it('nestedset - treeMoveToNthChild #4 1', async done => {
+it('nestedset - treeMoveToNthChild #4 1', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 34,
@@ -94,9 +99,12 @@ it('nestedset - treeMoveToNthChild #4 1', async done => {
     }, '#4');
 
     done()
+  }())
 });
 
-it('nestedset - treeMoveToNthChild #4 implicit', async done => {
+it('nestedset - treeMoveToNthChild #4 implicit', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 34,
@@ -105,9 +113,12 @@ it('nestedset - treeMoveToNthChild #4 implicit', async done => {
     }, '#4');
 
     done()
+  }())
 });
 
-it('nestedset - treeMoveToNthChild #4 explicit', async done => {
+it('nestedset - treeMoveToNthChild #4 explicit', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 34,
@@ -116,9 +127,12 @@ it('nestedset - treeMoveToNthChild #4 explicit', async done => {
     }, '#4');
 
     done()
+  }())
 });
 
-it('nestedset - treeMoveToNthChild #4 explicit 2', async done => {
+it('nestedset - treeMoveToNthChild #4 explicit 2', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 34,
@@ -127,10 +141,13 @@ it('nestedset - treeMoveToNthChild #4 explicit 2', async done => {
     }, '#4');
 
     done()
+  }())
 });
 
 
-it('nestedset - treeMoveToNthChild #4 explicit 3', async done => {
+it('nestedset - treeMoveToNthChild #4 explicit 3', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 34,
@@ -139,9 +156,12 @@ it('nestedset - treeMoveToNthChild #4 explicit 3', async done => {
     }, '#4');
 
     done()
+  }())
 });
 
-it('nestedset - treeMoveToNthChild #4 explicit 4', async done => {
+it('nestedset - treeMoveToNthChild #4 explicit 4', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 34,
@@ -150,10 +170,13 @@ it('nestedset - treeMoveToNthChild #4 explicit 4', async done => {
     }, '#4');
 
     done()
+  }())
 });
 
 
-it('nestedset - treeMoveToNthChild #4 explicit 5', async done => {
+it('nestedset - treeMoveToNthChild #4 explicit 5', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 34,
@@ -162,9 +185,12 @@ it('nestedset - treeMoveToNthChild #4 explicit 5', async done => {
     }, '#4');
 
     done()
+  }())
 });
 
-it('nestedset - treeMoveToNthChild #4 explicit 6', async done => {
+it('nestedset - treeMoveToNthChild #4 explicit 6', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 34,
@@ -173,6 +199,7 @@ it('nestedset - treeMoveToNthChild #4 explicit 6', async done => {
     }, '#4');
 
     done()
+  }())
 });
 
 

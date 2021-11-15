@@ -42,7 +42,9 @@ const prepare = async (file = 'tree-fixture-test-set-2') => {
     await fixtures.reset();
 }
 
-it('nestedset - treeMoveToNthChild 76', async done => {
+it('nestedset - treeMoveToNthChild 76', done => {
+
+  (async function () {
 
     let tmp;
 
@@ -89,9 +91,12 @@ it('nestedset - treeMoveToNthChild 76', async done => {
 
         throw e;
     }
+  }())
 });
 
-it('nestedset - treeMoveToNthChild 9', async done => {
+it('nestedset - treeMoveToNthChild 9', done => {
+
+  (async function () {
 
     let tmp;
 
@@ -141,5 +146,6 @@ it('nestedset - treeMoveToNthChild 9', async done => {
 
         throw e;
     }
+  }())
 });
 

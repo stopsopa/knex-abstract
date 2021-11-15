@@ -73,7 +73,9 @@ const test = async (opt, equal) => {
     }, null, 4));
 }
 
-it('nestedset - treeMoveToNthChild #6', async done => {
+it('nestedset - treeMoveToNthChild #6', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 17,
@@ -82,5 +84,6 @@ it('nestedset - treeMoveToNthChild #6', async done => {
     }, '#5');
 
     done()
+  }())
 });
 

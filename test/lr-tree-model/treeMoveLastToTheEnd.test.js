@@ -42,7 +42,9 @@ const prepare = async (file = 'tree-fixture-test-set-4') => {
     await fixtures.reset();
 }
 
-it('move last to the end - throw', async done => {
+it('move last to the end - throw', done => {
+
+  (async function () {
 
     let tmp;
 
@@ -68,9 +70,12 @@ it('move last to the end - throw', async done => {
 
         done();
     }
+  }())
 });
 
-it('move last to the end', async done => {
+it('move last to the end', done => {
+
+  (async function () {
 
     let tmp;
 
@@ -138,6 +143,7 @@ it('move last to the end', async done => {
 
         throw e;
     }
+  }())
 });
 
 

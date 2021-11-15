@@ -96,7 +96,9 @@ const test = async params => {
     });
 }
 
-it('nestedset - integrity after #5', async done => {
+it('nestedset - integrity after #5', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 19,
@@ -115,10 +117,13 @@ it('nestedset - integrity after #5', async done => {
     });
 
     done()
+  }())
 });
 
 
-it('nestedset - integrity after #5 1', async done => {
+it('nestedset - integrity after #5 1', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 21,
@@ -137,11 +142,14 @@ it('nestedset - integrity after #5 1', async done => {
     });
 
     done()
+  }())
 });
 
 
 
-it('nestedset - integrity after #5 2', async done => {
+it('nestedset - integrity after #5 2', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 16,
@@ -160,10 +168,13 @@ it('nestedset - integrity after #5 2', async done => {
     });
 
     done()
+  }())
 });
 
 
-it('nestedset - integrity after #5 3', async done => {
+it('nestedset - integrity after #5 3', done => {
+
+  (async function () {
 
     await test({
         sourceId    : 16,
@@ -182,5 +193,6 @@ it('nestedset - integrity after #5 3', async done => {
     });
 
     done()
+  }())
 });
 
