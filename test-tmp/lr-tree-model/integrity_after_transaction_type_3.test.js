@@ -10,7 +10,7 @@ require('dotenv-up')(4, false, 'tests');
 
 const fixturesTool      = require('./tree-fixtures');
 
-const config            = require('../lr-tree-model/config');
+const config            = require('./config');
 
 knex.init(config);
 
@@ -96,23 +96,71 @@ const test = async params => {
     });
 }
 
-it('nestedset - integrity after #6', done => {
+it('nestedset - integrity after #3', done => {
 
   (async function () {
 
     await test({
-        sourceId    : 21,
-        parentId    : 3,
-        nOneIndexed : 8,
+        sourceId    : 5,
+        parentId    : 10,
+        nOneIndexed : 2,
         nodes       : 90,
         after: {
-            "tid": 21,
-            "title": "r1 a1 b9 c2 2",
-            "tl": 54,
-            "tlevel": 4,
-            "tparent_id": 3,
-            "tr": 57,
-            "tsort": 8
+            "tid": 5,
+            "title": "r1 a1 b2",
+            "tl": 9,
+            "tlevel": 5,
+            "tparent_id": 10,
+            "tr": 18,
+            "tsort": 2
+        }
+    });
+
+    done()
+  }())
+});
+
+it('nestedset - integrity after #3 1', done => {
+
+  (async function () {
+
+    await test({
+        sourceId    : 5,
+        parentId    : 21,
+        // nOneIndexed : 2,
+        nodes       : 90,
+        after: {
+            "tid": 5,
+            "title": "r1 a1 b2",
+            "tl": 29,
+            "tlevel": 7,
+            "tparent_id": 21,
+            "tr": 38,
+            "tsort": 2
+        }
+    });
+
+    done()
+  }())
+});
+
+it('nestedset - integrity after #3 2', done => {
+
+  (async function () {
+
+    await test({
+        sourceId    : 17,
+        parentId    : 19,
+        // nOneIndexed : 2,
+        nodes       : 90,
+        after: {
+            "tid": 17,
+            "title": "r1 a1 b6 c1",
+            "tl": 40,
+            "tlevel": 6,
+            "tparent_id": 19,
+            "tr": 41,
+            "tsort": 4
         }
     });
 
@@ -121,23 +169,23 @@ it('nestedset - integrity after #6', done => {
 });
 
 
-it('nestedset - integrity after #6 1', done => {
+it('nestedset - integrity after #3 2', done => {
 
   (async function () {
 
     await test({
-        sourceId    : 16,
-        parentId    : 3,
-        // nOneIndexed : 3,
+        sourceId    : 17,
+        parentId    : 19,
+        nOneIndexed : 2,
         nodes       : 90,
         after: {
-            "tid": 16,
-            "title": "r1 a1 b6",
-            "tl": 50,
-            "tlevel": 4,
-            "tparent_id": 3,
-            "tr": 77,
-            "tsort": 12
+            "tid": 17,
+            "title": "r1 a1 b6 c1",
+            "tl": 34,
+            "tlevel": 6,
+            "tparent_id": 19,
+            "tr": 35,
+            "tsort": 2
         }
     });
 

@@ -10,7 +10,7 @@ require('dotenv-up')(4, false, 'tests');
 
 const fixturesTool      = require('./tree-fixtures');
 
-const config            = require('../lr-tree-model/config');
+const config            = require('./config');
 
 knex.init(config);
 
@@ -73,73 +73,133 @@ const test = async (opt, equal) => {
     }, null, 4));
 }
 
-it('nestedset - treeMoveToNthChild #3', done => {
+it('nestedset - treeMoveToNthChild #4', done => {
 
   (async function () {
 
     await test({
-        sourceId    : 6,
-        parentId    : 12,
-        nOneIndexed : 2,
-    }, '#3');
-
-    done()
-  }())
-});
-
-it('nestedset - treeMoveToNthChild #3 1', done => {
-
-  (async function () {
-
-    await test({
-        sourceId    : 6,
+        sourceId    : 34,
         parentId    : 15,
         nOneIndexed : 2,
-    }, '#3');
+    }, '#4');
 
     done()
   }())
 });
 
-it('nestedset - treeMoveToNthChild #3 2', done => {
+
+it('nestedset - treeMoveToNthChild #4 1', done => {
 
   (async function () {
 
     await test({
-        sourceId    : 6,
-        parentId    : 27,
+        sourceId    : 34,
+        parentId    : 12,
+        nOneIndexed : 2,
+    }, '#4');
+
+    done()
+  }())
+});
+
+it('nestedset - treeMoveToNthChild #4 implicit', done => {
+
+  (async function () {
+
+    await test({
+        sourceId    : 34,
+        parentId    : 15,
         // nOneIndexed : 2,
-    }, '#3');
+    }, '#4');
 
     done()
   }())
 });
 
-it('nestedset - treeMoveToNthChild #3 3', done => {
+it('nestedset - treeMoveToNthChild #4 explicit', done => {
 
   (async function () {
 
     await test({
-        sourceId    : 6,
+        sourceId    : 34,
+        parentId    : 15,
+        nOneIndexed : 3,
+    }, '#4');
+
+    done()
+  }())
+});
+
+it('nestedset - treeMoveToNthChild #4 explicit 2', done => {
+
+  (async function () {
+
+    await test({
+        sourceId    : 34,
+        parentId    : 15,
+        nOneIndexed : 4,
+    }, '#4');
+
+    done()
+  }())
+});
+
+
+it('nestedset - treeMoveToNthChild #4 explicit 3', done => {
+
+  (async function () {
+
+    await test({
+        sourceId    : 34,
+        parentId    : 27,
+        // nOneIndexed : 4,
+    }, '#4');
+
+    done()
+  }())
+});
+
+it('nestedset - treeMoveToNthChild #4 explicit 4', done => {
+
+  (async function () {
+
+    await test({
+        sourceId    : 34,
         parentId    : 27,
         nOneIndexed : 5,
-    }, '#3');
+    }, '#4');
 
     done()
   }())
 });
 
 
-it('nestedset - treeMoveToNthChild #3 3 equal', done => {
+it('nestedset - treeMoveToNthChild #4 explicit 5', done => {
 
   (async function () {
 
     await test({
-        sourceId    : 6,
-        parentId    : 6,
-        nOneIndexed : 2,
-    }, '#8');
+        sourceId    : 34,
+        parentId    : 27,
+        nOneIndexed : 6,
+    }, '#4');
 
     done()
   }())
 });
+
+it('nestedset - treeMoveToNthChild #4 explicit 6', done => {
+
+  (async function () {
+
+    await test({
+        sourceId    : 34,
+        parentId    : 27,
+        nOneIndexed : 60,
+    }, '#4');
+
+    done()
+  }())
+});
+
+

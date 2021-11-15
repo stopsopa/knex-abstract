@@ -10,7 +10,7 @@ require('dotenv-up')(4, false, 'tests');
 
 const fixturesTool          = require('./tree-fixtures');
 
-const config            = require('../lr-tree-model/config');
+const config            = require('./config');
 
 knex.init(config);
 

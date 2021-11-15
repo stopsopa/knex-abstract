@@ -10,7 +10,7 @@ require('dotenv-up')(4, false, 'tests');
 
 const fixturesTool      = require('./tree-fixtures');
 
-const config            = require('../lr-tree-model/config');
+const config            = require('./config');
 
 knex.init(config);
 
@@ -59,7 +59,6 @@ const test = async (opt, equal) => {
         await mtree.treeMoveToNthChild({
             ...opt,
             gate        : true,
-            strict: true,
         });
     }
     catch (e) {
@@ -73,62 +72,89 @@ const test = async (opt, equal) => {
     }, null, 4));
 }
 
-it('nestedset - treeMoveToNthChild #2', done => {
+it('nestedset - treeMoveToNthChild #5', done => {
 
   (async function () {
 
     await test({
-        sourceId    : 12,
+        sourceId    : 30,
         parentId    : 3,
         nOneIndexed : 2,
-    }, '#2');
+    }, '#5');
 
     done()
   }())
 });
 
-
-it('nestedset - treeMoveToNthChild #2 2', done => {
+it('nestedset - treeMoveToNthChild #5 2', done => {
 
   (async function () {
 
     await test({
-        sourceId    : 35,
+        sourceId    : 23,
         parentId    : 3,
-        nOneIndexed : 1,
-    }, '#2');
+        nOneIndexed : 2,
+    }, '#5');
 
     done()
   }())
 });
 
 
-it('nestedset - treeMoveToNthChild #2 3', done => {
+it('nestedset - treeMoveToNthChild #5 3', done => {
 
   (async function () {
 
     await test({
-        sourceId    : 5,
+        sourceId    : 24,
         parentId    : 3,
-        nOneIndexed : 1,
-    }, '#2');
+        nOneIndexed : 2,
+    }, '#5');
 
     done()
   }())
 });
 
-it('nestedset - treeMoveToNthChild #2 487', done => {
+it('nestedset - treeMoveToNthChild #5 4', done => {
 
   (async function () {
 
     await test({
-        sourceId    : 49,
+        sourceId    : 15,
+        parentId    : 3,
+        nOneIndexed : 2,
+    }, '#5');
+
+    done()
+  }())
+});
+
+it('nestedset - treeMoveToNthChild #5 5', done => {
+
+  (async function () {
+
+    await test({
+        sourceId    : 23,
         parentId    : 1,
-        nOneIndexed : 1,
-    }, '#2');
+        nOneIndexed : 2,
+    }, '#5');
 
     done()
   }())
 });
 
+
+it('nestedset - treeMoveToNthChild #5 6', done => {
+
+  (async function () {
+
+    await test({
+        sourceId    : 23,
+        parentId    : 1,
+        // nOneIndexed : 2,
+    }, '#5');
+
+    done()
+  }())
+});
 

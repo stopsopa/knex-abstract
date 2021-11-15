@@ -10,7 +10,7 @@ require('dotenv-up')(4, false, 'tests');
 
 const fixturesTool      = require('./tree-fixtures');
 
-const config            = require('../lr-tree-model/config');
+const config            = require('./config');
 
 knex.init(config);
 
@@ -32,7 +32,7 @@ afterAll(async () => {
     await man.destroy();
 });
 
-const prepare = async (file = 'tree-fixture-test-set-1') => {
+const prepare = async (file = 'tree-fixture-test-set-2') => {
 
     const fixtures = fixturesTool({
         yamlFile: path.resolve(__dirname, `${file}.yml`),
@@ -42,7 +42,7 @@ const prepare = async (file = 'tree-fixture-test-set-1') => {
     await fixtures.reset();
 }
 
-it('nestedset - treeCreateBefore 76', done => {
+it('nestedset - treeMoveToNthChild 76', done => {
 
   (async function () {
 
@@ -52,38 +52,35 @@ it('nestedset - treeCreateBefore 76', done => {
 
         await prepare();
 
-        expect(await mtree.count()).toEqual(75);
+        expect(await mtree.count()).toEqual(85);
 
         tmp = await mtree.treeCheckIntegrity();
 
         expect(tmp.valid).toBeTruthy();
 
-        const id = await mtree.insert({
-            title: 'test',
-        });
-
-        await mtree.treeCreateBefore({
-            sourceId: id,
-            targetId: 12,
+        await mtree.treeMoveToNthChild({
+            sourceId    : 12,
+            parentId    : 3,
+            nOneIndexed : 11,
             strict: true,
         });
 
-        expect(await mtree.count()).toEqual(76);
+        expect(await mtree.count()).toEqual(85);
 
         tmp = await mtree.treeCheckIntegrity();
 
         expect(tmp.valid).toBeTruthy();
 
-        const { created, updated, ...entity } = await mtree.find(id);
+        const { created, updated, ...entity } = await mtree.find(12);
 
         expect(entity).toEqual({
-            "tid": 76,
-            "title": "test",
-            "tl": 19,
-            "tlevel": 5,
-            "tparent_id": 9,
-            "tr": 20,
-            "tsort": 3,
+            "tid": 12,
+            "title": "r1 a1 b6",
+            "tl": 40,
+            "tlevel": 4,
+            "tparent_id": 3,
+            "tr": 65,
+            "tsort": 11,
         });
 
         done();
@@ -97,7 +94,7 @@ it('nestedset - treeCreateBefore 76', done => {
   }())
 });
 
-it('nestedset - treeCreateBefore 9', done => {
+it('nestedset - treeMoveToNthChild 9', done => {
 
   (async function () {
 
@@ -107,7 +104,7 @@ it('nestedset - treeCreateBefore 9', done => {
 
         await prepare();
 
-        expect(await mtree.count()).toEqual(75);
+        expect(await mtree.count()).toEqual(85);
 
         tmp = await mtree.treeCheckIntegrity();
 
@@ -115,32 +112,29 @@ it('nestedset - treeCreateBefore 9', done => {
 
         await knex().transaction(async trx => {
 
-            const id = await mtree.insert(trx, {
-                title: 'test',
-            });
-
-            await mtree.treeCreateBefore(trx, {
-                sourceId: id,
-                targetId: 12,
+            await mtree.treeMoveToNthChild(trx, {
+                sourceId    : 12,
+                parentId    : 3,
+                nOneIndexed : 11,
                 strict: true,
             });
 
-            expect(await mtree.count(trx)).toEqual(76);
+            expect(await mtree.count(trx)).toEqual(85);
 
             tmp = await mtree.treeCheckIntegrity(trx);
 
             expect(tmp.valid).toBeTruthy();
 
-            const { created, updated, ...entity } = await mtree.find(trx, id);
+            const { created, updated, ...entity } = await mtree.find(trx, 12);
 
             expect(entity).toEqual({
-                "tid": 76,
-                "title": "test",
-                "tl": 19,
-                "tlevel": 5,
-                "tparent_id": 9,
-                "tr": 20,
-                "tsort": 3,
+                "tid": 12,
+                "title": "r1 a1 b6",
+                "tl": 40,
+                "tlevel": 4,
+                "tparent_id": 3,
+                "tr": 65,
+                "tsort": 11,
             });
         });
 
@@ -154,3 +148,4 @@ it('nestedset - treeCreateBefore 9', done => {
     }
   }())
 });
+

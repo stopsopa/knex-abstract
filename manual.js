@@ -22,7 +22,7 @@ require('dotenv-up')({
     deep        : 1,
 }, true, 'manual');
 
-const fixturesTool          = require('./test/lr-tree-model/tree-fixtures');
+const fixturesTool          = require('./test-tmp/lr-tree-model/tree-fixtures');
 
 const host              = process.env.HOST;
 
@@ -44,7 +44,7 @@ app.use(express.json());
 
 const knex              = require('./src');
 
-knex.init(require('./test/lr-tree-model/config'));
+knex.init(require('./test-tmp/lr-tree-model/config'));
 
 const fixtures = fixturesTool({
     // yamlFile: path.resolve(__dirname, './test/lr-tree-model/tree-fixture-sm.yml'),
@@ -52,7 +52,7 @@ const fixtures = fixturesTool({
     knex,
 });
 
-const emit = require('./test/lr-tree-model/io')({
+const emit = require('./test-tmp/lr-tree-model/io')({
     io,
 });
 

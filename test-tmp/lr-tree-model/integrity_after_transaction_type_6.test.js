@@ -10,7 +10,7 @@ require('dotenv-up')(4, false, 'tests');
 
 const fixturesTool      = require('./tree-fixtures');
 
-const config            = require('../lr-tree-model/config');
+const config            = require('./config');
 
 knex.init(config);
 
@@ -96,19 +96,44 @@ const test = async params => {
     });
 }
 
-it('nestedset - integrity after #1', done => {
+it('nestedset - integrity after #6', done => {
 
   (async function () {
 
     await test({
-        sourceId    : 5,
+        sourceId    : 21,
         parentId    : 3,
-        // nOneIndexed : 2,
+        nOneIndexed : 8,
         nodes       : 90,
         after: {
-            "tid": 5,
-            "title": "r1 a1 b2",
-            "tl": 68,
+            "tid": 21,
+            "title": "r1 a1 b9 c2 2",
+            "tl": 54,
+            "tlevel": 4,
+            "tparent_id": 3,
+            "tr": 57,
+            "tsort": 8
+        }
+    });
+
+    done()
+  }())
+});
+
+
+it('nestedset - integrity after #6 1', done => {
+
+  (async function () {
+
+    await test({
+        sourceId    : 16,
+        parentId    : 3,
+        // nOneIndexed : 3,
+        nodes       : 90,
+        after: {
+            "tid": 16,
+            "title": "r1 a1 b6",
+            "tl": 50,
             "tlevel": 4,
             "tparent_id": 3,
             "tr": 77,
@@ -120,26 +145,3 @@ it('nestedset - integrity after #1', done => {
   }())
 });
 
-it('nestedset - integrity after #1 1', done => {
-
-  (async function () {
-
-    await test({
-        sourceId    : 15,
-        parentId    : 3,
-        nOneIndexed : 11,
-        nodes       : 90,
-        after: {
-            "tid": 15,
-            "title": "r1 a1 b5",
-            "tl": 74,
-            "tlevel": 4,
-            "tparent_id": 3,
-            "tr": 75,
-            "tsort": 11
-        }
-    });
-
-    done()
-  }())
-});
