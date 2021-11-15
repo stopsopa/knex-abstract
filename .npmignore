@@ -42,6 +42,7 @@ manual.js
 /docker/
 /migrations/
 swappackagejson.sh
+/test-tmp/
 
 
 

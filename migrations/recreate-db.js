@@ -32,7 +32,7 @@ const dangerous = (mode === 'dangerous');
 
         try {
 
-            await man.query(`DROP DATABASE IF EXISTS :db:`, {db});
+            await man.query({}, `DROP DATABASE IF EXISTS :db:`, {db});
         }
         catch (e) {
 
@@ -42,7 +42,7 @@ const dangerous = (mode === 'dangerous');
 
     try {
 
-        await man.query(`CREATE DATABASE IF NOT EXISTS :db: /*!40100 DEFAULT CHARACTER SET utf8 */`, {db});
+        await man.query({}, `CREATE DATABASE IF NOT EXISTS :db: /*!40100 DEFAULT CHARACTER SET utf8 */`, {db});
 
         console.log(dangerous ? 'recreated (DANGEROUS)' : 'just created (SAFE)');
     }
