@@ -50,23 +50,23 @@ export class auto1545125154513 implements MigrationInterface {
 
                 const { roles, ...user } = tmp;
 
-                const count = await model.common.queryColumn(trx, `SELECT count(*) c from users where email = ?`, [user.email]);
+                const count = await model.common.queryColumn({trx}, `SELECT count(*) c from users where email = ?`, [user.email]);
 
                 let id;
 
                 if (count) {
 
-                    await model.users.update(trx, user, {
+                    await model.users.update({trx}, user, {
                         email: user.email,
                     });
 
-                    id = await model.users.queryColumn(trx, `SELECT id from users where email = :email`, {
+                    id = await model.users.queryColumn({trx}, `SELECT id from users where email = :email`, {
                         email: user.email,
                     });
                 }
                 else {
 
-                    id = await model.users.insert(trx, user);
+                    id = await model.users.insert({trx}, user);
                 }
 
 //                 for (var i = 0, l = roles.length ; i < l ; i += 1 ) {
@@ -159,7 +159,7 @@ export class auto1545125154513 implements MigrationInterface {
 //                 await model.user_role.query(`delete from user_role where user_id = :user_id and role_id = :role_id`, list[i]);
 //             }
 
-            await model.common.query(`delete from users where email in (:emails)`, {
+            await model.common.query({trx}, `delete from users where email in (:emails)`, {
                 emails: u
             })
 
