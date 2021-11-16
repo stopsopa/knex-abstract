@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-const log = require('inspc');
+const log = require("inspc");
 
-const knex = require('knex-abstract');
+const knex = require("knex-abstract");
 
-require('dotenv-up')(4, false, 'tests');
+require("dotenv-up")(4, false, "tests");
 
-const config = require('../../../models/config');
+const config = require("../../../models/config");
 
 knex.init(config);
 
@@ -43,14 +43,14 @@ it(`knex - mysql - insert`, (done) => {
     await manm.insert(
       {},
       {
-        title: 'test',
+        title: "test",
       }
     );
 
     const id = await manm.insert(
       {},
       {
-        title: 'test',
+        title: "test",
       }
     );
 
@@ -65,12 +65,12 @@ it(`knex - mysql - insert, hasOwnProperty`, (done) => {
     await manm.insert(
       {},
       {
-        title: 'test',
+        title: "test",
       }
     );
 
     const a = function () {};
-    a.prototype.other = 'other';
+    a.prototype.other = "other";
 
     const b = function (t) {
       this.title = t;
@@ -80,7 +80,7 @@ it(`knex - mysql - insert, hasOwnProperty`, (done) => {
 
     b.prototype.constructor = b;
 
-    const c = new b('custom');
+    const c = new b("custom");
 
     const id = await manm.insert({}, c);
 

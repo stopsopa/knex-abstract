@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-const log = require('inspc');
+const log = require("inspc");
 
-const knex = require('knex-abstract');
+const knex = require("knex-abstract");
 
-require('dotenv-up')(4, false, 'tests');
+require("dotenv-up")(4, false, "tests");
 
-const config = require('../../../models/config');
+const config = require("../../../models/config");
 
 knex.init(config);
 
@@ -44,7 +44,7 @@ beforeEach(clear);
 
 it(`knex - no transactify`, (done) => {
   (async function () {
-    const id = await manm.transactifytest({}, 'title1');
+    const id = await manm.transactifytest({}, "title1");
 
     expect(id).toEqual(1);
 
@@ -52,17 +52,17 @@ it(`knex - no transactify`, (done) => {
 
     expect(list).toEqual([
       {
-        title: 'title1',
+        title: "title1",
         id: 1,
         user_id: null,
       },
       {
-        title: 'title1_l1',
+        title: "title1_l1",
         id: 2,
         user_id: null,
       },
       {
-        title: 'title1_l1_l2',
+        title: "title1_l1_l2",
         id: 3,
         user_id: null,
       },
@@ -77,7 +77,7 @@ it(`knex - no transactify`, (done) => {
     let id;
 
     await connection.transaction(async (trx) => {
-      id = await manm.transactifytest({trx}, 'title1');
+      id = await manm.transactifytest({ trx }, "title1");
     });
 
     expect(id).toEqual(1);
@@ -86,17 +86,17 @@ it(`knex - no transactify`, (done) => {
 
     expect(list).toEqual([
       {
-        title: 'title1',
+        title: "title1",
         id: 1,
         user_id: null,
       },
       {
-        title: 'title1_l1',
+        title: "title1_l1",
         id: 2,
         user_id: null,
       },
       {
-        title: 'title1_l1_l2',
+        title: "title1_l1_l2",
         id: 3,
         user_id: null,
       },
@@ -109,9 +109,11 @@ it(`knex - no transactify`, (done) => {
 it(`knex - transactify - no function given`, (done) => {
   (async function () {
     try {
-      await manm.transactify({}, 'test');
+      await manm.transactify({}, "test");
     } catch (e) {
-      expect(String(e)).toEqual('Error: many.js error: transactify: logic is not a function');
+      expect(String(e)).toEqual(
+        "Error: many.js error: transactify: logic is not a function"
+      );
 
       done();
     }

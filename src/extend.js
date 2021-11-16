@@ -1,6 +1,8 @@
 module.exports = function extend(knex, prototype, more = {}, ...rest) {
-  if (typeof prototype !== 'function') {
-    throw new Error(`extend: prototype is not a function, it is: ` + typeof prototype);
+  if (typeof prototype !== "function") {
+    throw new Error(
+      `extend: prototype is not a function, it is: ` + typeof prototype
+    );
   }
 
   function cache() {

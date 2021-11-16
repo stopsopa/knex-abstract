@@ -1,97 +1,79 @@
+const fs = require("fs");
 
-const fs                = require('fs');
+const yaml = require("js-yaml");
 
-const yaml              = require('js-yaml');
+const log = require("inspc");
 
-const log               = require('inspc');
+const isArray = require("nlab/isArray");
 
-const isArray           = require('nlab/isArray');
+function enrich(node, l = 1, level = 1, sort = 1) {
+  node.tl = l++;
 
-function enrich (node, l = 1, level = 1, sort = 1) {
+  node.tlevel = level;
 
-    node.tl     = l ++;
+  node.tsort = sort;
 
-    node.tlevel = level;
-
-    node.tsort  = sort;
-
-    if (isArray(node.children)) {
-
-        for (let i = 0, len = node.children.length ; i < len ; i += 1 ) {
-
-            l = enrich(node.children[i], l, level + 1, i + 1);
-        }
+  if (isArray(node.children)) {
+    for (let i = 0, len = node.children.length; i < len; i += 1) {
+      l = enrich(node.children[i], l, level + 1, i + 1);
     }
+  }
 
-    node.tr = l ++;
+  node.tr = l++;
 
-    return l;
+  return l;
 }
 
-module.exports = ({
-    yamlFile,
-    knex,
-}) => {
+module.exports = ({ yamlFile, knex }) => {
+  const connection = knex();
 
-    const connection = knex();
+  const model = connection.model;
 
-    const model = connection.model;
+  const man = model.tree;
 
-    const man = model.tree;
+  const fixtures = yaml.safeLoad(fs.readFileSync(yamlFile, "utf8")).root;
 
-    const fixtures  = yaml.safeLoad(fs.readFileSync(yamlFile, 'utf8')).root;
+  enrich(fixtures);
 
-    enrich(fixtures);
-
-    async function iterateReset(trx, rawNode, parent_id) {
-
-        if (parent_id) {
-
-            rawNode.tparent_id = parent_id;
-        }
-
-        const {
-            children,
-            operation,
-            ...node
-        } = rawNode;
-
-        const id = await man.insert(node);
-
-        if (isArray(children)) {
-
-            for (let i = 0, len = children.length ; i < len ; i += 1 ) {
-
-                await iterateReset(trx, children[i], id);
-            }
-        }
+  async function iterateReset(trx, rawNode, parent_id) {
+    if (parent_id) {
+      rawNode.tparent_id = parent_id;
     }
 
-    const tools = {
-        reset: async data => {
+    const { children, operation, ...node } = rawNode;
 
-            return await connection.transaction(async trx => {
+    const id = await man.insert(node);
 
-                await man.query(trx, 'TRUNCATE :table:');
-
-                let ret;
-
-                const tmp = data ? (function (data) {
-
-                    ret = data;
-
-                    enrich(data.root)
-
-                    return data.root;
-
-                }(yaml.safeLoad(data))) : fixtures;
-
-                await iterateReset(trx, tmp);
-
-                return ret;
-            })
-        },
+    if (isArray(children)) {
+      for (let i = 0, len = children.length; i < len; i += 1) {
+        await iterateReset(trx, children[i], id);
+      }
     }
+  }
 
-    return tools;
+  const tools = {
+    reset: async (data) => {
+      return await connection.transaction(async (trx) => {
+        await man.query(trx, "TRUNCATE :table:");
+
+        let ret;
+
+        const tmp = data
+          ? (function (data) {
+              ret = data;
+
+              enrich(data.root);
+
+              return data.root;
+            })(yaml.safeLoad(data))
+          : fixtures;
+
+        await iterateReset(trx, tmp);
+
+        return ret;
+      });
+    },
+  };
+
+  return tools;
 };

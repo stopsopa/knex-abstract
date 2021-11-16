@@ -1,13 +1,12 @@
-
 // const fs = require('fs');
 
 // const path = require('path');
 
 // const file = path.resolve(__dirname, 'telegram.log');
 
-const now = () => (new Date()).toISOString().substring(0, 19).replace('T', ' ');
+const now = () => new Date().toISOString().substring(0, 19).replace("T", " ");
 
-const tlog = require('inspc/logt');
+const tlog = require("inspc/logt");
 
 // fetchJson('/telegram', {
 //     method: 'post',
@@ -41,72 +40,64 @@ const tlog = require('inspc/logt');
 //     }
 // }
 
-module.exports = ({
-    io
-}) => {
+module.exports = ({ io }) => {
+  if (!io) {
+    throw new Error(`telegramMiddleware: io is required`);
+  }
 
-    if ( ! io ) {
+  let list = [];
 
-        throw new Error(`telegramMiddleware: io is required`);
-    }
+  io.on("connection", (socket) => {
+    list.push(socket);
 
-    let list = [];
+    tlog("auto socket.io connection: " + list.length);
 
-    io.on('connection', socket => {
+    socket.on("disconnect", () => {
+      list = list.filter((s) => s !== socket);
 
-        list.push(socket);
-
-        tlog('auto socket.io connection: ' + list.length);
-
-        socket.on('disconnect', () => {
-
-            list = list.filter(s => s !== socket);
-
-            tlog('auto socket.io disconnect: ' + list.length);
-        });
-
-        // tlog('fake emit');
-        //
-        // socket.emit('s-c-telegram-message', {
-        //     "update_id": 9952688,
-        //     "message": {
-        //         "message_id": 46,
-        //         "from": {
-        //             "id": 593693414,
-        //             "is_bot": false,
-        //             "first_name": "simon",
-        //             "last_name": "d",
-        //             "username": "stopsopa",
-        //             "language_code": "en-GB"
-        //         },
-        //         "chat": {
-        //             "id": 593693414,
-        //             "first_name": "simon",
-        //             "last_name": "d",
-        //             "username": "stopsopa",
-        //             "type": "private"
-        //         },
-        //         "date": 1526508326,
-        //         "text": "test2 fake"
-        //     }
-        // });
+      tlog("auto socket.io disconnect: " + list.length);
     });
 
-    return (event, data) => {
+    // tlog('fake emit');
+    //
+    // socket.emit('s-c-telegram-message', {
+    //     "update_id": 9952688,
+    //     "message": {
+    //         "message_id": 46,
+    //         "from": {
+    //             "id": 593693414,
+    //             "is_bot": false,
+    //             "first_name": "simon",
+    //             "last_name": "d",
+    //             "username": "stopsopa",
+    //             "language_code": "en-GB"
+    //         },
+    //         "chat": {
+    //             "id": 593693414,
+    //             "first_name": "simon",
+    //             "last_name": "d",
+    //             "username": "stopsopa",
+    //             "type": "private"
+    //         },
+    //         "date": 1526508326,
+    //         "text": "test2 fake"
+    //     }
+    // });
+  });
 
-        // tlog('incoming message from telegram')
+  return (event, data) => {
+    // tlog('incoming message from telegram')
 
-        // const body = req.body;
+    // const body = req.body;
 
-        list.forEach(socket => {
+    list.forEach((socket) => {
+      socket.emit(event, data);
+    });
 
-            socket.emit(event, data);
-        });
+    // const json = JSON.stringify(req.body, null, 4);
 
-        // const json = JSON.stringify(req.body, null, 4);
-
-        // fs.appendFileSync(file, json + "\n\n");
-        //
-        // return res.end(JSON.stringify({ok: true}));
-    };
-}
+    // fs.appendFileSync(file, json + "\n\n");
+    //
+    // return res.end(JSON.stringify({ok: true}));
+  };
+};

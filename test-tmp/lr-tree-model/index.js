@@ -1,8 +1,7 @@
-
-const mysql = require('./mysql');
+const mysql = require("./mysql");
 
 const models = {
-    mysql,
+  mysql,
 };
 
 module.exports = models;

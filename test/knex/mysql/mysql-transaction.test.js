@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-const log = require('inspc');
+const log = require("inspc");
 
-const knex = require('knex-abstract');
+const knex = require("knex-abstract");
 
-require('dotenv-up')(4, false, 'tests');
+require("dotenv-up")(4, false, "tests");
 
-const config = require('../../../models/config');
+const config = require("../../../models/config");
 
 knex.init(config);
 
@@ -51,10 +51,10 @@ it(`knex - no transaction`, (done) => {
     await man.insert(
       {},
       {
-        firstName: 'trans f a',
-        lastName: 'trans l a',
-        email: 'transa@gmail.com',
-        password: 'transa',
+        firstName: "trans f a",
+        lastName: "trans l a",
+        email: "transa@gmail.com",
+        password: "transa",
       }
     );
 
@@ -62,18 +62,20 @@ it(`knex - no transaction`, (done) => {
       await man.insert(
         {},
         {
-          firstName__k: 'trans f b',
-          lastName: 'trans l b',
-          email: 'transb@gmail.com',
-          password: 'transb',
+          firstName__k: "trans f b",
+          lastName: "trans l b",
+          email: "transb@gmail.com",
+          password: "transb",
         }
       );
     } catch (e) {
-      expect(String(e)).toContain('Unknown column');
+      expect(String(e)).toContain("Unknown column");
 
-      const count = await man.queryColumn({}, `select count(*) c from :table: where password in (?)`, [
-        ['transa', 'transb'],
-      ]);
+      const count = await man.queryColumn(
+        {},
+        `select count(*) c from :table: where password in (?)`,
+        [["transa", "transb"]]
+      );
 
       expect(count).toBe(1);
 
@@ -87,31 +89,33 @@ it(`knex - transaction ON`, (done) => {
     try {
       await connection.transaction(async (trx) => {
         await man.insert(
-          {trx},
+          { trx },
           {
-            firstName: 'trans f a',
-            lastName: 'trans l a',
-            email: 'transa@gmail.com',
-            password: 'transa',
+            firstName: "trans f a",
+            lastName: "trans l a",
+            email: "transa@gmail.com",
+            password: "transa",
           }
         );
 
         await man.insert(
-          {trx},
+          { trx },
           {
-            firstName__k: 'trans f b',
-            lastName: 'trans l b',
-            email: 'transb@gmail.com',
-            password: 'transb',
+            firstName__k: "trans f b",
+            lastName: "trans l b",
+            email: "transb@gmail.com",
+            password: "transb",
           }
         );
       });
     } catch (e) {
-      expect(String(e)).toContain('Unknown column');
+      expect(String(e)).toContain("Unknown column");
 
-      const count = await man.queryColumn({}, `select count(*) c from :table: where password in (?)`, [
-        ['transa', 'transb'],
-      ]);
+      const count = await man.queryColumn(
+        {},
+        `select count(*) c from :table: where password in (?)`,
+        [["transa", "transb"]]
+      );
 
       expect(count).toBe(0);
 

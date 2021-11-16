@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
-const path              = require('path');
+const path = require("path");
 
-const log               = require('inspc');
+const log = require("inspc");
 
-const knex              = require('knex-abstract');
+const knex = require("knex-abstract");
 
-require('dotenv-up')(4, false, 'tests');
+require("dotenv-up")(4, false, "tests");
 
-const fixturesTool      = require('./tree-fixtures');
+const fixturesTool = require("./tree-fixtures");
 
-const config            = require('./config');
+const config = require("./config");
 
 knex.init(config);
 
@@ -19,33 +19,28 @@ let man;
 let mtree;
 
 beforeAll(async () => {
+  man = knex().model.users;
 
-    man     = knex().model.users;
-
-    mtree   = knex().model.tree;
+  mtree = knex().model.tree;
 });
 
 afterAll(async () => {
+  // await clear();
 
-    // await clear();
-
-    await man.destroy();
+  await man.destroy();
 });
 
-const prepare = async (file = 'tree-fixture-test-set-3') => {
+const prepare = async (file = "tree-fixture-test-set-3") => {
+  const fixtures = fixturesTool({
+    yamlFile: path.resolve(__dirname, `${file}.yml`),
+    knex,
+  });
 
-    const fixtures = fixturesTool({
-        yamlFile: path.resolve(__dirname, `${file}.yml`),
-        knex,
-    });
+  await fixtures.reset();
+};
 
-    await fixtures.reset();
-}
-
-it('nestedset - treeMoveToNthChild last', done => {
-
+it("nestedset - treeMoveToNthChild last", (done) => {
   (async function () {
-
     await prepare();
 
     expect(await mtree.count()).toEqual(90);
@@ -55,27 +50,23 @@ it('nestedset - treeMoveToNthChild last', done => {
     expect(tmp.valid).toBeTruthy();
 
     try {
+      await mtree.treeMoveToNthChild({
+        sourceId: 23,
+        parentId: 19,
+        strict: true,
+      });
+    } catch (e) {
+      expect(String(e)).toEqual(
+        `Error: nestedset.js: treeMoveToNthChild: can't move last element to the end, because it's already at the end because it's "last"`
+      );
 
-        await mtree.treeMoveToNthChild({
-            sourceId: 23,
-            parentId: 19,
-            strict: true,
-        });
+      done();
     }
-    catch (e) {
-
-        expect(String(e)).toEqual(`Error: nestedset.js: treeMoveToNthChild: can't move last element to the end, because it's already at the end because it's "last"`);
-
-        done();
-    }
-  }())
+  })();
 });
 
-
-it('nestedset - treeMoveToNthChild same-index', done => {
-
+it("nestedset - treeMoveToNthChild same-index", (done) => {
   (async function () {
-
     await prepare();
 
     expect(await mtree.count()).toEqual(90);
@@ -85,27 +76,24 @@ it('nestedset - treeMoveToNthChild same-index', done => {
     expect(tmp.valid).toBeTruthy();
 
     try {
+      await mtree.treeMoveToNthChild({
+        sourceId: 19,
+        parentId: 16,
+        nOneIndexed: 3,
+        strict: true,
+      });
+    } catch (e) {
+      expect(String(e)).toEqual(
+        `Error: nestedset.js: treeMoveToNthChild: can't move element as a child of the same parent '16' and to the same index '3'`
+      );
 
-        await mtree.treeMoveToNthChild({
-            sourceId: 19,
-            parentId: 16,
-            nOneIndexed: 3,
-            strict: true,
-        });
+      done();
     }
-    catch (e) {
-
-        expect(String(e)).toEqual(`Error: nestedset.js: treeMoveToNthChild: can't move element as a child of the same parent '16' and to the same index '3'`);
-
-        done();
-    }
-  }())
+  })();
 });
 
-it('nestedset - treeMoveToNthChild child of itself', done => {
-
+it("nestedset - treeMoveToNthChild child of itself", (done) => {
   (async function () {
-
     await prepare();
 
     expect(await mtree.count()).toEqual(90);
@@ -115,19 +103,18 @@ it('nestedset - treeMoveToNthChild child of itself', done => {
     expect(tmp.valid).toBeTruthy();
 
     try {
+      await mtree.treeMoveToNthChild({
+        sourceId: 16,
+        parentId: 19,
+        // nOneIndexed: 3,
+        strict: true,
+      });
+    } catch (e) {
+      expect(String(e)).toEqual(
+        `Error: nestedset.js: treeMoveToNthChild: #8 can't move element as a child of itself`
+      );
 
-        await mtree.treeMoveToNthChild({
-            sourceId: 16,
-            parentId: 19,
-            // nOneIndexed: 3,
-            strict: true,
-        });
+      done();
     }
-    catch (e) {
-
-        expect(String(e)).toEqual(`Error: nestedset.js: treeMoveToNthChild: #8 can't move element as a child of itself`);
-
-        done();
-    }
-  }())
+  })();
 });

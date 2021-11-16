@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
-const path              = require('path');
+const path = require("path");
 
-const log               = require('inspc');
+const log = require("inspc");
 
-const knex              = require('knex-abstract');
+const knex = require("knex-abstract");
 
-require('dotenv-up')(4, false, 'tests');
+require("dotenv-up")(4, false, "tests");
 
-const fixturesTool      = require('./tree-fixtures');
+const fixturesTool = require("./tree-fixtures");
 
-const config            = require('./config');
+const config = require("./config");
 
 knex.init(config);
 
@@ -19,105 +19,90 @@ let man;
 let mtree;
 
 beforeAll(async () => {
+  man = knex().model.users;
 
-    man     = knex().model.users;
-
-    mtree   = knex().model.tree;
+  mtree = knex().model.tree;
 });
 
 afterAll(async () => {
+  // await clear();
 
-    // await clear();
-
-    await man.destroy();
+  await man.destroy();
 });
 
-const prepare = async (file = 'tree-fixture-test-set-1') => {
+const prepare = async (file = "tree-fixture-test-set-1") => {
+  const fixtures = fixturesTool({
+    yamlFile: path.resolve(__dirname, `${file}.yml`),
+    knex,
+  });
 
-    const fixtures = fixturesTool({
-        yamlFile: path.resolve(__dirname, `${file}.yml`),
-        knex,
-    });
+  await fixtures.reset();
+};
 
-    await fixtures.reset();
-}
-
-it('nestedset - treeDelete 74', done => {
-
+it("nestedset - treeDelete 74", (done) => {
   (async function () {
-
     let tmp;
 
     try {
+      await prepare();
 
-        await prepare();
+      expect(await mtree.count()).toEqual(75);
 
-        expect(await mtree.count()).toEqual(75);
+      tmp = await mtree.treeCheckIntegrity();
 
-        tmp = await mtree.treeCheckIntegrity();
+      expect(tmp.valid).toBeTruthy();
 
-        expect(tmp.valid).toBeTruthy();
+      await mtree.treeDelete(57);
 
-        await mtree.treeDelete(57);
+      expect(await mtree.count()).toEqual(74);
 
-        expect(await mtree.count()).toEqual(74);
+      tmp = await mtree.treeCheckIntegrity();
 
-        tmp = await mtree.treeCheckIntegrity();
+      expect(tmp.valid).toBeTruthy();
 
-        expect(tmp.valid).toBeTruthy();
+      done();
+    } catch (e) {
+      log.dump(e, 5);
 
-        done();
+      throw e;
     }
-    catch (e) {
-
-        log.dump(e, 5);
-
-        throw e;
-    }
-  }())
+  })();
 });
 
-it('nestedset - treeDelete 74 f', done => {
-
+it("nestedset - treeDelete 74 f", (done) => {
   (async function () {
-
     let tmp;
 
     try {
+      await prepare();
 
-        await prepare();
+      expect(await mtree.count()).toEqual(75);
 
-        expect(await mtree.count()).toEqual(75);
+      tmp = await mtree.treeCheckIntegrity();
 
-        tmp = await mtree.treeCheckIntegrity();
+      expect(tmp.valid).toBeTruthy();
 
-        expect(tmp.valid).toBeTruthy();
+      await mtree.treeDelete({
+        id: 57,
+      });
 
-        await mtree.treeDelete({
-            id: 57
-        });
+      expect(await mtree.count()).toEqual(74);
 
-        expect(await mtree.count()).toEqual(74);
+      tmp = await mtree.treeCheckIntegrity();
 
-        tmp = await mtree.treeCheckIntegrity();
+      expect(tmp.valid).toBeTruthy();
 
-        expect(tmp.valid).toBeTruthy();
+      done();
+    } catch (e) {
+      log.dump(e, 5);
 
-        done();
+      throw e;
     }
-    catch (e) {
-
-        log.dump(e, 5);
-
-        throw e;
-    }
-  }())
+  })();
 });
 
-it('nestedset - treeDelete 9', done => {
-
+it("nestedset - treeDelete 9", (done) => {
   (async function () {
-
     let tmp;
 
     await prepare();
@@ -128,17 +113,16 @@ it('nestedset - treeDelete 9', done => {
 
     expect(tmp.valid).toBeTruthy();
 
-    await knex().transaction(async trx => {
+    await knex().transaction(async (trx) => {
+      await mtree.treeDelete(trx, 9);
 
-        await mtree.treeDelete(trx, 9);
+      expect(await mtree.count(trx)).toEqual(69);
 
-        expect(await mtree.count(trx)).toEqual(69);
+      tmp = await mtree.treeCheckIntegrity(trx);
 
-        tmp = await mtree.treeCheckIntegrity(trx);
-
-        expect(tmp.valid).toBeTruthy();
+      expect(tmp.valid).toBeTruthy();
     });
 
     done();
-  }())
+  })();
 });

@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-const log = require('inspc');
+const log = require("inspc");
 
-const knex = require('knex-abstract');
+const knex = require("knex-abstract");
 
-require('dotenv-up')(4, false, 'tests');
+require("dotenv-up")(4, false, "tests");
 
-const config = require('../../../models/config');
+const config = require("../../../models/config");
 
 knex.init(config);
 
@@ -38,14 +38,15 @@ const clear = async () => {
 
 it(`knex - mysql - find`, (done) => {
   (async function () {
-    const {created, updated, roles, config, password, ...rest} = await man.find({}, 1);
+    const { created, updated, roles, config, password, ...rest } =
+      await man.find({}, 1);
 
     expect(rest).toEqual({
-      email: 'admin@gmail.com',
+      email: "admin@gmail.com",
       enabled: true,
-      firstName: 'admin',
+      firstName: "admin",
       id: 1,
-      lastName: 'admin',
+      lastName: "admin",
       // "password": "adminpass"
     });
 
@@ -55,11 +56,11 @@ it(`knex - mysql - find`, (done) => {
 
 it(`knex - mysql - find with custom select`, (done) => {
   (async function () {
-    const data = await man.find({}, 1, 'lastName, firstName');
+    const data = await man.find({}, 1, "lastName, firstName");
 
     expect(data).toEqual({
-      lastName: 'admin',
-      firstName: 'admin',
+      lastName: "admin",
+      firstName: "admin",
       roles: [], // still output data are warmed up by fromDb()
     });
 

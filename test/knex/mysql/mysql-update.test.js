@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
-const log = require('inspc');
+const log = require("inspc");
 
-const knex = require('knex-abstract');
+const knex = require("knex-abstract");
 
-const delay = require('nlab/delay');
+const delay = require("nlab/delay");
 
-require('dotenv-up')(4, false, 'tests');
+require("dotenv-up")(4, false, "tests");
 
-const config = require('../../../models/config');
+const config = require("../../../models/config");
 
 knex.init(config);
 
@@ -45,17 +45,17 @@ it(`knex - mysql - update`, (done) => {
     await manm.insert(
       {},
       {
-        title: 'test',
+        title: "test",
       }
     );
 
     const affectedRows = await manm.update(
       {},
       {
-        title: 'test2',
+        title: "test2",
       },
       {
-        title: 'test',
+        title: "test",
       }
     );
 
@@ -63,7 +63,7 @@ it(`knex - mysql - update`, (done) => {
 
     const all = await manm.findAll({});
 
-    expect(all).toEqual([{id: 1, title: 'test2', user_id: null}]);
+    expect(all).toEqual([{ id: 1, title: "test2", user_id: null }]);
 
     done();
   })();

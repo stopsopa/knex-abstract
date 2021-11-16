@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-const log = require('inspc');
+const log = require("inspc");
 
-const knex = require('knex-abstract');
+const knex = require("knex-abstract");
 
-require('dotenv-up')(4, false, 'tests');
+require("dotenv-up")(4, false, "tests");
 
-const config = require('../../../models/config');
+const config = require("../../../models/config");
 
 knex.init(config);
 
@@ -41,18 +41,29 @@ it(`knex - mysql - findAll`, (done) => {
     const data = await man.findAll({});
 
     const map = data.map((a) => {
-      const {created, updated, roles, config, enabled, id, firstName, lastName, password, ...rest} = a;
+      const {
+        created,
+        updated,
+        roles,
+        config,
+        enabled,
+        id,
+        firstName,
+        lastName,
+        password,
+        ...rest
+      } = a;
 
       return rest;
     });
 
     expect(map).toEqual([
       {
-        email: 'admin@gmail.com',
+        email: "admin@gmail.com",
         // "password": "adminpass"
       },
       {
-        email: 'user@gmail.com',
+        email: "user@gmail.com",
         // "password": "password1234"
       },
     ]);

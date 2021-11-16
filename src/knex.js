@@ -1,4 +1,3 @@
-
 let connections = false;
 
 function isObject(a) {
@@ -9,9 +8,9 @@ let config = false;
 
 const extend = (knex, name) => {
   const models = Object.entries(config)
-    .filter(([key]) => key !== 'def')
+    .filter(([key]) => key !== "def")
     .reduce((acc, k) => {
-      const {models, ...cc} = k[1];
+      const { models, ...cc } = k[1];
 
       acc[k[0]] = models;
 
@@ -27,18 +26,22 @@ const extend = (knex, name) => {
 
     knex.model = new Proxy(model, {
       get(target, propKey, receiver) {
-
-        if (typeof target[propKey] !== 'undefined') {
+        if (typeof target[propKey] !== "undefined") {
           return target[propKey];
         }
 
         const keys = Object.keys(target);
 
-        throw new Error(`No such ${name} manager '${propKey}', registered managers are: ` + keys.join(', '));
+        throw new Error(
+          `No such ${name} manager '${propKey}', registered managers are: ` +
+            keys.join(", ")
+        );
       },
     });
   } else {
-    throw new Error(`key '${name}' defined under server.config -> 'knex' config but there is no models defined for it`);
+    throw new Error(
+      `key '${name}' defined under server.config -> 'knex' config but there is no models defined for it`
+    );
   }
 };
 
@@ -57,7 +60,9 @@ const tool = (name) => {
   }
 
   if (!config[name]) {
-    throw new Error(`knex-abstract: Connection '${name}' is not defined in config.js under 'knex' key`);
+    throw new Error(
+      `knex-abstract: Connection '${name}' is not defined in config.js under 'knex' key`
+    );
   }
 
   return connections[name];
@@ -75,21 +80,25 @@ tool.init = (c) => {
   const keys = Object.keys(c);
 
   if (!keys.length) {
-    throw new Error(`knex-abstract: key 'knex' is an object but there is not connections defined in it`);
+    throw new Error(
+      `knex-abstract: key 'knex' is an object but there is not connections defined in it`
+    );
   }
 
-  if (typeof c.def !== 'string') {
-    throw new Error(`knex-abstract: Not 'def' connection specified: 'config.js' for knex key 'knex.def'`);
+  if (typeof c.def !== "string") {
+    throw new Error(
+      `knex-abstract: Not 'def' connection specified: 'config.js' for knex key 'knex.def'`
+    );
   }
 
   config = c;
 
   connections = keys
-    .filter((c) => c !== 'def')
+    .filter((c) => c !== "def")
     .reduce((acc, name) => {
-      const {models, ...cc} = c[name];
+      const { models, ...cc } = c[name];
 
-      acc[name] = eval('require')('knex')(cc);
+      acc[name] = eval("require")("knex")(cc);
 
       extend(acc[name], name);
 

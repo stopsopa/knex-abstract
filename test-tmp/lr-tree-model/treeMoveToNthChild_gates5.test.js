@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
-const path              = require('path');
+const path = require("path");
 
-const log               = require('inspc');
+const log = require("inspc");
 
-const knex              = require('knex-abstract');
+const knex = require("knex-abstract");
 
-require('dotenv-up')(4, false, 'tests');
+require("dotenv-up")(4, false, "tests");
 
-const fixturesTool      = require('./tree-fixtures');
+const fixturesTool = require("./tree-fixtures");
 
-const config            = require('./config');
+const config = require("./config");
 
 knex.init(config);
 
@@ -19,130 +19,131 @@ let man;
 let mtree;
 
 beforeAll(async () => {
+  man = knex().model.users;
 
-    man     = knex().model.users;
-
-    mtree   = knex().model.tree;
+  mtree = knex().model.tree;
 });
 
 afterAll(async () => {
+  // await clear();
 
-    // await clear();
-
-    await man.destroy();
+  await man.destroy();
 });
 
-const prepare = async (file = 'tree-fixture-test-set-2') => {
+const prepare = async (file = "tree-fixture-test-set-2") => {
+  const fixtures = fixturesTool({
+    yamlFile: path.resolve(__dirname, `${file}.yml`),
+    knex,
+  });
 
-    const fixtures = fixturesTool({
-        yamlFile: path.resolve(__dirname, `${file}.yml`),
-        knex,
-    });
-
-    await fixtures.reset();
-}
+  await fixtures.reset();
+};
 
 const test = async (opt, equal) => {
+  let tmp;
 
-    let tmp;
+  try {
+    await prepare();
 
-    try {
+    expect(await mtree.count()).toEqual(85);
 
-        await prepare();
+    tmp = await mtree.treeCheckIntegrity();
 
-        expect(await mtree.count()).toEqual(85);
+    expect(tmp.valid).toBeTruthy();
 
-        tmp = await mtree.treeCheckIntegrity();
+    await mtree.treeMoveToNthChild({
+      ...opt,
+      gate: true,
+      strict: true,
+    });
+  } catch (e) {
+    return expect(e.message).toEqual(equal);
+  }
 
-        expect(tmp.valid).toBeTruthy();
+  throw new Error(
+    "Gate test failed, params: " +
+      JSON.stringify(
+        {
+          opt,
+          equal,
+        },
+        null,
+        4
+      )
+  );
+};
 
-        await mtree.treeMoveToNthChild({
-            ...opt,
-            gate        : true,
-            strict: true,
-        });
-    }
-    catch (e) {
-
-        return expect(e.message).toEqual(equal);
-    }
-
-    throw new Error('Gate test failed, params: ' + JSON.stringify({
-        opt,
-        equal,
-    }, null, 4));
-}
-
-it('nestedset - treeMoveToNthChild #7', done => {
-
+it("nestedset - treeMoveToNthChild #7", (done) => {
   (async function () {
+    await test(
+      {
+        sourceId: 59,
+        parentId: 56,
+        nOneIndexed: 3,
+      },
+      "#same-index"
+    );
 
-    await test({
-        sourceId    : 59,
-        parentId    : 56,
-        nOneIndexed : 3,
-    }, '#same-index');
-
-    done()
-  }())
+    done();
+  })();
 });
 
-
-it('nestedset - treeMoveToNthChild #7 1', done => {
-
+it("nestedset - treeMoveToNthChild #7 1", (done) => {
   (async function () {
+    await test(
+      {
+        sourceId: 59,
+        parentId: 56,
+        nOneIndexed: 4,
+      },
+      "#1"
+    );
 
-    await test({
-        sourceId    : 59,
-        parentId    : 56,
-        nOneIndexed : 4,
-    }, '#1');
-
-    done()
-  }())
+    done();
+  })();
 });
 
-it('nestedset - treeMoveToNthChild #7 2', done => {
-
+it("nestedset - treeMoveToNthChild #7 2", (done) => {
   (async function () {
+    await test(
+      {
+        sourceId: 59,
+        parentId: 56,
+        nOneIndexed: 2,
+      },
+      "#2"
+    );
 
-    await test({
-        sourceId    : 59,
-        parentId    : 56,
-        nOneIndexed : 2,
-    }, '#2');
-
-    done()
-  }())
+    done();
+  })();
 });
 
-
-it('nestedset - treeMoveToNthChild #7 3', done => {
-
+it("nestedset - treeMoveToNthChild #7 3", (done) => {
   (async function () {
+    await test(
+      {
+        sourceId: 2,
+        parentId: 1,
+        nOneIndexed: 1,
+      },
+      "#same-index"
+    );
 
-    await test({
-        sourceId    : 2,
-        parentId    : 1,
-        nOneIndexed : 1,
-    }, '#same-index');
-
-    done()
-  }())
+    done();
+  })();
 });
 
-
-
-it('nestedset - treeMoveToNthChild #7 4', done => {
-
+it("nestedset - treeMoveToNthChild #7 4", (done) => {
   (async function () {
+    await test(
+      {
+        sourceId: 2,
+        parentId: 1,
+        nOneIndexed: 2,
+      },
+      "#1"
+    );
 
-    await test({
-        sourceId    : 2,
-        parentId    : 1,
-        nOneIndexed : 2,
-    }, '#1');
-
-    done()
-  }())
+    done();
+  })();
 });
