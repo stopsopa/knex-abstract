@@ -73,11 +73,23 @@ if [ "${MYSQL_PASS}" = "" ]; then
   exit 1
 fi
 
+if [ "${PMA_PMADB}" = "" ]; then
+
+  echo "${0} error: PMA_PMADB is not defined"
+
+  exit 1
+fi
+
+#set -x
+#TMP="$(/bin/bash "${_DIR}/../bash/envrender.sh" "${ENV}" "${_DIR}/docker-compose.yml" --clear -g "doc-up-tmp")"
+#set +x
+
 if [ "${1}" = "up" ]; then
 
     set -e
 
     docker compose --env-file "${ENV}" -f "${_DIR}/docker-compose.yml" up -d
+#    docker compose -f "${TMP}" up -d
 
     CONTAINER="${PROJECT_NAME}_mysql"
 
@@ -97,9 +109,9 @@ if [ "${1}" = "up" ]; then
     fi
 
     # https://stackoverflow.com/a/50131831
-    docker exec -it "${CONTAINER}" mysql -u root -p${MYSQL_PASS} -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '${MYSQL_PASS}'; flush privileges;"
+    docker exec -it "${CONTAINER}" mysql -u ${MYSQL_USER} -p${MYSQL_PASS} -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '${MYSQL_PASS}'; flush privileges;"
 
-    docker exec -it "${CONTAINER}" mysql -u root -p${MYSQL_PASS} -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DB} /*\!40100 DEFAULT CHARACTER SET utf8 */"
+    docker exec -it "${CONTAINER}" mysql -u ${MYSQL_USER} -p${MYSQL_PASS} -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DB} /*\!40100 DEFAULT CHARACTER SET utf8 */"
 
     set +x
 
@@ -121,6 +133,7 @@ fi
 if [ "${1}" = "down" ]; then
 
     docker compose --env-file "${ENV}" -f "${_DIR}/docker-compose.yml" down
+#    docker compose -f "${TMP}" down
 
     docker ps | grep "${PROJECT_NAME}"
 

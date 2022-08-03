@@ -37,7 +37,6 @@
   "dependencies": {
     "@babel/standalone": "^7.4.2",
     "@types/node": "^16.11.7",
-    "codecov": "^3.1.0",
     "dotenv": "^10.0.0",
     "dotenv-up": "^1.0.30",
     "express": "^4.17.1",

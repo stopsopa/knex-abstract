@@ -51,7 +51,4 @@ fi
 
 cd ..
 
-# cat ./coverage/lcov.info | node node_modules/coveralls/bin/coveralls.js -v | grep -v "@"
-node node_modules/.bin/codecov
-
 
