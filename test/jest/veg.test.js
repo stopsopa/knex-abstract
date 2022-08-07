@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 // http://facebook.github.io/jest/docs/configuration.html#snapshotserializers-array-string
 expect.addSnapshotSerializer({
@@ -6,8 +6,8 @@ expect.addSnapshotSerializer({
   print: (val) => `${val.emoji} ${val.title}`,
 });
 
-const veg = require("./testlib/veg");
+const veg = require('./testlib/veg');
 
-it("veg test", () => {
+it('veg test', () => {
   expect(veg).toMatchSnapshot();
 });

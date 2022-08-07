@@ -22,10 +22,10 @@ function green {
             yarn
         fi
 
-        if [ ! -e node_modules/.bin/jest ]; then
-
-            yarn add jest --dev
-        fi
+#        if [ ! -e node_modules/.bin/jest ]; then
+#
+#            yarn add jest --dev
+#        fi
 
         if [[ "$(knex-abstract --is-linked)" = "$LOCVER" ]]; then
 
@@ -36,7 +36,9 @@ function green {
             set -e
             set -x
 
-            make yarn
+            yarn
+
+            npm link
 
             if [[ "$(knex-abstract --is-linked)" != "$LOCVER" ]]; then
 
@@ -78,8 +80,10 @@ if [ "$1" = "--help" ]; then
 cat << EOF
 
     /bin/bash $0 --help
-    /bin/bash $0 --watchAll
-    /bin/bash $0 -t 'filter test'
+    /bin/bash $0 --watch                        ## this will run only changed test
+    /bin/bash $0 --watchAll                     ## this will run all test on every change
+    /bin/bash $0 [--watch|--watchAll] test/...  ## will run one test file or dir with tests 
+    /bin/bash $0 -t 'filter test'               ## this will run only tests matching the provided string
 
 EOF
 
@@ -98,10 +102,36 @@ if [ -f node_modules/.bin/jest ]; then  # exist
     JEST="node node_modules/.bin/jest"
 else
 
-    { red "node_modules/.bin/jest - doesn't exist"; } 2>&3
+    { green "node_modules/.bin/jest - doesn't exist"; } 2>&3
 
     exit 1
 fi
+
+#if [ "$JEST" = "" ]; then
+#
+#    { green "local jest - not found"; } 2>&3
+#
+#    jest -v > /dev/null
+#
+#    STAT="$?"
+#
+#    { green "(jest -v) status: $STAT"; } 2>&3
+#
+#    if [ "$STAT" = "0" ]; then
+#
+#        { green "global jest - found"; } 2>&3
+#
+#        JEST="jest"
+#    else
+#
+#        { red "\n    Can't detect jest, install globally: \n   npm install jest -g\n\n"; } 2>&3
+#
+#        exit 1;
+#    fi
+#else
+#
+#    { green "local jest - found"; } 2>&3
+#fi
 
 if [[ "$(ls -la node_modules/knex-abstract | grep knex-abstract)" = *"->"* ]]; then
 
@@ -115,14 +145,23 @@ fi
 
 # --bail \
 # --detectOpenHandles \
+# --silent=false \
+# --verbose false \
+# --detectOpenHandles \
 
 TEST="$(cat <<END
 $JEST \
 $@ \
 --roots test \
---verbose \
 --runInBand \
---modulePathIgnorePatterns test/examples test/jest test/minefield test/project test/puppeteer karma_build
+--modulePathIgnorePatterns \
+    test/examples \
+    test/jest \
+    test/minefield \
+    test/project \
+    test/puppeteer \
+    karma_build \
+    test/knex/postgres
 END
 )";
 

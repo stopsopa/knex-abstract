@@ -1,662 +1,640 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
     <title>Test</title>
-    <link rel="shortcut icon" type="image/png" href="favicon.ico"/>
+    <link rel="shortcut icon" type="image/png" href="favicon.ico" />
     <style>
-        * {
-            font-family: "Andale Mono",AndaleMono,monospace;
-            font-size: 11px;
-        }
-        table {
-            width: 98%;
-            border: 1px solid gray;
-        }
-        .level {
-            position: relative;
-            /*border: 1px solid lightgray;*/
-            padding-left: 7px;
-            /*maring-bottom: 1px;*/
-            margin-top: 1px;
-        }
-        .level > div > .level {
-            margin-left: 30px;
-            margin-bottom: 1px;
-        }
-        .check {
-            position: absolute;
-            top: -1px;
-            left: -20px;
-            z-index: 1;
-        }
-        .valid {
-            color: green;
-        }
-        .invalid {
-            color: red;
-        }
-        .level > .id {
-            color: darkcyan;
-        }
-        .level.parent > .id {
-            background-color: darkmagenta;
-            box-shadow: 400px 0 3px darkmagenta;
-            color: white;
-        }
-        .level.source > .id {
-            background-color: darkgreen;
-            box-shadow: 400px 0 3px darkgreen;
-            color: white;
-        }
-        .level > .le {
-            background-color: #0056ff;
-            color: white;
-            padding-left: 3px;
-            padding-right: 3px;
-            border-radius: 10px;
-        }
-        .level > .l {
-            position: relative;
-            background-color: brown;
-            color: white;
-            padding-left: 1px;
-            padding-right: 3px;
-            /*border-top-left-radius: 3px;*/
-            /*border-bottom-left-radius: 3px;*/
-        }
-        .level > .l::before {
-            position: absolute;
-            top: 0px;
-            border-right: 4px solid brown;
-            border-bottom: 6px solid transparent;
-            border-top: 6px solid transparent;
-            border-left: 4px solid transparent;
-            content: "";
-            left: -8px;
-        }
-        .level > .r {
-            position: relative;
-            background-color: blueviolet;
-            color: white;
-            padding-left: 3px;
-            padding-right: 1px;
-            /*border-top-right-radius: 3px;*/
-            /*border-bottom-right-radius: 3px;*/
-        }
-        .level > .r::before {
-            position: absolute;
-            top: 0px;
-            border-right: 4px solid transparent;
-            border-bottom: 6px solid transparent;
-            border-top: 6px solid transparent;
-            border-left: 4px solid blueviolet;
-            content: "";
-            right: -8px;
-        }
-        .level > .s {
-            color: #a98823;
-        }
-        button {
-            background-color: #a5a5a5;
-            color: white;
-            border-radius: 1px;
-            margin-left: 5px;
-            margin-right: 5px;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: gray;
-        }
+      * {
+        font-family: 'Andale Mono', AndaleMono, monospace;
+        font-size: 11px;
+      }
+      table {
+        width: 98%;
+        border: 1px solid gray;
+      }
+      .level {
+        position: relative;
+        /*border: 1px solid lightgray;*/
+        padding-left: 7px;
+        /*maring-bottom: 1px;*/
+        margin-top: 1px;
+      }
+      .level > div > .level {
+        margin-left: 30px;
+        margin-bottom: 1px;
+      }
+      .check {
+        position: absolute;
+        top: -1px;
+        left: -20px;
+        z-index: 1;
+      }
+      .valid {
+        color: green;
+      }
+      .invalid {
+        color: red;
+      }
+      .level > .id {
+        color: darkcyan;
+      }
+      .level.parent > .id {
+        background-color: darkmagenta;
+        box-shadow: 400px 0 3px darkmagenta;
+        color: white;
+      }
+      .level.source > .id {
+        background-color: darkgreen;
+        box-shadow: 400px 0 3px darkgreen;
+        color: white;
+      }
+      .level > .le {
+        background-color: #0056ff;
+        color: white;
+        padding-left: 3px;
+        padding-right: 3px;
+        border-radius: 10px;
+      }
+      .level > .l {
+        position: relative;
+        background-color: brown;
+        color: white;
+        padding-left: 1px;
+        padding-right: 3px;
+        /*border-top-left-radius: 3px;*/
+        /*border-bottom-left-radius: 3px;*/
+      }
+      .level > .l::before {
+        position: absolute;
+        top: 0px;
+        border-right: 4px solid brown;
+        border-bottom: 6px solid transparent;
+        border-top: 6px solid transparent;
+        border-left: 4px solid transparent;
+        content: '';
+        left: -8px;
+      }
+      .level > .r {
+        position: relative;
+        background-color: blueviolet;
+        color: white;
+        padding-left: 3px;
+        padding-right: 1px;
+        /*border-top-right-radius: 3px;*/
+        /*border-bottom-right-radius: 3px;*/
+      }
+      .level > .r::before {
+        position: absolute;
+        top: 0px;
+        border-right: 4px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-top: 6px solid transparent;
+        border-left: 4px solid blueviolet;
+        content: '';
+        right: -8px;
+      }
+      .level > .s {
+        color: #a98823;
+      }
+      button {
+        background-color: #a5a5a5;
+        color: white;
+        border-radius: 1px;
+        margin-left: 5px;
+        margin-right: 5px;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: gray;
+      }
 
-        .create {
-            position: relative;
+      .create {
+        position: relative;
+      }
+      .create .box {
+        position: absolute;
+        top: -5px;
+        left: 0;
+        z-index: 1;
+        background-color: white;
+        padding: 3px;
+        border: 1px solid gray;
+        width: 523px;
+        box-shadow: 0 0 16px black;
+      }
+      .create .box > div {
+        display: inline-block;
+        background-color: #0056ff;
+        color: white;
+        cursor: pointer;
+        padding: 3px 5px;
+      }
+      .create .box.paste > div {
+        background-color: #009b2b;
+      }
+      .create .box > * {
+        margin-left: 3px;
+      }
+      .create .box > *.glue {
+        margin-left: 0;
+      }
+      .create .box > div:hover {
+        box-shadow: 0 0 2px black;
+      }
+      .n {
+        width: 27px;
+      }
+      .negative {
+        background-color: #ffeb00;
+        color: white;
+      }
+      @keyframes blinking {
+        0% {
+          border: 3px solid greenyellow;
         }
-        .create .box {
-            position: absolute;
-            top: -5px;
-            left: 0;
-            z-index: 1;
-            background-color: white;
-            padding: 3px;
-            border: 1px solid gray;
-            width: 523px;
-            box-shadow: 0 0 16px black;
-        }
-        .create .box > div {
-            display: inline-block;
-            background-color: #0056ff;
-            color: white;
-            cursor: pointer;
-            padding: 3px 5px;
-        }
-        .create .box.paste > div {
-            background-color: #009b2b;
-        }
-        .create .box > * {
-            margin-left: 3px;
-        }
-        .create .box > *.glue {
-            margin-left: 0;
-        }
-        .create .box > div:hover {
-            box-shadow: 0 0 2px black;
-        }
-        .n {
-            width: 27px;
-        }
-        .negative {
-            background-color: #ffeb00;
-            color: white;
-        }
-        @keyframes blinking {
-            0%{
-                border: 3px solid greenyellow;
-            }
-            /* YOU CAN ADD MORE COLORS IN THE KEYFRAMES IF YOU WANT
+        /* YOU CAN ADD MORE COLORS IN THE KEYFRAMES IF YOU WANT
             50%{
               background-color: #55d66b;
               border: 5px solid #126620;
             }
             */
-            100%{
-                border: 3px solid orangered;
-            }
+        100% {
+          border: 3px solid orangered;
         }
-        #app .error {
-            animation: blinking 0.5s infinite;
-        }
-        .debug {
-            position: fixed;
-            top: 5px;
-            right: 5px;
-            border: 1px solid lightgray;
-            background-color: white;
-        }
-        textarea {
-            min-width: 700px;
-            min-height: 250px;
-        }
+      }
+      #app .error {
+        animation: blinking 0.5s infinite;
+      }
+      .debug {
+        position: fixed;
+        top: 5px;
+        right: 5px;
+        border: 1px solid lightgray;
+        background-color: white;
+      }
+      textarea {
+        min-width: 700px;
+        min-height: 250px;
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <table>
-        <tbody>
+      <tbody>
         <tr>
-            <td>
-    <div id="app">
-        Loading ...
-    </div>
-            </td>
-            <td>
-    <pre></pre>
-
-            </td>
+          <td>
+            <div id="app">Loading ...</div>
+          </td>
+          <td>
+            <pre></pre>
+          </td>
         </tr>
-
-        </tbody>
+      </tbody>
     </table>
     <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
     <script src="node_modules/react/umd/react.production.min.js"></script>
     <script src="node_modules/react-dom/umd/react-dom.production.min.js"></script>
     <script src="node_modules/@babel/standalone/babel.min.js"></script>
     <script type="text/babel">
+      function isObject(o) {
+        return Object.prototype.toString.call(o) === '[object Object]';
+      }
 
-        function isObject(o) {
-            return Object.prototype.toString.call(o) === '[object Object]';
+      const now = () => new Date().toISOString().substring(0, 19).replace('T', ' ');
+
+      const log = (function () {
+        try {
+          return console.log;
+        } catch (e) {
+          return function () {};
         }
+      })();
 
-        const now = () => (new Date()).toISOString().substring(0, 19).replace('T', ' ');
+      const pre = document.querySelector('pre');
 
-        const log           =   (function(){try{return console.log}catch(e){return function(){}}}());
+      const delay = (time, data) => new Promise((resolve) => (time ? setTimeout(resolve, time, data) : resolve(data)));
+      const {Component, Fragment} = React;
 
-        const pre           =   document.querySelector('pre');
+      const newTitle = (function (i = 1) {
+        return (s = 'title-') => s + i++;
+      })();
 
-        const delay = (time, data) =>
-            new Promise(
-                resolve => time ? setTimeout(resolve, time, data) : resolve(data)
-            )
-        ;
+      class Create extends Component {
+        constructor(...args) {
+          super(...args);
+          this.state = {
+            show: false,
+            title: '',
+            n: 1,
+          };
+        }
+        onAdd = (method, extra) => {
+          if (extra === undefined) {
+            extra = {};
+          }
 
-        const {
-            Component,
-            Fragment,
-        } = React;
+          this.setState({show: false}, () => {
+            const {onAdd, id: targetId} = this.props;
 
-        const newTitle = (function (i = 1) {
-            return (s = 'title-') => (s + (i++));
-        }());
+            const {title, n} = this.state;
 
-        class Create extends Component {
-            constructor(...args) {
-                super(...args);
-                this.state = {
-                    show: false,
-                    title: '',
-                    n: 1,
-                };
+            const data = {
+              title,
+              targetId,
+              method,
+              extra,
+            };
+
+            if (n) {
+              data.n = n;
             }
-            onAdd = (method, extra) => {
 
-                if ( extra === undefined ) {
+            onAdd(data);
+          });
+        };
+        render() {
+          const {show, title, n} = this.state;
 
-                    extra = {};
+          return (
+            <span className="create">
+              <button
+                onClick={() =>
+                  this.setState({
+                    show: true,
+                    title: newTitle(),
+                  })
                 }
+              >
+                {this.props.children}
+              </button>
+              {show && (
+                <div className="box">
+                  <div onClick={() => this.setState({show: false})}>x</div>
+                  <input value={title} onChange={(e) => this.setState({title: e.target.value})} />
+                  <div onClick={() => this.onAdd('treeCreateBefore')}>before</div>
+                  <div onClick={() => this.onAdd('treeCreateAfter')}>after</div>
+                  <div onClick={() => this.onAdd('treeCreateAsNthChild')}>treeCreateAsNthChild()</div>
+                  <input
+                    value={n}
+                    onChange={(e) => this.setState({n: parseInt(e.target.value || 0, 10) || ''})}
+                    className="n glue"
+                    onFocus={(e) => e.target.select()}
+                    placeholder="end"
+                  />
+                </div>
+              )}
+            </span>
+          );
+        }
+      }
 
-                this.setState({show: false}, () => {
+      class Paste extends Component {
+        constructor(...args) {
+          super(...args);
+          this.state = {
+            show: false,
+            n: 1,
+          };
+        }
+        onPaste = (method, extra) => {
+          if (extra === undefined) {
+            extra = {};
+          }
 
-                    const {
-                        onAdd,
-                        id: targetId,
-                    } = this.props;
+          this.setState({show: false}, () => {
+            const {onPaste, id: targetId, clipboard} = this.props;
 
-                    const {
-                        title,
-                        n,
-                    } = this.state;
+            const {n} = this.state;
 
-                    const data = {
-                        title,
-                        targetId,
-                        method,
-                        extra,
-                    };
+            const data = {
+              sourceId: clipboard,
+              targetId,
+              method,
+              extra,
+            };
 
-                    if (n) {
+            if (n) {
+              data.n = n;
+            }
 
-                        data.n = n;
-                    }
+            onPaste(data);
+          });
+        };
+        render() {
+          const {show, n} = this.state;
 
-                    onAdd(data);
+          return (
+            <span className="create">
+              <button
+                onClick={() =>
+                  this.setState({
+                    show: true,
+                  })
+                }
+              >
+                {this.props.children}
+              </button>
+              {show && (
+                <div className="box paste">
+                  <div onClick={() => this.setState({show: false})}>x</div>
+                  <div onClick={() => this.onPaste('treeMoveBefore')}>before</div>
+                  <div onClick={() => this.onPaste('treeMoveAfter')}>after</div>
+                  <div onClick={() => this.onPaste('treeMoveToNthChild')}>treeMoveToNthChild()</div>
+                  <input
+                    value={n}
+                    onChange={(e) => this.setState({n: parseInt(e.target.value || 0, 10) || ''})}
+                    className="n glue"
+                    onFocus={(e) => e.target.select()}
+                    placeholder="end"
+                  />
+                </div>
+              )}
+            </span>
+          );
+        }
+      }
+
+      class Level extends Component {
+        render() {
+          const {
+            tree,
+            onCopy = () => {},
+            onPasteAfter = () => {},
+            onPasteBefore = () => {},
+            onPasteToStart = () => {},
+            onPasteToEnd = () => {},
+            onPasteToZeroN = () => {},
+            onDelete = () => {},
+            onAdd = () => {},
+
+            clipboard,
+          } = this.props;
+
+          return (
+            <div>
+              {tree.map((c) => (
+                <div className={`level${c.operation ? ` ${c.operation}` : ''}`} key={c.id.d}>
+                  <div class="check">
+                    <input type="checkbox" checked={c.id.d === clipboard} onClick={() => onCopy(c.id.d)} />
+                  </div>
+                  <span className={`id${c.id.v ? '' : ' error'}`}>#{c.id.d}</span>{' '}
+                  <span className={`l${c.l.v ? '' : ' error'}`}>{c.l.d}</span>
+                  <span className={`r${c.r.v ? '' : ' error'}`}>{c.r.d}</span>{' '}
+                  <span className={`le${c.level.v ? '' : ' error'}`}>{c.level.d}</span>{' '}
+                  <span className={`s${c.sort.v ? '' : ' error'}${c.sort.n ? ' negative' : ''}`}>{c.sort.d}</span>:{' '}
+                  <b>{c.title}</b>
+                  <span>
+                    <button onClick={() => onDelete(c.id.d)}>delete</button>
+                    <Create {...this.props} id={c.id.d}>
+                      create
+                    </Create>
+                    {clipboard && (
+                      <Paste {...this.props} id={c.id.d}>
+                        paste
+                      </Paste>
+                    )}
+                  </span>
+                  {Array.isArray(c.children) && <Level {...this.props} tree={c.children} />}
+                </div>
+              ))}
+            </div>
+          );
+        }
+      }
+
+      const socket = io();
+      let gon = 0;
+      let setState = (data) => {
+        log('original setState', data);
+      };
+
+      class Debugger extends React.Component {
+        constructor(...args) {
+          super(...args);
+
+          this.state = {
+            show: false,
+            t: 2,
+            on: false,
+            data: '',
+            operation: {},
+            log: [],
+          };
+
+          setState = (data) => this.setState(data);
+        }
+        onIject = () => {
+          const {data} = this.state;
+
+          socket.emit('reset', data);
+        };
+        onStart = () =>
+          this.setState(
+            (state) => ({
+              on: state.on + 1,
+              operation: {},
+            }),
+            () => {
+              if (this.state.log.find((e) => e == this.state.on)) {
+                return console.log('already triggered');
+              } else {
+                console.log('triggering');
+              }
+
+              socket.emit('start', this.state.on);
+            }
+          );
+        onStop = () =>
+          this.setState(
+            {
+              on: 0,
+              log: [],
+            },
+            () => (gon = 0)
+          );
+        render() {
+          const {show, t, on, data, operation} = this.state;
+
+          gon = on;
+
+          return (
+            <div
+              className="debug"
+              style={{
+                minHeight: '49px',
+              }}
+            >
+              <div style={{height: '4px'}}>
+                <button onClick={() => this.setState({show: !show})} style={{float: 'right'}}>
+                  toggle debuger
+                </button>
+              </div>
+              <br />
+              <button onClick={this.onStart} style={{float: 'right'}}>
+                start
+              </button>
+              <button onClick={this.onStop} style={{float: 'right'}}>
+                stop
+              </button>
+              {show && (
+                <div>
+                  <textarea onChange={(e) => this.setState({data: e.target.value})} value={data} />
+                </div>
+              )}
+              <div style={{height: '17px'}}>
+                <button onClick={this.onIject} style={{float: 'right'}}>
+                  inject
+                </button>
+              </div>
+              {isObject(operation) && Object.keys(operation).length > 0 ? (
+                <pre>{JSON.stringify(operation, null, 4)}</pre>
+              ) : (
+                ''
+              )}
+            </div>
+          );
+        }
+      }
+
+      class Root extends React.Component {
+        constructor(...args) {
+          super(...args);
+
+          this.state = {
+            tree: [],
+            clipboard: false,
+          };
+        }
+        componentDidMount() {
+          const connect = () => {
+            // to make sure it will be triggered only once
+            socket.removeListener('connect', connect);
+
+            const n = now();
+
+            log('connected...: ', n);
+
+            socket.on('data', (data) => {
+              pre.innerHTML = JSON.stringify(data, null, 4);
+            });
+
+            socket.on('tobrowser', (data) => {
+              // this.setState(data.old);
+
+              const tmp = {...data.old};
+
+              // console.log('tobrowser: ', data);
+              // console.log(JSON.stringify(data.checked, null, 4));
+
+              // tmp.tree = data.checked;
+
+              tmp.tree = data.checked;
+
+              this.setState(tmp);
+            });
+
+            socket.on('setstate', (state) => this.setState(state));
+            //
+            // socket.emit('init', {});
+
+            socket.on('disconnect', () => {
+              log('disconnect: ' + n);
+            });
+
+            socket.on('flood', (data) => {
+              if (gon < 1) {
+                return log('gon is off... stop');
+              }
+
+              const {invalid, on} = data;
+
+              // this.setState(data.old);
+
+              const tmp = {...data.old};
+
+              if (invalid) {
+                log('invalid: ' + tmp.invalidMsg);
+                log('invalid: ', invalid);
+
+                gon = 0; // stop immediately
+
+                setState({
+                  on: false,
+                  data: invalid.snapshot,
+                  show: true,
+                  operation: invalid.operation,
                 });
-            }
-            render () {
+              }
 
-                const {
-                    show,
-                    title,
-                    n,
-                } = this.state;
+              // console.log('data: ', data);
+              // console.log(JSON.stringify(data.checked, null, 4));
 
-                return (
-                    <span className="create">
-                        <button onClick={() => this.setState({
-                            show: true,
-                            title: newTitle()
-                        })}>{this.props.children}</button>
-                        {
-                            show && <div className="box">
-                                <div onClick={() => this.setState({show: false})}>x</div>
-                                <input value={title} onChange={e => this.setState({title: e.target.value})} />
-                                <div onClick={() => this.onAdd('treeCreateBefore')}>before</div>
-                                <div onClick={() => this.onAdd('treeCreateAfter')}>after</div>
-                                <div onClick={() => this.onAdd('treeCreateAsNthChild')}>treeCreateAsNthChild()</div>
-                                <input value={n} onChange={e => this.setState({n: parseInt(e.target.value || 0, 10) || ''})} className="n glue" onFocus={e => e.target.select()} placeholder="end" />
-                            </div>
-                        }
-                    </span>
-                );
-            }
-        }
+              // tmp.tree = data.checked;
 
-        class Paste extends Component {
-            constructor(...args) {
-                super(...args);
-                this.state = {
-                    show: false,
-                    n: 1,
-                };
-            }
-            onPaste = (method, extra) => {
+              tmp.tree = data.checked;
 
-                if ( extra === undefined ) {
-
-                    extra = {};
+              this.setState(tmp, () => {
+                if (gon > 0) {
+                  // log.dump({'send start': on})
+                  setTimeout(() => socket.emit('start', on), 0); /* delay */
+                } else {
+                  log(`flag 'on' false`);
                 }
+              });
+            });
 
-                this.setState({show: false}, () => {
+            socket.emit('check');
+          };
 
-                    const {
-                        onPaste,
-                        id: targetId,
-                        clipboard,
-                    } = this.props;
-
-                    const {
-                        n,
-                    } = this.state;
-
-                    const data = {
-                        sourceId: clipboard,
-                        targetId,
-                        method,
-                        extra,
-                    };
-
-                    if (n) {
-
-                        data.n = n;
-                    }
-
-                    onPaste(data);
-                });
-            }
-            render () {
-
-                const {
-                    show,
-                    n,
-                } = this.state;
-
-                return (
-                    <span className="create">
-                        <button onClick={() => this.setState({
-                            show: true,
-                        })}>{this.props.children}</button>
-                        {
-                            show && <div className="box paste">
-                                <div onClick={() => this.setState({show: false})}>x</div>
-                                <div onClick={() => this.onPaste('treeMoveBefore')}>before</div>
-                                <div onClick={() => this.onPaste('treeMoveAfter')}>after</div>
-                                <div onClick={() => this.onPaste('treeMoveToNthChild')}>treeMoveToNthChild()</div>
-                                <input value={n} onChange={e => this.setState({n: parseInt(e.target.value || 0, 10) || ''})} className="n glue" onFocus={e => e.target.select()} placeholder="end" />
-                            </div>
-                        }
-                    </span>
-                );
-            }
+          socket.on('connect', connect);
         }
+        render() {
+          const {
+            tree,
+            valid,
+            invalidMsg,
 
-        class Level extends Component {
-            render () {
+            clipboard,
+          } = this.state;
 
-                const {
-                    tree,
-                    onCopy          = () => {},
-                    onPasteAfter    = () => {},
-                    onPasteBefore   = () => {},
-                    onPasteToStart  = () => {},
-                    onPasteToEnd    = () => {},
-                    onPasteToZeroN  = () => {},
-                    onDelete        = () => {},
-                    onAdd           = () => {},
-
-                    clipboard,
-                } = this.props;
-
-                return (
-                    <div>
-                        {tree.map(c => (
-                            <div className={`level${c.operation ? ` ${c.operation}` : ''}`} key={c.id.d}>
-                                <div class="check">
-                                    <input type="checkbox" checked={c.id.d === clipboard} onClick={() => onCopy(c.id.d)}/>
-                                </div>
-                                <span className={`id${c.id.v ? '' : ' error'}`}>#{c.id.d}</span> <span className={`l${c.l.v ? '' : ' error'}`}>{c.l.d}</span><span className={`r${c.r.v ? '' : ' error'}`}>{c.r.d}</span> <span className={`le${c.level.v ? '' : ' error'}`}>{c.level.d}</span> <span className={`s${c.sort.v ? '' : ' error'}${c.sort.n ? ' negative' : ''}`}>{c.sort.d}</span>: <b>{c.title}</b>
-                                <span>
-                                    <button onClick={() => onDelete(c.id.d)}>delete</button>
-                                    <Create {...this.props} id={c.id.d}>create</Create>
-                                    {clipboard && (
-                                        <Paste {...this.props} id={c.id.d}>paste</Paste>
-                                    )}
-                                </span>
-                                {
-                                    Array.isArray(c.children) &&
-                                        <Level
-                                            {...this.props}
-                                            tree={c.children}
-                                        />
-                                }
-                            </div>
-                        ))}
-                    </div>
-                );
-            }
+          return (
+            <>
+              <button onClick={() => socket.emit('reset')}>reset</button>
+              <button onClick={() => socket.emit('fix')}>fix</button>
+              <button onClick={() => socket.emit('check')}>check integrity</button>
+              <span className={valid ? 'valid' : 'invalid'}>{valid ? 'valid...' : invalidMsg}</span>
+              <Level
+                tree={tree}
+                onCopy={(id) => {
+                  console.log('onCopy', clipboard, id);
+                  return this.setState({
+                    clipboard: clipboard === id ? false : id,
+                  });
+                }}
+                onPasteAfter={(targetId) => log('after: ', clipboard, targetId)}
+                onPasteBefore={() => log('before')}
+                onPasteToStart={() => log('first child')}
+                onPasteToEnd={() => log('end child')}
+                onPasteToZeroN={() => log('zero n child')}
+                onDelete={(id) => socket.emit('onDelete', id)}
+                onAdd={(a) => socket.emit('onAdd', a)}
+                onPaste={(a) => socket.emit('onPaste', a)}
+                clipboard={clipboard}
+              />
+              <Debugger />
+            </>
+          );
         }
+      }
+      ReactDOM.render(<Root />, document.getElementById('app'));
 
-        const socket        =   io();
-        let gon             = 0;
-        let setState       = data => {
-            log('original setState', data);
-        }
-
-        class Debugger extends React.Component {
-            constructor(...args) {
-                super(...args);
-
-                this.state = {
-                    show: false,
-                    t: 2,
-                    on: false,
-                    data: '',
-                    operation: {},
-                    log: [],
-                }
-
-                setState = data => this.setState(data);
-
-            }
-            onIject = () => {
-
-                const {
-                    data,
-                } = this.state;
-
-                socket.emit('reset', data);
-            }
-            onStart = () => this.setState(state => ({
-                on: state.on + 1,
-                operation: {}
-            }), () => {
-
-                if (this.state.log.find(e => e == this.state.on)) {
-
-                    return console.log('already triggered');
-                }
-                else {
-                    console.log('triggering');
-                }
-
-                socket.emit('start', this.state.on);
-            })
-            onStop = () => this.setState({
-                on: 0,
-                log: [],
-            }, () => gon = 0)
-            render() {
-
-                const {
-                    show,
-                    t,
-                    on,
-                    data,
-                    operation,
-                } = this.state;
-
-                gon = on;
-
-                return (
-                    <div className="debug" style={{
-                        minHeight: '49px',
-                    }}>
-                        <div style={{height: '4px'}}>
-                            <button onClick={() => this.setState({show: !show})} style={{float: 'right'}}>toggle debuger</button>
-                        </div>
-                        <br />
-                        <button onClick={this.onStart} style={{float: 'right'}}>start</button>
-                        <button onClick={this.onStop} style={{float: 'right'}}>stop</button>
-                        {show && <div>
-                            <textarea
-                                onChange={e => this.setState({data: e.target.value})}
-                                value={data}
-                            />
-                        </div>}
-                        <div style={{height: '17px'}}>
-                            <button onClick={this.onIject} style={{float: 'right'}}>inject</button>
-                        </div>
-                        {(isObject(operation) && Object.keys(operation).length > 0) ? <pre>{JSON.stringify(operation, null, 4)}</pre> : ''}
-                    </div>
-                );
-            }
-        }
-
-        class Root extends React.Component {
-            constructor(...args) {
-
-                super(...args);
-
-                this.state = {
-                    tree: [],
-                    clipboard: false,
-                }
-            }
-            componentDidMount() {
-
-                const connect = () => {
-
-                    // to make sure it will be triggered only once
-                    socket.removeListener('connect', connect);
-
-                    const n = now();
-
-                    log('connected...: ', n);
-
-                    socket.on('data', data => {
-                        pre.innerHTML = JSON.stringify(data, null, 4);
-                    });
-
-                    socket.on('tobrowser', data => {
-                        // this.setState(data.old);
-
-                        const tmp = {...data.old};
-
-                        // console.log('tobrowser: ', data);
-                        // console.log(JSON.stringify(data.checked, null, 4));
-
-                        // tmp.tree = data.checked;
-
-                        tmp.tree = data.checked;
-
-                        this.setState(tmp);
-                    })
-
-                    socket.on('setstate', state => this.setState(state))
-                    //
-                    // socket.emit('init', {});
-
-                    socket.on('disconnect', () => {
-
-                        log('disconnect: ' + n);
-                    });
-
-                    socket.on('flood', data => {
-
-                        if ( gon < 1 ) {
-
-                            return log('gon is off... stop');
-                        }
-
-                        const {
-                            invalid,
-                            on,
-                        } = data;
-
-                        // this.setState(data.old);
-
-                        const tmp = {...data.old};
-
-                        if ( invalid ) {
-
-                            log('invalid: ' + tmp.invalidMsg);
-                            log('invalid: ', invalid)
-
-                            gon = 0; // stop immediately
-
-                            setState({
-                                on: false,
-                                data: invalid.snapshot,
-                                show: true,
-                                operation: invalid.operation,
-                            });
-                        }
-
-                        // console.log('data: ', data);
-                        // console.log(JSON.stringify(data.checked, null, 4));
-
-                        // tmp.tree = data.checked;
-
-                        tmp.tree = data.checked;
-
-                        this.setState(tmp, () => {
-
-                            if (gon > 0) {
-
-                                // log.dump({'send start': on})
-                                setTimeout(() => socket.emit('start', on), 0); /* delay */
-                            }
-                            else {
-
-                                log(`flag 'on' false`);
-                            }
-                        });
-                    });
-
-                    socket.emit('check')
-                };
-
-                socket.on('connect', connect);
-
-            }
-            render() {
-
-                const {
-                    tree,
-                    valid,
-                    invalidMsg,
-
-                    clipboard,
-                } = this.state;
-
-                return (
-                    <>
-                        <button onClick={() => socket.emit('reset')}>reset</button>
-                        <button onClick={() => socket.emit('fix')}>fix</button>
-                        <button onClick={() => socket.emit('check')}>check integrity</button>
-                        <span className={valid ? 'valid' : 'invalid'}>{valid ? 'valid...' : invalidMsg}</span>
-                        <Level
-                            tree={tree}
-                            onCopy={id => {
-                                console.log('onCopy', clipboard, id);
-                                return this.setState({
-                                    clipboard: (clipboard === id) ? false : id,
-                                });
-                            }}
-                            onPasteAfter={targetId => log('after: ', clipboard, targetId)}
-                            onPasteBefore={() => log('before')}
-                            onPasteToStart={() => log('first child')}
-                            onPasteToEnd={() => log('end child')}
-                            onPasteToZeroN={() => log('zero n child')}
-                            onDelete={id => socket.emit('onDelete', id)}
-                            onAdd={a => socket.emit('onAdd', a)}
-                            onPaste={a => socket.emit('onPaste', a)}
-
-                            clipboard={clipboard}
-                        />
-                        <Debugger />
-                    </>
-                );
-            }
-        }
-        ReactDOM.render(
-            <Root />,
-            document.getElementById('app')
-        );
-
-        window.socket = socket;
-
+      window.socket = socket;
     </script>
-</body>
+  </body>
 </html>

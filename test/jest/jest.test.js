@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 // more about expect vvv
 // more about expect vvv
@@ -8,12 +8,12 @@
 // more about expect ^^^
 // more about expect ^^^
 
-it("just jest", () => {
+it('just jest', () => {
   expect(2 + 2).toBe(4);
 
-  const data = { one: 1 };
-  data["two"] = 2;
-  expect(data).toEqual({ one: 1, two: 2 }); // use === (recursive)
+  const data = {one: 1};
+  data['two'] = 2;
+  expect(data).toEqual({one: 1, two: 2}); // use === (recursive)
 
   for (let a = 1; a < 10; a++) {
     for (let b = 1; b < 10; b++) {
@@ -29,7 +29,7 @@ it("just jest", () => {
   expect(false).toBeFalsy();
 });
 
-test("null", () => {
+test('null', () => {
   const n = null;
   expect(n).toBeNull();
   expect(n).toBeDefined();
@@ -38,7 +38,7 @@ test("null", () => {
   expect(n).toBeFalsy();
 });
 
-test("zero", () => {
+test('zero', () => {
   const z = 0;
   expect(z).not.toBeNull();
   expect(z).toBeDefined();
@@ -48,7 +48,7 @@ test("zero", () => {
 });
 
 // https://facebook.github.io/jest/docs/en/using-matchers.html#numbers
-test("two plus two", () => {
+test('two plus two', () => {
   const value = 2 + 2;
   expect(value).toBeGreaterThan(3);
 
@@ -61,33 +61,27 @@ test("two plus two", () => {
   expect(value).toEqual(4);
 });
 
-test("adding floating point numbers", () => {
+test('adding floating point numbers', () => {
   const value = 0.1 + 0.2;
   expect(value).not.toBe(0.3); // It isn't! Because rounding error
   expect(value).toBeCloseTo(0.3); // This works.
 });
 
 // https://facebook.github.io/jest/docs/en/using-matchers.html#strings
-test("there is no I in team", () => {
-  expect("team").not.toMatch(/I/);
+test('there is no I in team', () => {
+  expect('team').not.toMatch(/I/);
 });
 
 test('but there is a "stop" in Christoph', () => {
-  expect("Christoph").toMatch(/stop/);
+  expect('Christoph').toMatch(/stop/);
 });
 
 // https://facebook.github.io/jest/docs/en/using-matchers.html#arrays
 (function () {
-  const shoppingList = [
-    "diapers",
-    "kleenex",
-    "trash bags",
-    "paper towels",
-    "beer",
-  ];
+  const shoppingList = ['diapers', 'kleenex', 'trash bags', 'paper towels', 'beer'];
 
-  test("the shopping list has beer on it", () => {
-    expect(shoppingList).toContain("beer");
+  test('the shopping list has beer on it', () => {
+    expect(shoppingList).toContain('beer');
   });
 })();
 
@@ -95,15 +89,15 @@ test('but there is a "stop" in Christoph', () => {
 
 (function () {
   function compileAndroidCode() {
-    throw new Error("you are using the wrong JDK");
+    throw new Error('you are using the wrong JDK');
   }
 
-  test("compiling android goes as expected", () => {
+  test('compiling android goes as expected', () => {
     expect(compileAndroidCode).toThrow();
     expect(compileAndroidCode).toThrow(Error);
 
     // You can also use the exact error message or a regexp
-    expect(compileAndroidCode).toThrow("you are using the wrong JDK");
+    expect(compileAndroidCode).toThrow('you are using the wrong JDK');
     expect(compileAndroidCode).toThrow(/JDK/);
   });
 })();

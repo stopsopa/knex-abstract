@@ -4,6 +4,7 @@
 /test/
 /Makefile
 /test.sh
+/update.sh
 /update-badge.sh
 /.travis.yml
 /coverage/
@@ -39,12 +40,13 @@ yarn-error*
 yt.png
 favicon.ico
 manual.js
+package_dev.json
 /docker/
 /migrations/
-swappackagejson.sh
-/test-tmp/
 
 
 
 
 
+
+/sandbox/

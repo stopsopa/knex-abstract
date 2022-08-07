@@ -1,12 +1,12 @@
-"use strict";
+'use strict';
 
-const log = require("inspc");
+const log = require('inspc');
 
-const knex = require("knex-abstract");
+const knex = require('knex-abstract');
 
-require("dotenv-up")(4, false, "tests");
+require('dotenv-up')(4, false, 'tests');
 
-const config = require("../../../models/config");
+const config = require('../../../models/config');
 
 knex.init(config);
 
@@ -43,7 +43,7 @@ it(`knex - mysql - delete`, (done) => {
     await manm.insert(
       {},
       {
-        title: "test",
+        title: 'test',
       }
     );
 
@@ -64,21 +64,21 @@ it(`knex - mysql - delete, [1, 3]`, (done) => {
     await manm.insert(
       {},
       {
-        title: "test1",
+        title: 'test1',
       }
     );
 
     await manm.insert(
       {},
       {
-        title: "test2",
+        title: 'test2',
       }
     );
 
     await manm.insert(
       {},
       {
-        title: "test3",
+        title: 'test3',
       }
     );
 
@@ -88,7 +88,7 @@ it(`knex - mysql - delete, [1, 3]`, (done) => {
 
     const all = await manm.findAll({});
 
-    expect(all).toEqual([{ id: 2, title: "test2", user_id: null }]);
+    expect(all).toEqual([{id: 2, title: 'test2', user_id: null}]);
 
     done();
   })();

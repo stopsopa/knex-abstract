@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-const mul = require("./testlib/mul");
+const mul = require('./testlib/mul');
 
-it("mul test", () => {
+it('mul test', () => {
   expect(mul(8, 4)).toMatchSnapshot();
 });

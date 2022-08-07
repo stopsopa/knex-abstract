@@ -10,11 +10,11 @@ fixtures:
 	(cd migrations && node recreate-db.js safe)
 	(cd migrations && make mrun)
 
-doc: down
+doc: docs
 	(cd docker && docker-compose build)
 	(cd docker && docker-compose up -d --build)
 
-down:
+docs:
 	cd docker && docker-compose stop
 
 islinked:

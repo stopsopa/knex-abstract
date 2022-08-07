@@ -26,6 +26,7 @@ node_modules
 /webpack
 /problems.txt
 /todo.txt
+/update.sh
 /yarn-error.log
 /link.sh
 /version-dep.js
@@ -34,4 +35,6 @@ node_modules
 /dev/
 .env
 .env.dist
+
+/sandbox/
 

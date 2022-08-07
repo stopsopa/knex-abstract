@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 
 // https://facebook.github.io/jest/#use
 
-const React = require("react");
+const React = require('react');
 
 // https://facebook.github.io/react/blog/2017/04/07/react-v15.5.0.html#migrating-from-react.createclass
-const createReactClass = require("create-react-class");
+const createReactClass = require('create-react-class');
 
 module.exports = createReactClass({
   render: function () {

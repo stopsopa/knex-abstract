@@ -1,10 +1,13 @@
 {
   "name": "knex-abstract",
-  "version": "1.0.5",
+  "version": "0.0.28",
   "description": "",
   "main": "src",
   "scripts": {
-    "test": "/bin/bash test.sh"
+    "test": "/bin/bash test.sh",
+    "style:check": "yarn prettier --check .",
+    "style:fix": "yarn prettier --write .",
+    "style:list": "yarn prettier --list-different ."
   },
   "engines": {
     "node": ">=10"
@@ -22,7 +25,7 @@
     "url": "https://github.com/stopsopa/knex-abstract/issues"
   },
   "bin": {
-    "knex-abstract": "./install/install.js"
+    "knex-abstract": "install/install.js"
   },
   "homepage": "https://github.com/stopsopa/knex-abstract#readme",
   "jest": {
@@ -42,6 +45,10 @@
     "inspc": "^0.0.19",
     "knex": "^0.21.18",
     "mysql": "^2.18.1",
-    "nlab": "^0.0.53"
+    "nlab": "^0.0.53",
+    "pg": "^8.6.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.7.1"
   }
 }

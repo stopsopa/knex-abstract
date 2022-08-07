@@ -8,9 +8,7 @@ const abstract = require(".");
 
 // const extend            = abstract.extend;
 
-const prototype = abstract.prototype;
-
-const a = prototype.a;
+const prototype = abstract.prototype_common;
 
 const Opt = prototype.Opt;
 
@@ -69,25 +67,25 @@ module.exports = (topt) => {
     /**
      * Method to ensure that there is valid root node in the database
      */
-    treeInit: async function (...args) {
-      let [opt, trx, data] = a(args);
+    treeInit: async function (opt, data) {
 
       opt = {
         ...opt,
         both: false,
       };
 
-      return await this.transactify(trx, async (trx) => {
-        const root = await this.queryOne(
-          opt,
-          trx,
+      return await this.transactify(opt.trx, async (trx) => {
+
+        opt.trx = trx;
+
+        const root = await this.queryOne(opt,
           `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: where :level: = 1`,
           {
             ...topt.columns,
           }
         );
 
-        const count = await this.count(opt, trx);
+        const count = await this.count(opt);
 
         if (root) {
           if (root.level !== 1) {
@@ -129,7 +127,7 @@ module.exports = (topt) => {
           );
         }
 
-        const id = await this.insert(opt, trx, {
+        const id = await this.insert(opt, {
           ...data,
           [level]: 1,
           [sort]: 1,
@@ -137,11 +135,10 @@ module.exports = (topt) => {
           [r]: 2,
         });
 
-        return await this.treeFindOne(opt, trx, id);
+        return await this.treeFindOne(opt, id);
       });
     },
-    treeSkeleton: function (...args) {
-      let [opt, trx, select = ""] = a(args);
+    treeSkeleton: function (opt, select = "") {
 
       opt = {
         ...opt,
@@ -158,15 +155,13 @@ module.exports = (topt) => {
 
       return this.query(
         opt,
-        trx,
         `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort${select} FROM :table: t ORDER BY l, sort FOR UPDATE`,
         {
           ...topt.columns,
         }
       );
     },
-    treeFindOne: function (...args) {
-      let [opt, trx, id] = a(args);
+    treeFindOne: function (opt, id) {
 
       opt = {
         ...opt,
@@ -175,7 +170,6 @@ module.exports = (topt) => {
 
       return this.queryOne(
         opt,
-        trx,
         `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort FROM :table: t WHERE :id: = :id FOR UPDATE`,
         {
           ...topt.columns,
@@ -183,10 +177,9 @@ module.exports = (topt) => {
         }
       );
     },
-    assemble: async function (...args) {
-      let [opt, trx, select, normalize = false] = a(args);
+    assemble: async function (opt, select, normalize = false) {
 
-      let list = await this.treeSkeleton(opt, trx, select);
+      let list = await this.treeSkeleton(opt, select);
 
       const obj = list.reduce((acc, row) => {
         acc[row.id] = row;
@@ -260,15 +253,11 @@ module.exports = (topt) => {
         return k;
       }
 
-      return async function (...args) {
-        let [
-          opt,
-          trx,
-          select = "",
-          normalize = false, // string || function
-        ] = a(args);
+      return async function (opt, select = "",
+                             normalize = false // string || function
+      ) {
 
-        let { tree, list } = await this.assemble(opt, trx, select, normalize);
+        let { tree, list } = await this.assemble(opt, select, normalize);
 
         let valid = true;
 
@@ -289,11 +278,11 @@ module.exports = (topt) => {
         if (normalize !== false) {
           if (typeof this[normalize] !== "function") {
             throw new Error(
-              `knex-abstract, nextedset.js, treeCheckIntegrity(): normalize function '${normalize}' is defined but there is no such method in '${this.__table}' manager`
+              `knex-abstract, nextedset.js, treeCheckIntegrity({}): normalize function '${normalize}' is defined but there is no such method in '${this.__table}' manager`
             );
           }
 
-          await promiseall(list.map((d) => this[normalize](d, opt, trx)));
+          await promiseall(list.map((d) => this[normalize](opt, d)));
         }
 
         return {
@@ -304,7 +293,7 @@ module.exports = (topt) => {
       };
     })(),
     treeFix: (function () {
-      async function fix(opt, trx, tree, k = 1, p = "", _pid = false, lvl = 1) {
+      async function fix(opt, tree, k = 1, p = "", _pid = false, lvl = 1) {
         if (Array.isArray(tree)) {
           for (let i = 0, ll = tree.length, t, key; i < ll; i += 1) {
             const toFix = {};
@@ -323,7 +312,6 @@ module.exports = (topt) => {
               k = await fix.call(
                 this,
                 opt,
-                trx,
                 t.children,
                 k,
                 key,
@@ -349,7 +337,7 @@ module.exports = (topt) => {
             }
 
             if (Object.keys(toFix).length) {
-              await this.update(opt, trx, toFix, t.id);
+              await this.update(opt, toFix, t.id);
             }
 
             k += 1;
@@ -359,25 +347,26 @@ module.exports = (topt) => {
         return k;
       }
 
-      return async function (...args) {
-        let [opt, trx] = a(args);
+      return async function (opt) {
 
         opt = {
           ...opt,
           both: false,
         };
 
-        return await this.transactify(trx, async (trx) => {
-          let { tree } = await this.assemble(opt, trx);
+        return await this.transactify(opt.trx, async (trx) => {
 
-          await fix.call(this, opt, trx, tree);
+          opt.trx = trx;
+
+          let { tree } = await this.assemble(opt);
+
+          await fix.call(this, opt, tree);
 
           return tree;
         });
       };
     })(),
-    treeDelete: async function (...args) {
-      let [opt, trx, id] = a(args);
+    treeDelete: async function (opt, id) {
 
       opt = {
         ...opt,
@@ -394,7 +383,10 @@ module.exports = (topt) => {
         id = id.id;
       }
 
-      return await this.transactify(trx, async (trx) => {
+      return await this.transactify(opt.trx, async (trx) => {
+
+        opt.trx = trx;
+
         let found;
 
         if (isObject(id)) {
@@ -406,7 +398,7 @@ module.exports = (topt) => {
             throw th(`treeDelete: id can't be undefined`);
           }
 
-          found = await this.treeFindOne(opt, trx, id);
+          found = await this.treeFindOne(opt, id);
         }
 
         if (!found) {
@@ -439,7 +431,7 @@ module.exports = (topt) => {
           throw th(`treeDelete: found.l is >= than found.r`);
         }
 
-        const parent = await this.treeFindOne(opt, trx, found.pid);
+        const parent = await this.treeFindOne(opt, found.pid);
 
         const howManyToRemove = (found.r - found.l + 1) / 2;
 
@@ -455,7 +447,6 @@ module.exports = (topt) => {
         if (flip) {
           result = await this.query(
             opt,
-            trx,
             `update :table: set :sort: = -:sort: where :l: >= :vl and :r: <= :vr`,
             {
               sort,
@@ -468,7 +459,6 @@ module.exports = (topt) => {
         } else {
           result = await this.query(
             opt,
-            trx,
             `delete from :table: where :l: >= :vl and :r: <= :vr`,
             {
               l,
@@ -487,7 +477,6 @@ module.exports = (topt) => {
 
         await this.query(
           opt,
-          trx,
           `update :table: set :l: = :l: - :offset where :l: > :vl and :sort: > 0`,
           {
             l,
@@ -499,7 +488,6 @@ module.exports = (topt) => {
 
         await this.query(
           opt,
-          trx,
           `update :table: set :r: = :r: - :offset where :r: > :vr and :sort: > 0`,
           {
             r,
@@ -532,7 +520,6 @@ module.exports = (topt) => {
         // return;
         await this.query(
           opt,
-          trx,
           `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id${excludeFlipped} ORDER BY :l:`,
           {
             sort,
@@ -543,8 +530,7 @@ module.exports = (topt) => {
         );
       });
     },
-    treeMoveBefore: async function (...args) {
-      let [opt, trx, opt2 = {}] = a(args);
+    treeMoveBefore: async function (opt, opt2) {
 
       opt = {
         ...opt,
@@ -553,12 +539,15 @@ module.exports = (topt) => {
 
       const { sourceId, targetId, strict = false } = opt2;
 
-      return await this.transactify(trx, async (trx) => {
+      return await this.transactify(opt.trx, async (trx) => {
+
+        opt.trx = trx;
+
         if (targetId === undefined) {
           throw th(`treeMoveBefore: targetId can't be undefined`);
         }
 
-        const target = await this.treeFindOne(opt, trx, targetId);
+        const target = await this.treeFindOne(opt, targetId);
 
         if (!target) {
           throw th(`treeMoveBefore: target not found by id: ${targetId}`);
@@ -574,7 +563,7 @@ module.exports = (topt) => {
           throw th(`treeMoveBefore: sourceId can't be undefined`);
         }
 
-        const source = await this.treeFindOne(opt, trx, sourceId);
+        const source = await this.treeFindOne(opt, sourceId);
 
         if (!source) {
           throw th(`treeMoveBefore: source not found by id: ${sourceId}`);
@@ -584,7 +573,7 @@ module.exports = (topt) => {
           throw th(`treeMoveBefore: target.pid can't be undefined`);
         }
 
-        const parent = await this.treeFindOne(opt, trx, target.pid);
+        const parent = await this.treeFindOne(opt, target.pid);
 
         if (!parent) {
           throw th(`treeMoveBefore: parent not found by id: ${target.pid}`);
@@ -599,11 +588,10 @@ module.exports = (topt) => {
           strict,
         };
 
-        return await this.treeMoveToNthChild(opt, trx, params);
+        return await this.treeMoveToNthChild(opt, params);
       });
     },
-    treeCreateBefore: async function (...args) {
-      let [opt, trx, opt2 = {}] = a(args);
+    treeCreateBefore: async function (opt, opt2) {
 
       opt = {
         ...opt,
@@ -612,12 +600,15 @@ module.exports = (topt) => {
 
       const { sourceId, targetId, strict = false } = opt2;
 
-      return await this.transactify(trx, async (trx) => {
+      return await this.transactify(opt.trx, async (trx) => {
+
+        opt.trx = trx;
+
         if (targetId === undefined) {
           throw th(`treeCreateAfter: targetId can't be undefined`);
         }
 
-        const target = await this.treeFindOne(opt, trx, targetId);
+        const target = await this.treeFindOne(opt, targetId);
 
         if (!target) {
           throw th(`treeCreateAfter: target not found by id: ${targetId}`);
@@ -633,7 +624,7 @@ module.exports = (topt) => {
           throw th(`treeCreateAfter: sourceId can't be undefined`);
         }
 
-        const source = await this.treeFindOne(opt, trx, sourceId);
+        const source = await this.treeFindOne(opt, sourceId);
 
         if (!source) {
           throw th(`treeCreateAfter: source not found by id: ${sourceId}`);
@@ -643,7 +634,7 @@ module.exports = (topt) => {
           throw th(`treeCreateAfter: target.pid can't be undefined`);
         }
 
-        const parent = await this.treeFindOne(opt, trx, target.pid);
+        const parent = await this.treeFindOne(opt, target.pid);
 
         if (!parent) {
           throw th(`treeCreateAfter: parent not found by id: ${target.pid}`);
@@ -656,11 +647,10 @@ module.exports = (topt) => {
           strict,
         };
 
-        return await this.treeCreateAsNthChild(opt, trx, params);
+        return await this.treeCreateAsNthChild(opt, params);
       });
     },
-    treeMoveAfter: async function (...args) {
-      let [opt, trx, opt2 = {}] = a(args);
+    treeMoveAfter: async function (opt, opt2) {
 
       opt = {
         ...opt,
@@ -669,12 +659,15 @@ module.exports = (topt) => {
 
       const { sourceId, targetId, strict = false } = opt2;
 
-      return await this.transactify(trx, async (trx) => {
+      return await this.transactify(opt.trx, async (trx) => {
+
+        opt.trx = trx;
+
         if (targetId === undefined) {
           throw th(`treeMoveAfter: targetId can't be undefined`);
         }
 
-        const target = await this.treeFindOne(opt, trx, targetId);
+        const target = await this.treeFindOne(opt, targetId);
 
         if (!target) {
           throw th(`treeMoveAfter: target not found by id: ${targetId}`);
@@ -690,7 +683,7 @@ module.exports = (topt) => {
           throw th(`treeMoveAfter: sourceId can't be undefined`);
         }
 
-        const source = await this.treeFindOne(opt, trx, sourceId);
+        const source = await this.treeFindOne(opt, sourceId);
 
         if (!source) {
           throw th(`treeMoveAfter: source not found by id: ${sourceId}`);
@@ -700,7 +693,7 @@ module.exports = (topt) => {
           throw th(`treeMoveAfter: target.pid can't be undefined`);
         }
 
-        const parent = await this.treeFindOne(opt, trx, target.pid);
+        const parent = await this.treeFindOne(opt, target.pid);
 
         if (!parent) {
           throw th(`treeMoveAfter: parent not found by id: ${target.pid}`);
@@ -715,11 +708,10 @@ module.exports = (topt) => {
           strict,
         };
 
-        return await this.treeMoveToNthChild(opt, trx, params);
+        return await this.treeMoveToNthChild(opt, params);
       });
     },
-    treeCreateAfter: async function (...args) {
-      let [opt, trx, opt2 = {}] = a(args);
+    treeCreateAfter: async function (opt, opt2) {
 
       opt = {
         ...opt,
@@ -728,12 +720,15 @@ module.exports = (topt) => {
 
       const { sourceId, targetId, strict = false } = opt2;
 
-      return await this.transactify(trx, async (trx) => {
+      return await this.transactify(opt.trx, async (trx) => {
+
+        opt.trx = trx;
+
         if (targetId === undefined) {
           throw th(`treeCreateAfter: targetId can't be undefined`);
         }
 
-        const target = await this.treeFindOne(opt, trx, targetId);
+        const target = await this.treeFindOne(opt, targetId);
 
         if (!target) {
           throw th(`treeCreateAfter: target not found by id: ${targetId}`);
@@ -749,7 +744,7 @@ module.exports = (topt) => {
           throw th(`treeCreateAfter: sourceId can't be undefined`);
         }
 
-        const source = await this.treeFindOne(opt, trx, sourceId);
+        const source = await this.treeFindOne(opt, sourceId);
 
         if (!source) {
           throw th(`treeCreateAfter: source not found by id: ${sourceId}`);
@@ -759,7 +754,7 @@ module.exports = (topt) => {
           throw th(`treeCreateAfter: target.pid can't be undefined`);
         }
 
-        const parent = await this.treeFindOne(opt, trx, target.pid);
+        const parent = await this.treeFindOne(opt, target.pid);
 
         if (!parent) {
           throw th(`treeCreateAfter: parent not found by id: ${target.pid}`);
@@ -772,11 +767,10 @@ module.exports = (topt) => {
           strict,
         };
 
-        return await this.treeCreateAsNthChild(opt, trx, params);
+        return await this.treeCreateAsNthChild(opt, params);
       });
     },
-    treeCreateAsNthChild: async function (...args) {
-      let [opt, trx, opt2 = {}] = a(args);
+    treeCreateAsNthChild: async function (opt, opt2) {
 
       opt = {
         ...opt,
@@ -790,7 +784,10 @@ module.exports = (topt) => {
         moveMode = false, // parameters for internal use - usually optimalization
       } = opt2;
 
-      return await this.transactify(trx, async (trx) => {
+      return await this.transactify(opt.trx, async (trx) => {
+
+        opt.trx = trx;
+
         let source;
 
         if (isObject(sourceId)) {
@@ -802,7 +799,7 @@ module.exports = (topt) => {
             throw th(`treeCreateAsNthChild: sourceId can't be undefined`);
           }
 
-          source = await this.treeFindOne(opt, trx, sourceId);
+          source = await this.treeFindOne(opt, sourceId);
         }
 
         if (!source) {
@@ -830,7 +827,7 @@ module.exports = (topt) => {
           throw th(`treeCreateAsNthChild: parentId can't be undefined`);
         }
 
-        const parent = await this.treeFindOne(opt, trx, parentId);
+        const parent = await this.treeFindOne(opt, parentId);
 
         if (!parent) {
           throw th(`treeCreateAsNthChild: parent not found by id: ${parentId}`);
@@ -856,7 +853,6 @@ module.exports = (topt) => {
 
         const maxIndex = await this.queryColumn(
           opt,
-          trx,
           `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id and :sort: > 0`,
           {
             pid,
@@ -884,7 +880,6 @@ module.exports = (topt) => {
 
         let rowUnderIndex = await this.queryOne(
           opt,
-          trx,
           `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s and :sort: > 0 FOR UPDATE`,
           {
             ...topt.columns,
@@ -898,7 +893,6 @@ module.exports = (topt) => {
         if (!rowUnderIndex) {
           lastNode = await this.queryOne(
             opt,
-            trx,
             `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s and :sort: > 0 FOR UPDATE`,
             {
               ...topt.columns,
@@ -931,7 +925,6 @@ module.exports = (topt) => {
 
         await this.query(
           opt,
-          trx,
           `update :table: set :l: = :l: + :offset where :l: > :vl and :sort: > 0`,
           {
             l,
@@ -976,7 +969,7 @@ where             (
         //     rparams.rvr  = rowUnderIndex.r;
         // }
 
-        await this.query(opt, trx, rquery, rparams);
+        await this.query(opt, rquery, rparams);
 
         if (moveMode) {
           const offset = nl - source.l;
@@ -985,7 +978,6 @@ where             (
 
           await this.query(
             opt,
-            trx,
             `UPDATE :table: SET :l: = :l: + :offset, :r: = :r: + :offset, :sort: = -:sort:, :level: = :level: - :levelOffset WHERE :sort: < 0`,
             {
               l,
@@ -999,7 +991,6 @@ where             (
 
           await this.update(
             opt,
-            trx,
             {
               [pid]: parent.id,
             },
@@ -1015,7 +1006,7 @@ where             (
 
           update[r] = update[l] + 1;
 
-          await this.update(opt, trx, update, source.id);
+          await this.update(opt, update, source.id);
         }
 
         /**
@@ -1033,7 +1024,6 @@ where             (
                  */
         await this.query(
           opt,
-          trx,
           `SET @x = 0; UPDATE :table: SET :sort: = (@x:=@x+1) WHERE :pid: = :id ORDER BY :l:`,
           {
             sort,
@@ -1043,9 +1033,29 @@ where             (
           }
         );
       });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     },
-    treeMoveToNthChild: async function (...args) {
-      let [opt, trx, opt2 = {}] = a(args);
+    treeMoveToNthChild: async function (opt, opt2) {
 
       opt = {
         ...opt,
@@ -1066,12 +1076,15 @@ where             (
           }
         : () => {};
 
-      return await this.transactify(trx, async (trx) => {
+      return await this.transactify(opt.trx, async (trx) => {
+
+        opt.trx = trx;
+
         if (sourceId === undefined) {
           throw th(`treeMoveToNthChild: sourceId can't be undefined`);
         }
 
-        const source = await this.treeFindOne(opt, trx, sourceId);
+        const source = await this.treeFindOne(opt, sourceId);
 
         if (!source) {
           throw th(`treeMoveToNthChild: source not found by id: ${sourceId}`);
@@ -1094,7 +1107,7 @@ where             (
           throw th(`treeMoveToNthChild: parentId can't be undefined`);
         }
 
-        const parent = await this.treeFindOne(opt, trx, parentId);
+        const parent = await this.treeFindOne(opt, parentId);
 
         if (!parent) {
           throw th(`treeMoveToNthChild: parent not found by id: ${parentId}`);
@@ -1120,7 +1133,6 @@ where             (
 
         const maxIndex = await this.queryColumn(
           opt,
-          trx,
           `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id`,
           {
             pid,
@@ -1169,7 +1181,7 @@ where             (
           return;
         }
 
-        // let rowUnderIndex = await this.queryOne(opt, trx, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s FOR UPDATE`, {
+        // let rowUnderIndex = await this.queryOne(opt, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s FOR UPDATE`, {
         //     ...topt.columns,
         //     id: parent.id,
         //     s: nOneIndexed
@@ -1223,12 +1235,12 @@ where             (
 
             // flip
 
-            await this.treeDelete(opt, trx, {
+            await this.treeDelete(opt, {
               id: source,
               flip: true,
             });
 
-            await this.treeCreateAsNthChild(opt, trx, {
+            await this.treeCreateAsNthChild(opt, {
               sourceId: source,
               parentId: parent.id, // don't pass object to force to retrieve parent again
               nOneIndexed,
