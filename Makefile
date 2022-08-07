@@ -26,12 +26,6 @@ cc: # run local server to general testing
 nt: # test .npmignore
 	@npm pack
 
-ct: # travis parameters.json
-	@/bin/bash update.sh --dev
-
-cp: # jest parameters.json
-	@/bin/bash update.sh --prod
-
 up: down
 	/bin/bash docker/docker-compose.sh up
 
@@ -42,16 +36,18 @@ islinked:
 	@cd dev && /bin/bash islinked.sh
 
 link:
-	make -s cp || true
 	npm link
 	npm link knex-abstract
-	(cd migrations && make -s link)
+	@cd migrations && make -s link
 
 unlink:
 	@cd dev && /bin/bash unlink.sh
 
 manual:
 	nodemon -e js,html manual.js
+
+yarn:
+	/bin/bash bash/swap-files.sh -m dev -- yarn
 
 
 

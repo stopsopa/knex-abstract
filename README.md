@@ -501,8 +501,7 @@ cp .env.dist .env
 npm install --global nodemon
 
 # this exchanges the package.json with the package_prod
-make ct
-yarn
+make yarn
 
 make link
 
