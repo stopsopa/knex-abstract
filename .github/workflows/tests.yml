@@ -4,6 +4,9 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+env:
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 jobs:
   test:
     timeout-minutes: 60
@@ -31,7 +34,7 @@ jobs:
       - name: ECHO TESTK
         run: echo ">${TESTK}<"
       - name: MD5
-        run: echo "${TESTK}" | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+        run: echo "AA${TESTK}ZZ" | tr 'A-Za-z' 'N-ZA-Mn-za-m'
       - name: Yarn install
         run: make yarn
       - name: npm link knex-abstract
