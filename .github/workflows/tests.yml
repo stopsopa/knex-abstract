@@ -26,12 +26,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
-      - name: Prepare package.json
-        run: make ct
       - name: Prepare .env
         run: cp .env.dist .env
       - name: Yarn install
-        run: yarn install --production=false
+        run: make yarn
       - name: npm link knex-abstract
         run: make link
       - name: link migrations/node_modules

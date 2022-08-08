@@ -47,7 +47,7 @@ manual:
 	nodemon -e js,html manual.js
 
 yarn:
-	/bin/bash bash/swap-files.sh -m dev -- yarn
+	/bin/bash bash/swap-files.sh -m dev -- yarn --production=false
 
 
 
