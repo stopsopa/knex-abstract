@@ -45,4 +45,4 @@ jobs:
       - name: MySQL fixtures
         run: cd migrations && make migrate
       - name: tests mysql
-        run: /bin/bash test.sh test/knex/mysql
+        run: /bin/bash test.sh
