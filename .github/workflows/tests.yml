@@ -7,6 +7,7 @@ on:
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  TESTTEST: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   test:
     timeout-minutes: 60
@@ -31,8 +32,8 @@ jobs:
           node-version: '16.x'
       - name: Prepare .env
         run: cp .env.dist .env
-      - name: ECHO TESTK
-        run: echo ">${GITHUB_TOKEN}<"
+      - name: echo TESTTEST
+        run: echo ">${TESTTEST}<"
       - name: Yarn install
         run: make yarn
       - name: npm link knex-abstract
