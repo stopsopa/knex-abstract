@@ -7,7 +7,6 @@ on:
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  TESTK: ${{ secrets.TESTK }}
 jobs:
   test:
     timeout-minutes: 60
@@ -33,9 +32,7 @@ jobs:
       - name: Prepare .env
         run: cp .env.dist .env
       - name: ECHO TESTK
-        run: echo ">${TESTK}<"
-      - name: MD5
-        run: echo "AA${TESTK}ZZ" | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+        run: echo ">${GITHUB_TOKEN}<"
       - name: Yarn install
         run: make yarn
       - name: npm link knex-abstract
@@ -54,3 +51,6 @@ jobs:
         run: cd migrations && make migrate
       - name: tests mysql
         run: /bin/bash test.sh
+
+
+# https://github.com/semantic-release/semantic-release/blob/master/docs/recipes/ci-configurations/github-actions.md        
