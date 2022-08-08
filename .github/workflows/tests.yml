@@ -28,6 +28,10 @@ jobs:
           node-version: '16.x'
       - name: Prepare .env
         run: cp .env.dist .env
+      - name: ECHO TESTK
+        run: echo ">${TESTK}<"
+      - name: MD5
+        run: echo "${TESTK}" | md5
       - name: Yarn install
         run: make yarn
       - name: npm link knex-abstract
