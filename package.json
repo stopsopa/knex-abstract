@@ -3,13 +3,6 @@
   "version": "1.0.5",
   "description": "",
   "main": "src",
-  "scripts": {
-    "test": "/bin/bash test.sh",
-    "style:check": "yarn prettier --check .",
-    "style:fix": "yarn prettier --write .",
-    "style:list": "yarn prettier --list-different .",
-    "prepare": "husky install"
-  },
   "engines": {
     "node": ">=10"
   },
@@ -25,31 +18,13 @@
   "bugs": {
     "url": "https://github.com/stopsopa/knex-abstract/issues"
   },
-  "bin": {
-    "knex-abstract": "install/install.js"
-  },
   "homepage": "https://github.com/stopsopa/knex-abstract#readme",
-  "jest": {
-    "verbose": true,
-    "bail": true,
-    "collectCoverage": true,
-    "coverageReporters": [
-      "html",
-      "lcov"
-    ],
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx}"
-    ]
-  },
   "dependencies": {
-    "dotenv-up": "^1.0.30",
     "inspc": "^0.0.19",
     "knex": "^0.21.18",
     "mysql": "^2.18.1",
     "nlab": "^0.0.53",
     "pg": "^8.6.0"
   },
-  "devDependencies": {
-    "prettier": "^2.7.1"
-  }
+  "devDependencies": {}
 }

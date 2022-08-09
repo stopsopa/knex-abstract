@@ -21,6 +21,8 @@ yarn-error*
 /local.txt
 /karma_build/
 /dev/
+package.dev.json
+/link.sh
 /webpack/
 /webpack-KARMA.config.js
 *.tgz
@@ -58,3 +60,4 @@ commitlint.config.js
 /models/
 swappackagejson.sh
 tsconfig.json
+/var/

@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ main, master ]
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # provided automatically by github itself https://docs.github.com/en/actions/security-guides/automatic-token-authentication
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 jobs:
   test:
@@ -33,8 +33,8 @@ jobs:
         run: cp .env.dist .env
       - name: Yarn install
         run: make yarn
-      - name: npm link knex-abstract
-        run: make link
+      - name: link
+        run: /bin/bash link.sh
       - name: link migrations/node_modules
         run: cd migrations && ln -s ../node_modules node_modules
       - name: Setup migration config
@@ -48,7 +48,18 @@ jobs:
       - name: MySQL fixtures
         run: cd migrations && make migrate
       - name: tests mysql
-        run: /bin/bash test.sh
+        run: |
+          node node_modules/.bin/jest \
+          --roots test \
+          --runInBand \
+          --modulePathIgnorePatterns \
+              test/examples \
+              test/jest \
+              test/minefield \
+              test/project \
+              test/puppeteer \
+              karma_build \
+              test/knex/postgres
         
       - name: npm pack
         run: npm pack
