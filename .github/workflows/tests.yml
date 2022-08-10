@@ -64,7 +64,6 @@ jobs:
 
       - name: npm pack
         run: npm pack
-
       # https://github.com/semantic-release/semantic-release/blob/master/docs/recipes/ci-configurations/github-actions.md
       - name: Release
         run: node node_modules/.bin/semantic-release
