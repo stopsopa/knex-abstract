@@ -102,11 +102,7 @@ it(`knex - mysql - toDb`, (done) => {
 
 it(`knex - mysql - queryColumn, array params`, (done) => {
   (async function () {
-    const lastName = await man.queryColumn(
-      {},
-      "select lastName from :table: u where u.:id: = ?",
-      [1]
-    );
+    const lastName = await man.queryColumn({}, "select lastName from :table: u where u.:id: = ?", [1]);
 
     expect(lastName).toEqual("admin");
 
@@ -116,11 +112,7 @@ it(`knex - mysql - queryColumn, array params`, (done) => {
 
 it(`knex - mysql - queryColumn, array params, one param is also array`, (done) => {
   (async function () {
-    const data = await man.query(
-      {},
-      "select lastName from :table: u where u.:id: in (?)",
-      [[1, 2]]
-    );
+    const data = await man.query({}, "select lastName from :table: u where u.:id: in (?)", [[1, 2]]);
 
     expect(data).toEqual([{ lastName: "admin" }, { lastName: "user" }]);
 

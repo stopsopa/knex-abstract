@@ -5,7 +5,7 @@ __PO="$___ROOT/package.json" # original file
 __PT="$___ROOT/package.tmp.json" # temp file
 
 __P0MODE="npm" # this one will be always on
-__P1MODE="travis"
+__P1MODE="dev"
 
 __P0="$___ROOT/package.$__P0MODE.json"
 __P1="$___ROOT/package.$__P1MODE.json" # this file normally should exist all the time

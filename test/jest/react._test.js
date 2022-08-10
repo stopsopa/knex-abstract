@@ -7,9 +7,7 @@ const veg = require("./testlib/veg");
 
 it("react test", () => {
   ["one", "two", "three"].forEach((title) => {
-    const component = renderer.create(
-      React.createElement(List, { list: veg, title: title })
-    );
+    const component = renderer.create(React.createElement(List, { list: veg, title: title }));
 
     expect(component).toMatchSnapshot();
   });

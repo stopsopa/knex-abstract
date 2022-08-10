@@ -1,0 +1,70 @@
+name: Tests
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # provided automatically by github itself https://docs.github.com/en/actions/security-guides/automatic-token-authentication
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+        services: # https://github.com/actions/example-services/actions/runs/449599975/workflow
+          mysql:
+            image: mysql/mysql-server:8.0.27
+            env:
+    #          MYSQL_DATABASE: knex
+    #          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+              MYSQL_ROOT_PASSWORD: docker_super_secret_passwd
+              MYSQL_ROOT_HOST: '%'
+            ports:
+              - 4238:3306
+            # needed because the mysql container does not provide a healthcheck
+            # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idservicesservice_idoptions
+            options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10 --name=mysql_container
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      - name: Prepare .env
+        run: cp .env.dist .env
+      - name: Yarn install
+        run: make yarn
+      - name: link
+        run: /bin/bash link.sh
+      - name: link migrations/node_modules
+        run: cd migrations && ln -s ../node_modules node_modules
+      - name: Setup migration config
+        run: cp migrations/ormconfig.js.mysql migrations/ormconfig.js
+      - name: MySQL healthy?
+        run: docker ps
+      - name: MySQL root access
+        run: /bin/bash .github/mysql-root-access.sh
+      - name: MySQL connectivity test
+        run: node .github/mysql-test.js
+      - name: MySQL fixtures
+        run: cd migrations && make migrate
+      - name: tests mysql
+        run: |
+          node node_modules/.bin/jest \
+          --verbose \
+          --roots test \
+          --runInBand \
+          --modulePathIgnorePatterns \
+              test/examples \
+              test/jest \
+              test/minefield \
+              test/project \
+              test/puppeteer \
+              karma_build \
+              test/knex/postgres
+
+      - name: npm pack
+        run: npm pack
+
+      # https://github.com/semantic-release/semantic-release/blob/master/docs/recipes/ci-configurations/github-actions.md
+      - name: Release
+        run: node node_modules/.bin/semantic-release

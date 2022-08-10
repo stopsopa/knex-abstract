@@ -111,9 +111,7 @@ it(`knex - transactify - no function given`, (done) => {
     try {
       await manm.transactify({}, "test");
     } catch (e) {
-      expect(String(e)).toEqual(
-        "Error: many.js error: transactify: logic is not a function"
-      );
+      expect(String(e)).toEqual("Error: many.js error: transactify: logic is not a function");
 
       done();
     }

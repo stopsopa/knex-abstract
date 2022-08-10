@@ -13,9 +13,7 @@ it("knex - init wrong config - part 1", (done) => {
     try {
       knex.init();
     } catch (e) {
-      expect(String(e)).toEqual(
-        "Error: knex-abstract: init(config), config has to be an object"
-      );
+      expect(String(e)).toEqual("Error: knex-abstract: init(config), config has to be an object");
 
       done();
     }
@@ -27,9 +25,7 @@ it("knex - init wrong config - part 2", (done) => {
     try {
       knex.init(true);
     } catch (e) {
-      expect(String(e)).toEqual(
-        "Error: knex-abstract: init(config), config has to be an object"
-      );
+      expect(String(e)).toEqual("Error: knex-abstract: init(config), config has to be an object");
 
       done();
     }

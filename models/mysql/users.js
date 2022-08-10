@@ -1,12 +1,12 @@
-const abstract = require('knex-abstract');
+const abstract = require("knex-abstract");
 
 const extend = abstract.extend;
 
 const prototype = abstract.prototype_common;
 
-const log = require('inspc');
+const log = require("inspc");
 
-const isObject = require('nlab/isObject');
+const isObject = require("nlab/isObject");
 
 module.exports = (knex) =>
   extend(
@@ -18,7 +18,7 @@ module.exports = (knex) =>
           `
 select r.id from roles r where r.name = ?
 `,
-          ['user']
+          ["user"]
         ).then((role) => {
           try {
             return role[0][0].id;
@@ -32,10 +32,10 @@ select r.id from roles r where r.name = ?
         }
 
         return {
-          firstName: '',
-          lastName: '',
-          email: '',
-          password: '',
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
           enabled: false,
           roles,
         };
@@ -62,9 +62,9 @@ select r.id from roles r where r.name = ?
                   },
                   {
                     firstName: opt.test1,
-                    lastName: 'test',
-                    password: 'psw',
-                    email: 'emailfdsafds',
+                    lastName: "test",
+                    password: "psw",
+                    email: "emailfdsafds",
                   }
                 );
             }
@@ -76,19 +76,19 @@ select r.id from roles r where r.name = ?
             return tmp;
           }
 
-          if (typeof row.roles === 'string') {
-            row.roles = row.roles.split(',').map((r) => (/^\d+$/.test(r) ? parseInt(r, 10) : r));
+          if (typeof row.roles === "string") {
+            row.roles = row.roles.split(",").map((r) => (/^\d+$/.test(r) ? parseInt(r, 10) : r));
           }
 
           if (!Array.isArray(row.roles)) {
             row.roles = [];
           }
 
-          if (typeof row.enabled !== 'undefined') {
+          if (typeof row.enabled !== "undefined") {
             row.enabled = !!row.enabled;
           }
 
-          if (typeof row.config === 'string') {
+          if (typeof row.config === "string") {
             try {
               row.config = JSON.parse(row.config);
             } catch (e) {
@@ -107,18 +107,18 @@ select r.id from roles r where r.name = ?
         }
 
         if (opt.test1) {
-          row.lastName = 'test1-lastName';
+          row.lastName = "test1-lastName";
         }
 
-        if (typeof row.roles !== 'undefined') {
+        if (typeof row.roles !== "undefined") {
           delete row.roles;
         }
 
-        if (typeof row.created !== 'undefined') {
+        if (typeof row.created !== "undefined") {
           delete row.created;
         }
 
-        if (typeof row.updated !== 'undefined') {
+        if (typeof row.updated !== "undefined") {
           delete row.updated;
         }
 
@@ -126,7 +126,7 @@ select r.id from roles r where r.name = ?
           delete row.config;
         }
 
-        if (typeof row.config !== 'undefined' && typeof row.config !== 'string') {
+        if (typeof row.config !== "undefined" && typeof row.config !== "string") {
           row.config = JSON.stringify(row.config, null, 4);
         }
 
@@ -179,7 +179,7 @@ select r.id from roles r where r.name = ?
         return await this.query(opt, `delete from user_role where user_id = :id`, userId);
       },
       prepareToValidate: function (data = {}, mode) {
-        if (typeof data.id !== 'undefined') {
+        if (typeof data.id !== "undefined") {
           delete data.id;
         }
 
@@ -187,7 +187,7 @@ select r.id from roles r where r.name = ?
 
         delete data.updated;
 
-        if (mode === 'create') {
+        if (mode === "create") {
           //            if (empty($data['shortname']) && !empty($data['name'])) {
           //
           //                $data['shortname'] = Urlizer::urlizeTrim($data['name']);
@@ -201,6 +201,6 @@ select r.id from roles r where r.name = ?
         return data;
       },
     },
-    'users',
-    'id'
+    "users",
+    "id"
   );

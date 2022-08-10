@@ -78,13 +78,7 @@ test('but there is a "stop" in Christoph', () => {
 
 // https://facebook.github.io/jest/docs/en/using-matchers.html#arrays
 (function () {
-  const shoppingList = [
-    "diapers",
-    "kleenex",
-    "trash bags",
-    "paper towels",
-    "beer",
-  ];
+  const shoppingList = ["diapers", "kleenex", "trash bags", "paper towels", "beer"];
 
   test("the shopping list has beer on it", () => {
     expect(shoppingList).toContain("beer");

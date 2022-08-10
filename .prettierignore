@@ -1,0 +1,6 @@
+/.ci
+/migrations
+/coverage
+/package.json
+/package.dev.json
+/var/

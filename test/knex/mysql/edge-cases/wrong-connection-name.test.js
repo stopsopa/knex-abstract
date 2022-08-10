@@ -15,9 +15,7 @@ it("knex - wrong connection name", (done) => {
     try {
       knex("test").model.common;
     } catch (e) {
-      expect(String(e)).toEqual(
-        "Error: knex-abstract: Connection 'test' is not defined in config.js under 'knex' key"
-      );
+      expect(String(e)).toEqual("Error: knex-abstract: Connection 'test' is not defined in config.js under 'knex' key");
 
       done();
     }

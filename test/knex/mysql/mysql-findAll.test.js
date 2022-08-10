@@ -41,18 +41,7 @@ it(`knex - mysql - findAll`, (done) => {
     const data = await man.findAll({});
 
     const map = data.map((a) => {
-      const {
-        created,
-        updated,
-        roles,
-        config,
-        enabled,
-        id,
-        firstName,
-        lastName,
-        password,
-        ...rest
-      } = a;
+      const { created, updated, roles, config, enabled, id, firstName, lastName, password, ...rest } = a;
 
       return rest;
     });

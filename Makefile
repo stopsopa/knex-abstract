@@ -1,8 +1,3 @@
-# https://docs.docker.com/compose/reference/envvars/#compose_project_name
-COMPOSE_PROJECT_NAME:="$(shell cat docker/name.conf)"
-
-export COMPOSE_PROJECT_NAME
-
 u: # update npm and git (generates new tag)
 	@/bin/bash update.sh
 
@@ -31,11 +26,6 @@ cc: # run local server to general testing
 nt: # test .npmignore
 	@npm pack
 
-yarn:
-	/bin/bash bash/swap-files.sh -m travis -- yarn
-	make -s link
-	npm install --global nodemon
-
 up: down
 	/bin/bash docker/docker-compose.sh up
 
@@ -46,9 +36,9 @@ islinked:
 	@cd dev && /bin/bash islinked.sh
 
 link:
-	/bin/bash bash/swap-files.sh -m travis -- npm link
-	/bin/bash bash/swap-files.sh -m travis -- npm link knex-abstract
-	(cd migrations && rm -rf node_modules && ln -s ../node_modules node_modules)
+	npm link
+	npm link knex-abstract
+	@cd migrations && make -s link
 
 unlink:
 	@cd dev && /bin/bash unlink.sh
@@ -56,10 +46,28 @@ unlink:
 manual:
 	nodemon -e js,html manual.js
 
+yarn:
+	/bin/bash bash/swap-files.sh -m dev -- yarn --production=false
+
 
 
 
 fixtures:
 	(cd migrations && node recreate-db.js safe)
-	(cd migrations && make migrate)
+	(cd migrations && make -s mrun)
+
+diff:
+	(cd migrations && make -s diff)
+
+mrun:
+	(cd migrations && make -s mrun)
+
+torun:
+	(cd migrations && make -s torun)
+
+mrevert:
+	(cd migrations && make -s mrevert)
+
+mtest:
+	(cd migrations && make -s mtest)
 

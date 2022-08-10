@@ -46,9 +46,7 @@ for (let i = 0, l = content.length; i < l; i += 1) {
 }
 
 if (done !== 2) {
-  throw new Error(
-    `Badges not found, invalid badges or missing badges in file '${README_md}'`
-  );
+  throw new Error(`Badges not found, invalid badges or missing badges in file '${README_md}'`);
 
   process.exit(2);
 }

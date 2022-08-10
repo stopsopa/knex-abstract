@@ -38,8 +38,7 @@ const clear = async () => {
 
 it(`knex - mysql - find`, (done) => {
   (async function () {
-    const { created, updated, roles, config, password, ...rest } =
-      await man.find({}, 1);
+    const { created, updated, roles, config, password, ...rest } = await man.find({}, 1);
 
     expect(rest).toEqual({
       email: "admin@gmail.com",

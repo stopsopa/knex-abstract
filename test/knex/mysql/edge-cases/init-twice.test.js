@@ -19,8 +19,7 @@ it("knex - init twice", (done) => {
       second,
     }).toEqual({
       first: 0,
-      second:
-        "knex-abstract: Connections are already initialized, no need to call init() again",
+      second: "knex-abstract: Connections are already initialized, no need to call init() again",
     });
 
     done();

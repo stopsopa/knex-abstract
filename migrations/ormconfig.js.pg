@@ -1,0 +1,34 @@
+
+require('dotenv-up')(4, false, 'ormconfig.js');
+
+const config = {
+   "type": "postgres",
+   "host": process.env.PROTECTED_PG_HOST,
+   "port": process.env.PROTECTED_PG_PORT,
+   "username": process.env.PROTECTED_PG_USER,
+   "password": process.env.PROTECTED_PG_PASS,
+   "database": process.env.PROTECTED_PG_DB,
+   //"synchronize": false,
+   //"logging": false,
+   // "logging": "query", // "query", "error", "schema"
+   "exclude": [
+      "node_modules"
+   ],
+   // "migrationsTableName": "migration_versions",
+   "entities": [
+      "src/pg_entity/**/*.ts"
+   ],
+   "migrations": [
+      "src/pg_migration/**/*.ts"
+   ],
+   "subscribers": [
+      "src/subscriber/**/*.ts"
+   ],
+   "cli": {
+      "entitiesDir": "src/pg_entity",
+      "migrationsDir": "src/pg_migration",
+      "subscribersDir": "src/subscriber"
+   }
+}
+
+module.exports = config;

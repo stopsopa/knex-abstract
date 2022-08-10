@@ -1,2 +1,1 @@
-
-module.exports = require('./src/nestedset');
+module.exports = require("./src/nestedset");

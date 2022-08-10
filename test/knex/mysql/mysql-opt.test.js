@@ -46,6 +46,20 @@ const clear = async () => {
 
 beforeEach(clear);
 
+it("knex - mysql - opt no object", (done) => {
+  (async function () {
+    const cman = knex().model.common;
+
+    try {
+      await cman.query([], "show databases");
+    } catch (e) {
+      expect(String(e)).toContain("opt is not an object");
+
+      done();
+    }
+  })();
+});
+
 it(`knex - mysql - opt`, (done) => {
   (async function () {
     await man.transactify(async (trx) => {
@@ -73,13 +87,9 @@ it(`knex - mysql - opt`, (done) => {
         password: "p",
       });
 
-      const count = await man.queryColumn(
-        opt,
-        "select count(id) c from :table: where firstName = :firstName",
-        {
-          firstName,
-        }
-      );
+      const count = await man.queryColumn(opt, "select count(id) c from :table: where firstName = :firstName", {
+        firstName,
+      });
 
       expect(count).toEqual(2);
     });
@@ -115,25 +125,17 @@ it(`knex - mysql - opt - beyond`, (done) => {
         password: "p",
       });
 
-      const count = await man.queryColumn(
-        opt,
-        "select count(id) c from :table: where firstName = :firstName",
-        {
-          firstName,
-        }
-      );
+      const count = await man.queryColumn(opt, "select count(id) c from :table: where firstName = :firstName", {
+        firstName,
+      });
 
       expect(count).toEqual(2);
     });
 
     // and now beyond transaction
-    const count = await man.queryColumn(
-      {},
-      "select count(id) c from :table: where firstName = :firstName",
-      {
-        firstName,
-      }
-    );
+    const count = await man.queryColumn({}, "select count(id) c from :table: where firstName = :firstName", {
+      firstName,
+    });
 
     expect(count).toEqual(2);
 
@@ -169,13 +171,9 @@ it(`knex - mysql - opt - beyond with trans error`, (done) => {
           password: "p",
         });
 
-        const count = await man.queryColumn(
-          opt,
-          "select count(id) c from :table: where firstName = :firstName",
-          {
-            firstName,
-          }
-        );
+        const count = await man.queryColumn(opt, "select count(id) c from :table: where firstName = :firstName", {
+          firstName,
+        });
 
         expect(count).toEqual(2);
 
@@ -184,13 +182,9 @@ it(`knex - mysql - opt - beyond with trans error`, (done) => {
     } catch (e) {}
 
     // and now beyond transaction
-    const count = await man.queryColumn(
-      {},
-      "select count(id) c from :table: where firstName = :firstName",
-      {
-        firstName,
-      }
-    );
+    const count = await man.queryColumn({}, "select count(id) c from :table: where firstName = :firstName", {
+      firstName,
+    });
 
     // even rows create in fromDb have been removed
     expect(count).toEqual(0);
