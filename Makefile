@@ -22,16 +22,10 @@ up: down
 down:
 	/bin/bash docker/docker-compose.sh down
 
-islinked:
-	@cd dev && /bin/bash islinked.sh
-
 link:
 	npm link
 	npm link knex-abstract
 	@cd migrations && make -s link
-
-unlink:
-	@cd dev && /bin/bash unlink.sh
 
 manual:
 	nodemon -e js,html manual.js
@@ -42,25 +36,4 @@ yarn:
 style_fix:
 	/bin/bash bash/swap-files.sh -m dev -- yarn style:fix
 
-
-
-
-fixtures:
-	(cd migrations && node recreate-db.js safe)
-	(cd migrations && make -s mrun)
-
-diff:
-	(cd migrations && make -s diff)
-
-mrun:
-	(cd migrations && make -s mrun)
-
-torun:
-	(cd migrations && make -s torun)
-
-mrevert:
-	(cd migrations && make -s mrevert)
-
-mtest:
-	(cd migrations && make -s mtest)
 
