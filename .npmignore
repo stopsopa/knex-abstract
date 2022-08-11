@@ -13,6 +13,7 @@
 /comment.txt
 /coverage/
 /DEV.md
+jest.config.js
 /dev/
 /docker/
 /example/
