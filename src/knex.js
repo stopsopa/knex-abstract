@@ -4,8 +4,6 @@
 
 //import configServer from 'server.config';
 
-const log = require("inspc");
-
 let connections = false;
 
 function isObject(a) {
