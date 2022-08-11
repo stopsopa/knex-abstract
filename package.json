@@ -10,8 +10,20 @@
     "type": "git",
     "url": "git+https://github.com/stopsopa/knex-abstract.git"
   },
-  "keywords": ["knex"],
-  "author": "Szymon Działowski",
+  "keywords": [
+    "knex"
+  ],
+  "author": {
+    "name": "Szymon Działowski",
+    "email": "szymon.dzialowski[at]gmail.com",
+    "url": "https://github.com/stopsopa"
+  },
+  "contributors": [
+    {
+      "name": "Tomek Wlodarczyk",
+      "url": "https://github.com/tomekwlod"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/stopsopa/knex-abstract/issues"
