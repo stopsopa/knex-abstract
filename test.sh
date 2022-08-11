@@ -67,7 +67,6 @@ JEST="node node_modules/.bin/jest"
 TEST="$(cat <<END
 $JEST \
 $@ \
---verbose \
 --roots test \
 --runInBand \
 --modulePathIgnorePatterns \
