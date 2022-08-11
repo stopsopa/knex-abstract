@@ -1,5 +1,5 @@
-/.ci
-/migrations
-/coverage
+/.ci/
+/migrations/
+/coverage/
 /package*.json
 /var/

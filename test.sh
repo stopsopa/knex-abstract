@@ -75,7 +75,6 @@ $@ \
     test/minefield \
     test/project \
     test/puppeteer \
-    karma_build \
     test/knex/postgres
 END
 )";
