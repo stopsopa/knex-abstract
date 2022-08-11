@@ -61,3 +61,5 @@ commitlint.config.js
 swappackagejson.sh
 tsconfig.json
 /var/
+/.vscode/
+/release.config.js

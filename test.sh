@@ -9,71 +9,32 @@ function green {
 }
 
 
+if [ ! -e node_modules ]; then
 
-        # to make sure that knex-abstract is linked -
-        # it is reaquired for testing due to require('knex-abstract') in tests
+    make yarn
+fi
 
-        LOCVER="$(node install/install.js --is-linked)";
-
-        { green "LOCVER: >>>$LOCVER<<<"; } 2>&3
-
-        if [ ! -e node_modules ]; then
-
-            yarn
-        fi
-
-#        if [ ! -e node_modules/.bin/jest ]; then
-#
-#            yarn add jest --dev
-#        fi
-
-        if [[ "$(knex-abstract --is-linked)" = "$LOCVER" ]]; then
-
-            { green "knex-abstract is linked globally"; } 2>&3
-
-        else
-
-            set -e
-            set -x
-
-            yarn
-
-            npm link
-
-            if [[ "$(knex-abstract --is-linked)" != "$LOCVER" ]]; then
-
-                { error "\n\n    can't link knex-abstract\n\n"; } 2>&3
-
-                exit 1
-            fi
-
-            set +e
-            set +x
-        fi
+set -e
+set -x
 
 
-        if [[ "$(node node_modules/knex-abstract/install/install.js --is-linked)" = "$LOCVER" ]]; then
+if [ -L node_modules/knex-abstract ]; then
 
-            { green "knex-abstract is linked in main target directory"; } 2>&3
+    { green "knex-abstract is linked"; } 2>&3
+else
 
-        else
+    npm link
 
-            npm link knex-abstract
+    npm link knex-abstract
+fi
 
-            if [[ "$(node node_modules/knex-abstract/install/install.js --is-linked)" != "$LOCVER" ]]; then
+set +e
+set +x
 
-                { red "can't link knex-abstract in main target directory."; } 2>&3
+if [ ! -e .env ]; then
 
-                exit 1
-            fi
-        fi
-
-        if [ ! -e .env ]; then
-
-            cp .env.dist .env
-        fi
-
-
+    cp .env.dist .env
+fi
 
 if [ "$1" = "--help" ]; then
 
@@ -95,53 +56,7 @@ JEST=""
 set -e
 set -x
 
-if [ -f node_modules/.bin/jest ]; then  # exist
-
-    { green "node_modules/.bin/jest - exists"; } 2>&3
-
-    JEST="node node_modules/.bin/jest"
-else
-
-    { green "node_modules/.bin/jest - doesn't exist"; } 2>&3
-
-    exit 1
-fi
-
-#if [ "$JEST" = "" ]; then
-#
-#    { green "local jest - not found"; } 2>&3
-#
-#    jest -v > /dev/null
-#
-#    STAT="$?"
-#
-#    { green "(jest -v) status: $STAT"; } 2>&3
-#
-#    if [ "$STAT" = "0" ]; then
-#
-#        { green "global jest - found"; } 2>&3
-#
-#        JEST="jest"
-#    else
-#
-#        { red "\n    Can't detect jest, install globally: \n   npm install jest -g\n\n"; } 2>&3
-#
-#        exit 1;
-#    fi
-#else
-#
-#    { green "local jest - found"; } 2>&3
-#fi
-
-if [[ "$(ls -la node_modules/knex-abstract | grep knex-abstract)" = *"->"* ]]; then
-
-    { green "knex-abstract is linked"; } 2>&3
-
-else
-
-    npm link
-    (cd test && npm link knex-abstract)
-fi
+JEST="node node_modules/.bin/jest"
 
 # --bail \
 # --detectOpenHandles \
@@ -152,6 +67,7 @@ fi
 TEST="$(cat <<END
 $JEST \
 $@ \
+--verbose \
 --roots test \
 --runInBand \
 --modulePathIgnorePatterns \

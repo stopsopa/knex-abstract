@@ -10,9 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/stopsopa/knex-abstract.git"
   },
-  "keywords": [
-    "knex"
-  ],
+  "keywords": ["knex"],
   "author": "Szymon Działowski",
   "license": "MIT",
   "bugs": {

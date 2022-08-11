@@ -1,4 +1,4 @@
-const abstract = require("../../../src");
+const abstract = require("knex-abstract");
 
 const extend = abstract.extend;
 
@@ -10,7 +10,7 @@ const table = "tree";
 
 const id = "tid";
 
-const nestedset = require("../../../src/nestedset");
+const nestedset = require("knex-abstract/nestedset");
 
 module.exports = (knex) =>
   extend(

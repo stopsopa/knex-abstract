@@ -49,6 +49,9 @@ manual:
 yarn:
 	/bin/bash bash/swap-files.sh -m dev -- yarn --production=false
 
+style_fix:
+	/bin/bash bash/swap-files.sh -m dev -- yarn style:fix
+
 
 
 

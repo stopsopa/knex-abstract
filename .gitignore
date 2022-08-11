@@ -10,3 +10,4 @@ yarn-error*
 /testinstall/
 yarn.lock
 package-lock.json
+/knex-project/
