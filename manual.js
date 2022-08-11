@@ -217,17 +217,23 @@ io.on("connection", (socket) => {
 
     try {
       await knex().transaction(async (trx) => {
-        const sourceId = await mtree.insert({trx}, {
-          title,
-        });
+        const sourceId = await mtree.insert(
+          { trx },
+          {
+            title,
+          }
+        );
 
         switch (method) {
           case "treeCreateBefore":
           case "treeCreateAfter":
-            await mtree[method]({trx}, {
-              sourceId,
-              targetId,
-            });
+            await mtree[method](
+              { trx },
+              {
+                sourceId,
+                targetId,
+              }
+            );
             break;
           case "treeCreateAsNthChild":
             const params = {
@@ -237,7 +243,7 @@ io.on("connection", (socket) => {
             if (n) {
               params.nOneIndexed = n;
             }
-            await mtree.treeCreateAsNthChild({trx}, params);
+            await mtree.treeCreateAsNthChild({ trx }, params);
             break;
           default:
             throw new Error(`Method unknown '${method}'`);
@@ -274,11 +280,14 @@ io.on("connection", (socket) => {
       switch (method) {
         case "treeMoveBefore":
         case "treeMoveAfter":
-          await mtree[method]({trx}, {
-            sourceId,
-            targetId,
-            // strict: true,
-          });
+          await mtree[method](
+            { trx },
+            {
+              sourceId,
+              targetId,
+              // strict: true,
+            }
+          );
           break;
         case "treeMoveToNthChild":
           const params = {
@@ -292,7 +301,7 @@ io.on("connection", (socket) => {
             params.nOneIndexed = n;
           }
 
-          await mtree.treeMoveToNthChild({trx}, params);
+          await mtree.treeMoveToNthChild({ trx }, params);
           break;
         default:
           throw new Error(`Method unknown '${method}'`);
@@ -404,7 +413,7 @@ io.on("connection", (socket) => {
 
         await knex().transaction(async (trx) => {
           const source = await man.queryOne(
-            {trx},
+            { trx },
             `SELECT * FROM :table: t WHERE t.tlevel > 1 ORDER BY rand() LIMIT 1 FOR UPDATE`
           );
           //                     const source = await man.queryOne(trx, `
@@ -433,17 +442,17 @@ io.on("connection", (socket) => {
 
           const logic = async () => {
             const countOnTheFirstLevel = await man.queryColumn(
-              {trx},
+              { trx },
               `select count(*) from :table: t where t.tlevel = 2`
             );
 
             let target;
 
             if (countOnTheFirstLevel < 4) {
-              target = await man.queryOne({trx}, `select * from :table: t where t.tlevel = 1 limit 1 FOR UPDATE`);
+              target = await man.queryOne({ trx }, `select * from :table: t where t.tlevel = 1 limit 1 FOR UPDATE`);
             } else {
               target = await man.queryOne(
-                {trx},
+                { trx },
                 `select * FROM tree t where t.tlevel > 1 AND not (t.tl >= :l AND t.tr <= :r) ORDER BY RAND() LIMIT 1 FOR UPDATE`,
                 {
                   l: source.tl,
@@ -499,10 +508,10 @@ io.on("connection", (socket) => {
               `${(on + "").padStart(3, "0")}: source: ${operation.sourceId} parentId: ${operation.parentId} n: ${index}`
             );
 
-            const snapshot = await mtree.treeCheckIntegrity({trx}, "t.title");
+            const snapshot = await mtree.treeCheckIntegrity({ trx }, "t.title");
 
             try {
-              await man.treeMoveToNthChild({trx}, operation);
+              await man.treeMoveToNthChild({ trx }, operation);
             } catch (e) {
               // log.dump({
               //     e
@@ -515,7 +524,7 @@ io.on("connection", (socket) => {
               }
             }
 
-            const data = await mtree.treeCheckIntegrity({trx}, "t.title");
+            const data = await mtree.treeCheckIntegrity({ trx }, "t.title");
 
             const { tree, valid, invalidMsg } = data;
 

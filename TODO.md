@@ -7,3 +7,5 @@
         tree: list.filter((l) => !l.pid),
         list,
       };
+
+- update DEV.md
