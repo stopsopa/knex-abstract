@@ -47,7 +47,6 @@ if [ ! -d var/package/ ]; then
     exit 1;
 fi
 
-
 if [ ! -L node_modules/knex-abstract ]; then
 
     echo "${0} error: node_modules/knex-abstract should be a link"
