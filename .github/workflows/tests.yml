@@ -9,6 +9,9 @@ env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 jobs:
   test:
+    strategy:
+      matrix:
+        version: [10, 11, 12, 13, 14, 15, 16, 17, 18] # ${{ matrix.version }}
     timeout-minutes: 60
     runs-on: ubuntu-latest
     services: # https://github.com/actions/example-services/actions/runs/449599975/workflow
@@ -28,7 +31,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: "16.x"
+          node-version: ${{ matrix.version }}
       - name: Prepare .env
         run: cp .env.dist .env
       - name: Yarn install
