@@ -1,4 +1,4 @@
-const knex = require("knex-abstract");
+const knex = require("../../src");
 
 const log = require("inspc");
 

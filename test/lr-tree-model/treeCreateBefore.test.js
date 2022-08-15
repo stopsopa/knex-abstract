@@ -4,7 +4,7 @@ const path = require("path");
 
 const log = require("inspc");
 
-const knex = require("knex-abstract");
+const knex = require("../../src");
 
 require("dotenv-up")(4, false, "tests");
 

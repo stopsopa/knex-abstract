@@ -871,7 +871,7 @@ if (watch) {
   });
 
   log(`
-         🌎  Listening on port ${port}, start time: ${time()}
+         🌎  Listening on port http://localhost:${port}, start time: ${time()}
             serving files from directory ${dir}, --help for more info
     `);
 }
