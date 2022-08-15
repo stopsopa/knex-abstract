@@ -28,14 +28,14 @@ if [ "${?}" != "0" ]; then
 
     echo "npm pack --pack-destination var/ failed"
 
-    echo /home/runner/.npm/
-    ls -la /home/runner/.npm/
+    echo /home/runner/.npm/_logs/
+    ls -la /home/runner/.npm/_logs/
 
     echo ""
     echo ""
     echo ""
 
-    cat /home/runner/.npm/*
+    cat /home/runner/.npm/_logs/*
     echo ""
     echo ""
     echo ""
