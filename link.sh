@@ -26,7 +26,7 @@ npm pack
 
 FILE="$(ls . | grep "\.tgz$")"
 
-mv "${FILE}" /var/
+mv "${FILE}" var/
 
 if [ "${?}" != "0" ]; then
 
