@@ -1,5 +1,7 @@
 source "bash/trim.sh";
 
+set -x
+
 if [ "${1}" = "" ]; then
 
     echo "${0} error: provide how many files are expected to be in npm package"
