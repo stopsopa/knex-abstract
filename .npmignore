@@ -5,6 +5,7 @@
 .prettierignore
 .prettierrc.json
 *.tgz
+*.html
 /.env
 /.env.dist
 /.idea/

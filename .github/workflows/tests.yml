@@ -38,7 +38,7 @@ jobs:
       - name: Yarn install
         run: make yarn
       - name: link
-        run: /bin/bash link.sh 10
+        run: /bin/bash link.sh 9
       - name: link migrations/node_modules
         run: cd migrations && ln -s ../node_modules node_modules
       - name: Setup migration config
