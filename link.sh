@@ -24,6 +24,25 @@ rm -rf var/*.tgz || true
 
 npm pack --pack-destination var/
 
+if [ "${?}" != "0" ]; then
+
+    echo "npm pack --pack-destination var/ failed"
+
+    echo /home/runner/.npm/
+    ls -la /home/runner/.npm/
+
+    echo ""
+    echo ""
+    echo ""
+
+    cat /home/runner/.npm/*
+    echo ""
+    echo ""
+    echo ""
+
+    exit 1
+fi
+
 FILE="$(ls var/ | grep "\.tgz$")"
 
 FILE="$(trim "${FILE}")"
