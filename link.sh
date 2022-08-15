@@ -18,7 +18,7 @@ _PWD="$(pwd)"
 
 rm -rf var/package
 
-rm -rf var/*.tgz
+rm -rf var/*.tgz || true
 
 npm pack --pack-destination var/
 
