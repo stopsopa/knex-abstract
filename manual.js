@@ -43,7 +43,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.json());
 
-const knex = require("knex-abstract");
+const knex = require("../../src");
 
 knex.init(require("./test/lr-tree-model/config"));
 

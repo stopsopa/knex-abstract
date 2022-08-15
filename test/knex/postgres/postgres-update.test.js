@@ -2,7 +2,7 @@
 
 const log = require("inspc");
 
-const knex = require("knex-abstract");
+const knex = require('knex-abstract');
 
 const delay = require("nlab/delay");
 

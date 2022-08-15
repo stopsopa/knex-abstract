@@ -3,6 +3,6 @@ module.exports = async () => {
     verbose: true,
     collectCoverage: true,
     coverageReporters: ["html", "lcov"],
-    collectCoverageFrom: ["src/**/*.{js,jsx}"],
+    collectCoverageFrom: ["src/**/*.{js,jsx}", "var/package/**/*.{js,jsx}"],
   };
 };

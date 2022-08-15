@@ -299,7 +299,7 @@ module.exports = (knex) =>
 And from now on manager will have extra available methods:
 
 ```javascript
-const knex = require("knex-abstract");
+const knex = require("../../src");
 
 (async function () {
   const man = knex().model.tags;
@@ -429,7 +429,7 @@ const path = require("path");
 
 const log = require("inspc");
 
-const knex = require("knex-abstract");
+const knex = require("../../src");
 
 const extend = knex.extend;
 

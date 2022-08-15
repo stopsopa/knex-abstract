@@ -1,4 +1,4 @@
-const abstract = require("knex-abstract");
+const abstract = require("../../../src");
 
 const extend = abstract.extend;
 
