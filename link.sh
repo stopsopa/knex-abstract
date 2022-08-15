@@ -22,7 +22,11 @@ rm -rf var/package
 
 rm -rf var/*.tgz || true
 
-npm pack --pack-destination var/
+npm pack
+
+FILE="$(ls . | grep "\.tgz$")"
+
+mv "${FILE}" /var/
 
 if [ "${?}" != "0" ]; then
 
