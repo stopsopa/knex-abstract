@@ -1,6 +1,6 @@
 source "bash/trim.sh";
 
-set -x
+# set -x
 
 if [ "${1}" = "" ]; then
 
