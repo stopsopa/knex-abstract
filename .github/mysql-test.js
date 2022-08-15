@@ -21,7 +21,6 @@ async function notExist(file) {
 
 (async () => {
   try {
-
     // {
     //   const nExist = await notExist(env);
 
@@ -30,9 +29,7 @@ async function notExist(file) {
     //   }
     // }
 
-
-    if ( ! fs.existsSync(env) ) {
-
+    if (!fs.existsSync(env)) {
       throw th(`file '${env}' doesn't exist (${nExist.message})`);
     }
 
