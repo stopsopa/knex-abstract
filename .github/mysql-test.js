@@ -1,8 +1,10 @@
 const path = require("path");
 
+const fs = require("fs");
+
 const env = path.resolve(__dirname, "..", ".env");
 
-const fsPromises = require("node:fs/promises");
+// const fsPromises = require("node:fs/promises"); // not available in node v 15
 
 const th = (msg) => th(`mysql-test.js error: ${msg}`);
 
@@ -19,12 +21,19 @@ async function notExist(file) {
 
 (async () => {
   try {
-    {
-      const nExist = await notExist(env);
 
-      if (nExist) {
-        throw th(`file '${env}' doesn't exist (${nExist.message})`);
-      }
+    // {
+    //   const nExist = await notExist(env);
+
+    //   if (nExist) {
+    //     throw th(`file '${env}' doesn't exist (${nExist.message})`);
+    //   }
+    // }
+
+
+    if ( ! fs.existsSync(env) ) {
+
+      throw th(`file '${env}' doesn't exist (${nExist.message})`);
     }
 
     require("dotenv").config({ path: env });
