@@ -31,9 +31,9 @@ manual:
 	nodemon -e js,html manual.js
 
 yarn:
-	/bin/bash bash/swap-files.sh -m dev -- yarn --production=false
+	/bin/bash bash/swap-files-v2.sh package.json package.dev.json -- yarn --production=false
 
 style_fix:
-	/bin/bash bash/swap-files.sh -m dev -- yarn style:fix
+	/bin/bash bash/swap-files-v2.sh package.json package.dev.json -- yarn style:fix
 
 

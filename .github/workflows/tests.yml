@@ -75,7 +75,7 @@ jobs:
         with:
           node-version: 18
       - name: Install semantic-release
-        run: /bin/bash bash/swap-files.sh -m dev -- yarn add semantic-release conventional-changelog-conventionalcommits
+        run: /bin/bash bash/swap-files-v2.sh package.json package.dev.json -- yarn add semantic-release conventional-changelog-conventionalcommits
       - name: npm pack
         run: npm pack
       # https://github.com/semantic-release/semantic-release/blob/master/docs/recipes/ci-configurations/github-actions.md
