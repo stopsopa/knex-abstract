@@ -1,9 +1,4 @@
 name: Tests
-on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # provided automatically by github itself https://docs.github.com/en/actions/security-guides/automatic-token-authentication
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
