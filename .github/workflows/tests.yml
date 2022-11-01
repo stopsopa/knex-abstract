@@ -1,4 +1,11 @@
 name: Tests
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # provided automatically by github itself https://docs.github.com/en/actions/security-guides/automatic-token-authentication
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -77,4 +84,3 @@ jobs:
       # https://github.com/semantic-release/semantic-release/blob/master/docs/recipes/ci-configurations/github-actions.md
       - name: Release
         run: node node_modules/.bin/semantic-release --debug
-
