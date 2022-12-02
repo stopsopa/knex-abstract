@@ -412,11 +412,11 @@ io.on("connection", (socket) => {
         const man = knex().model.tree;
 
         await knex().transaction(async (trx) => {
-          const source = await man.queryOne(
+          const source = await man.fetchOne(
             { trx },
             `SELECT * FROM :table: t WHERE t.tlevel > 1 ORDER BY rand() LIMIT 1 FOR UPDATE`
           );
-          //                     const source = await man.queryOne(trx, `
+          //                     const source = await man.fetchOne(trx, `
           // (
           //     SELECT *, '1' origin
           //     FROM tree t
@@ -441,7 +441,7 @@ io.on("connection", (socket) => {
           }
 
           const logic = async () => {
-            const countOnTheFirstLevel = await man.queryColumn(
+            const countOnTheFirstLevel = await man.fetchColumn(
               { trx },
               `select count(*) from :table: t where t.tlevel = 2`
             );
@@ -449,9 +449,9 @@ io.on("connection", (socket) => {
             let target;
 
             if (countOnTheFirstLevel < 4) {
-              target = await man.queryOne({ trx }, `select * from :table: t where t.tlevel = 1 limit 1 FOR UPDATE`);
+              target = await man.fetchOne({ trx }, `select * from :table: t where t.tlevel = 1 limit 1 FOR UPDATE`);
             } else {
-              target = await man.queryOne(
+              target = await man.fetchOne(
                 { trx },
                 `select * FROM tree t where t.tlevel > 1 AND not (t.tl >= :l AND t.tr <= :r) ORDER BY RAND() LIMIT 1 FOR UPDATE`,
                 {
@@ -460,7 +460,7 @@ io.on("connection", (socket) => {
                 }
               );
 
-              //                             target = await man.queryOne({trx}, `
+              //                             target = await man.fetchOne({trx}, `
               // (
               // SELECT *, '1' origin
               // FROM tree t

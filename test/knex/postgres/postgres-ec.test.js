@@ -80,13 +80,13 @@ it(`knex - postgres - exc semi`, (done) => {
 it(`knex - postgres - wrong fromDb`, (done) => {
   (async function () {
     try {
-      await knex("pg").model.wrongTest.queryColumn({}, 'select email from :table: u where "lastName" = :p1', {
+      await knex("pg").model.wrongTest.fetchColumn({}, 'select email from :table: u where "lastName" = :p1', {
         p1: "admin",
       });
 
       done("wrong");
     } catch (e) {
-      expect(String(e)).toEqual("Error: users.js error: queryOne error: rows is not an array");
+      expect(String(e)).toEqual("Error: users.js error: fetchOne error: rows is not an array");
 
       done();
     }
@@ -95,7 +95,7 @@ it(`knex - postgres - wrong fromDb`, (done) => {
 
 it(`knex - postgres - exc not semi`, (done) => {
   (async function () {
-    const data = await man.queryColumn({}, 'select email from :table: u where "lastName" = :p1', {
+    const data = await man.fetchColumn({}, 'select email from :table: u where "lastName" = :p1', {
       p1: "admin",
     });
 
@@ -108,7 +108,7 @@ it(`knex - postgres - exc not semi`, (done) => {
 it(`knex - postgres - "syntax error at or near", object params`, (done) => {
   (async function () {
     try {
-      await man.queryColumn({}, 'select email from :table: :table: u where "lastName" = :p1', {
+      await man.fetchColumn({}, 'select email from :table: :table: u where "lastName" = :p1', {
         p1: "admin",
       });
     } catch (e) {
@@ -122,7 +122,7 @@ it(`knex - postgres - "syntax error at or near", object params`, (done) => {
 it(`knex - postgres - "syntax error at or near", array params`, (done) => {
   (async function () {
     try {
-      await man.queryColumn({}, 'select email from :table: :table: u where "lastName" = ?', ["admin"]);
+      await man.fetchColumn({}, 'select email from :table: :table: u where "lastName" = ?', ["admin"]);
     } catch (e) {
       expect(String(e)).toContain("syntax error at or near");
 
@@ -131,20 +131,20 @@ it(`knex - postgres - "syntax error at or near", array params`, (done) => {
   })();
 });
 
-it(`knex - postgres - queryOne - more then one`, (done) => {
+it(`knex - postgres - fetchOne - more then one`, (done) => {
   (async function () {
     try {
-      const find = await manc.queryOne({}, "select * from roles where name in (?)", [["admin", "user"]]);
+      const find = await manc.fetchOne({}, "select * from roles where name in (?)", [["admin", "user"]]);
     } catch (e) {
-      expect(String(e)).toEqual("found 2 rows, queryOne is designed to fetch first from only one row");
+      expect(String(e)).toEqual("found 2 rows, fetchOne is designed to fetch first from only one row");
 
       done();
     }
   })();
 });
-it(`knex - postgres - queryOne, error`, (done) => {
+it(`knex - postgres - fetchOne, error`, (done) => {
   (async function () {
-    const one = await man.queryOne({}, 'select email from :table: u where "lastName" = ?', ["xyz"]);
+    const one = await man.fetchOne({}, 'select email from :table: u where "lastName" = ?', ["xyz"]);
 
     expect(one).toEqual(undefined);
 
@@ -152,10 +152,10 @@ it(`knex - postgres - queryOne, error`, (done) => {
   })();
 });
 
-it(`knex - postgres - queryOne, table reserved`, (done) => {
+it(`knex - postgres - fetchOne, table reserved`, (done) => {
   (async function () {
     try {
-      await man.queryOne({}, 'select email from :table: u where "lastName" = :p1', { __table: "users", p1: "xyz" });
+      await man.fetchOne({}, 'select email from :table: u where "lastName" = :p1', { __table: "users", p1: "xyz" });
     } catch (e) {
       expect(String(e)).toEqual(
         "Error: users.js error: Binding name ':table:' is reserved, if you are using it then you shouldn't specify parameter '__table' manually"
@@ -166,10 +166,10 @@ it(`knex - postgres - queryOne, table reserved`, (done) => {
   })();
 });
 
-it(`knex - postgres - queryOne, table used but on common`, (done) => {
+it(`knex - postgres - fetchOne, table used but on common`, (done) => {
   (async function () {
     try {
-      await manc.queryOne({}, 'select email from :table: u where "lastName" = :p1');
+      await manc.fetchOne({}, 'select email from :table: u where "lastName" = :p1');
     } catch (e) {
       expect(String(e)).toEqual("Error: index.js error: this.__table not specified");
 
@@ -178,10 +178,10 @@ it(`knex - postgres - queryOne, table used but on common`, (done) => {
   })();
 });
 
-it(`knex - postgres - queryOne, id reserved`, (done) => {
+it(`knex - postgres - fetchOne, id reserved`, (done) => {
   (async function () {
     try {
-      await man.queryOne({}, 'select email from :id: u where "lastName" = :p1', { __id: "users", p1: "xyz" });
+      await man.fetchOne({}, 'select email from :id: u where "lastName" = :p1', { __id: "users", p1: "xyz" });
     } catch (e) {
       expect(String(e)).toEqual(
         "Error: users.js error: Binding name ':id:' is reserved, if you are using it then you shouldn't specify parameter '__id' manually"
@@ -192,10 +192,10 @@ it(`knex - postgres - queryOne, id reserved`, (done) => {
   })();
 });
 
-it(`knex - postgres - queryOne, id used but on common`, (done) => {
+it(`knex - postgres - fetchOne, id used but on common`, (done) => {
   (async function () {
     try {
-      await manc.queryOne({}, 'select email from :id: u where "lastName" = :p1');
+      await manc.fetchOne({}, 'select email from :id: u where "lastName" = :p1');
     } catch (e) {
       expect(String(e)).toEqual("Error: index.js error: this.__id not specified");
 
@@ -204,10 +204,10 @@ it(`knex - postgres - queryOne, id used but on common`, (done) => {
   })();
 });
 
-it(`knex - postgres - queryOne, missing param`, (done) => {
+it(`knex - postgres - fetchOne, missing param`, (done) => {
   (async function () {
     try {
-      await man.queryOne({}, 'select email from :table: where "lastName" = :p1', {});
+      await man.fetchOne({}, 'select email from :table: where "lastName" = :p1', {});
     } catch (e) {
       expect(String(e)).toEqual(
         'Error: users.js error: Query: \'select email from :table: where "lastName" = :p1\' error: value for parameter \'p1\' is missing on the list of given parameters: {"__table":"users"}'

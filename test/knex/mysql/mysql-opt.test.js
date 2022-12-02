@@ -87,7 +87,7 @@ it(`knex - mysql - opt`, (done) => {
         password: "p",
       });
 
-      const count = await man.queryColumn(opt, "select count(id) c from :table: where firstName = :firstName", {
+      const count = await man.fetchColumn(opt, "select count(id) c from :table: where firstName = :firstName", {
         firstName,
       });
 
@@ -125,7 +125,7 @@ it(`knex - mysql - opt - beyond`, (done) => {
         password: "p",
       });
 
-      const count = await man.queryColumn(opt, "select count(id) c from :table: where firstName = :firstName", {
+      const count = await man.fetchColumn(opt, "select count(id) c from :table: where firstName = :firstName", {
         firstName,
       });
 
@@ -133,7 +133,7 @@ it(`knex - mysql - opt - beyond`, (done) => {
     });
 
     // and now beyond transaction
-    const count = await man.queryColumn({}, "select count(id) c from :table: where firstName = :firstName", {
+    const count = await man.fetchColumn({}, "select count(id) c from :table: where firstName = :firstName", {
       firstName,
     });
 
@@ -171,7 +171,7 @@ it(`knex - mysql - opt - beyond with trans error`, (done) => {
           password: "p",
         });
 
-        const count = await man.queryColumn(opt, "select count(id) c from :table: where firstName = :firstName", {
+        const count = await man.fetchColumn(opt, "select count(id) c from :table: where firstName = :firstName", {
           firstName,
         });
 
@@ -182,7 +182,7 @@ it(`knex - mysql - opt - beyond with trans error`, (done) => {
     } catch (e) {}
 
     // and now beyond transaction
-    const count = await man.queryColumn({}, "select count(id) c from :table: where firstName = :firstName", {
+    const count = await man.fetchColumn({}, "select count(id) c from :table: where firstName = :firstName", {
       firstName,
     });
 

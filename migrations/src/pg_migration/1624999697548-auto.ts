@@ -50,7 +50,7 @@ export class auto1624999697548 implements MigrationInterface {
         while ((tmp = users.shift())) {
           const {roles, ...user} = tmp;
 
-          let count = await model.common.queryColumn(
+          let count = await model.common.fetchColumn(
             {
               trx,
             },
@@ -73,7 +73,7 @@ export class auto1624999697548 implements MigrationInterface {
               }
             );
 
-            id = await model.users.queryColumn(
+            id = await model.users.fetchColumn(
               {
                 trx,
               },
@@ -95,7 +95,7 @@ export class auto1624999697548 implements MigrationInterface {
           //
           //                     const role = roles[i];
           //
-          //                     const count = await model.user_role.queryColumn(trx, `
+          //                     const count = await model.user_role.fetchColumn(trx, `
           // select            count(*) c
           // from              users u
           //        inner join user_role ur
@@ -117,7 +117,7 @@ export class auto1624999697548 implements MigrationInterface {
           //
           //                         log(`\n\nadding role '${role}' to user '${user.email}'\n`);
           //
-          //                         const roleId = await model.user_role.queryColumn(trx, `SELECT id from roles where name = ?`, [role]);
+          //                         const roleId = await model.user_role.fetchColumn(trx, `SELECT id from roles where name = ?`, [role]);
           //
           //                         await model.user_role.query(trx, `insert into user_role (user_id, role_id) values (?, ?)`, [id, roleId]);
           //                     }

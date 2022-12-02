@@ -76,7 +76,7 @@ module.exports = (topt) => {
       return await this.transactify(opt.trx, async (trx) => {
         opt.trx = trx;
 
-        const root = await this.queryOne(
+        const root = await this.fetchOne(
           opt,
           `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: where :level: = 1`,
           {
@@ -155,7 +155,7 @@ module.exports = (topt) => {
         both: false,
       };
 
-      return this.queryOne(
+      return this.fetchOne(
         opt,
         `SELECT :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort FROM :table: t WHERE :id: = :id FOR UPDATE`,
         {
@@ -774,7 +774,7 @@ module.exports = (topt) => {
           }
         });
 
-        const maxIndex = await this.queryColumn(
+        const maxIndex = await this.fetchColumn(
           opt,
           `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id and :sort: > 0`,
           {
@@ -801,7 +801,7 @@ module.exports = (topt) => {
           nOneIndexed = 1;
         }
 
-        let rowUnderIndex = await this.queryOne(
+        let rowUnderIndex = await this.fetchOne(
           opt,
           `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s and :sort: > 0 FOR UPDATE`,
           {
@@ -814,7 +814,7 @@ module.exports = (topt) => {
         let lastNode;
 
         if (!rowUnderIndex) {
-          lastNode = await this.queryOne(
+          lastNode = await this.fetchOne(
             opt,
             `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s and :sort: > 0 FOR UPDATE`,
             {
@@ -1014,7 +1014,7 @@ where             (
           }
         });
 
-        const maxIndex = await this.queryColumn(opt, `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id`, {
+        const maxIndex = await this.fetchColumn(opt, `SELECT MAX(:sort:) + 1 FROM :table: WHERE :pid: = :id`, {
           pid,
           sort,
           id: parent.id,
@@ -1055,7 +1055,7 @@ where             (
           return;
         }
 
-        // let rowUnderIndex = await this.queryOne(opt, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s FOR UPDATE`, {
+        // let rowUnderIndex = await this.fetchOne(opt, `select :id: id, :pid: pid, :level: level, :l: l, :r: r, :sort: sort from :table: WHERE :pid: = :id and :sort: = :s FOR UPDATE`, {
         //     ...topt.columns,
         //     id: parent.id,
         //     s: nOneIndexed

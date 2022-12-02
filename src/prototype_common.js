@@ -237,13 +237,19 @@ prototype.prototype.fetch = function (opt, ...args) {
   return promise;
 };
 
-prototype.prototype.queryOne = function (opt, ...args) {
+prototype.prototype.fetchOne = function (opt, ...args) {
   let promise = this.query(opt, ...args).then((rows) => {
     if (rows.length < 2) {
       return rows[0]; // return first row from result - but only if there is only one
     }
 
-    return Promise.reject("found " + rows.length + " rows, queryOne is designed to fetch first from only one row");
+    return Promise.reject(
+      "found " +
+        rows.length +
+        " rows, " +
+        (opt.__functionName || "fetchOne") +
+        " is designed to fetch first from only one row"
+    );
   });
 
   if (opt.fromDb !== false && opt.both !== false) {
@@ -263,7 +269,7 @@ prototype.prototype.queryOne = function (opt, ...args) {
       })
       .then((rows) => {
         if (!Array.isArray(rows)) {
-          throw this.Error(`queryOne error: rows is not an array`);
+          throw this.Error((opt.__functionName || "fetchOne") + " error: rows is not an array");
         }
 
         return rows[0];
@@ -273,8 +279,39 @@ prototype.prototype.queryOne = function (opt, ...args) {
   return promise;
 };
 
+prototype.prototype.queryOne = function (opt, ...args) {
+  return this.fetchOne(
+    {
+      ...opt,
+      fromDb: false,
+      __functionName: "queryOne",
+    },
+    ...args
+  );
+};
+
 prototype.prototype.queryColumn = function (opt, ...args) {
-  return this.queryOne(opt, ...args).then((row) => {
+  return this.queryOne(
+    {
+      ...opt,
+      __functionName: "queryColumn",
+    },
+    ...args
+  ).then((row) => {
+    if (isObject(row)) {
+      return Object.values(row)[0]; // extract value from first column
+    }
+  });
+};
+
+prototype.prototype.fetchColumn = function (opt, ...args) {
+  return this.fetchOne(
+    {
+      ...opt,
+      __functionName: "fetchColumn",
+    },
+    ...args
+  ).then((row) => {
     if (isObject(row)) {
       return Object.values(row)[0]; // extract value from first column
     }
@@ -282,7 +319,7 @@ prototype.prototype.queryColumn = function (opt, ...args) {
 };
 
 prototype.prototype.count = function (opt, ...args) {
-  return this.queryColumn(opt, "SELECT COUNT(*) AS c FROM :table:", ...args).then((c) => parseInt(c, 10));
+  return this.fetchColumn(opt, "SELECT COUNT(*) AS c FROM :table:", ...args).then((c) => parseInt(c, 10));
 };
 
 prototype.prototype.find = function (opt, id, select = "*") {
