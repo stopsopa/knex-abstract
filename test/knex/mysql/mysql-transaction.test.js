@@ -71,7 +71,7 @@ it(`knex - no transaction`, (done) => {
     } catch (e) {
       expect(String(e)).toContain("Unknown column");
 
-      const count = await man.queryColumn({}, `select count(*) c from :table: where password in (?)`, [
+      const count = await man.fetchColumn({}, `select count(*) c from :table: where password in (?)`, [
         ["transa", "transb"],
       ]);
 
@@ -109,7 +109,7 @@ it(`knex - transaction ON`, (done) => {
     } catch (e) {
       expect(String(e)).toContain("Unknown column");
 
-      const count = await man.queryColumn({}, `select count(*) c from :table: where password in (?)`, [
+      const count = await man.fetchColumn({}, `select count(*) c from :table: where password in (?)`, [
         ["transa", "transb"],
       ]);
 

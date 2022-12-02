@@ -93,7 +93,7 @@ const man = knex().model.registered_manager_name;
      *
      * uses: fromDb
      */
-    const row1 = await man.queryOne(`select * from ...`, {...params});
+    const row1 = await man.fetchOne(`select * from ...`, {...params});
 
     /**
      * Returns value from first column of first found row
@@ -102,25 +102,25 @@ const man = knex().model.registered_manager_name;
      * @throws Error - if found more then one
      * @return undefined - if nothing found, object if found one
      *
-     * NOTE: Uses .queryOne() internally - inherites .queryOne() throws
+     * NOTE: Uses .fetchOne() internally - inherites .fetchOne() throws
      *
      * uses: fromDb
      */
-    const count1 = await man.queryColumn(`select count(*) c from ...`, {...params});
+    const count1 = await man.fetchColumn(`select count(*) c from ...`, {...params});
 
     /**
      * Count all rows in table
      *
-     * NOTE: Uses .queryColumn() internally - inherites .queryOne() throws
+     * NOTE: Uses .fetchColumn() internally - inherites .fetchOne() throws
      *
      * IT'S NOT USING: fromDb
      */
     const count2 = await man.count();
 
     /**
-     * Different version of queryOne that accept only 'select' of query and id in parameters
+     * Different version of fetchOne that accept only 'select' of query and id in parameters
      *
-     * NOTE: Uses .queryOne() internally - inherites .queryOne() throws
+     * NOTE: Uses .fetchOne() internally - inherites .fetchOne() throws
      *
      * uses: fromDb
      */
@@ -477,7 +477,7 @@ knex.init({
 
     const migrationsTableName = config.migrationsTableName || "migrations";
 
-    let count = await man.queryColumn("select count(*) c from ??", [migrationsTableName]);
+    let count = await man.fetchColumn("select count(*) c from ??", [migrationsTableName]);
 
     process.stdout.write(String(count));
   } catch (e) {

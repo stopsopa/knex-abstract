@@ -96,9 +96,9 @@ it(`knex - postgres - toDb`, (done) => {
   })();
 });
 
-it(`knex - postgres - queryColumn, array params`, (done) => {
+it(`knex - postgres - fetchColumn, array params`, (done) => {
   (async function () {
-    const lastName = await man.queryColumn({}, 'select "lastName" from :table: u where u.:id: = ?', [1]);
+    const lastName = await man.fetchColumn({}, 'select "lastName" from :table: u where u.:id: = ?', [1]);
 
     expect(lastName).toEqual("admin");
 
@@ -106,7 +106,7 @@ it(`knex - postgres - queryColumn, array params`, (done) => {
   })();
 });
 
-it(`knex - postgres - queryColumn, array params, one param is also array`, (done) => {
+it(`knex - postgres - fetchColumn, array params, one param is also array`, (done) => {
   (async function () {
     const data = await man.query({}, 'select "lastName" from :table: u where u.:id: in (?)', [[1, 2]]);
 

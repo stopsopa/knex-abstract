@@ -31,8 +31,8 @@ jobs:
         # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idservicesservice_idoptions
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10 --name=mysql_container
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.version }}
       - name: Prepare .env
@@ -77,8 +77,11 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 18
+          
       - name: Install semantic-release
         run: /bin/bash bash/swap-files-v2.sh package.json package.dev.json -- yarn add semantic-release conventional-changelog-conventionalcommits
+        # it has to be done here beacause otherwise it will crash for node@15 with error>>> error semantic-release@19.0.5: The engine "node" is incompatible with this module. Expected version ">=16 || ^14.17". Got "15.14.0"
+
       - name: npm pack
         run: npm pack
       # https://github.com/semantic-release/semantic-release/blob/master/docs/recipes/ci-configurations/github-actions.md
