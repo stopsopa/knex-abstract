@@ -1,3 +1,25 @@
 {
-  "makefile.extensionOutputFolder": "./.vscode"
+  "debug.javascript.autoAttachFilter": "always", // https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_auto-attach
+
+  "search.exclude": {
+    "**/bower_components": false,
+    ".git/": true,
+    ".vscode/": true,
+    "build/": true,
+    "designer/": true,
+    "docker/": true,
+    "docs/": true,
+    "migrations/": true,
+    "var/": true
+  },
+  "files.watcherExclude": {
+    ".git/": true,
+    ".vscode/": true,
+    "build/": true,
+    "designer/": true,
+    "docker/": true,
+    "docs/": true,
+    "migrations/": true,
+    "var/": true
+  }
 }

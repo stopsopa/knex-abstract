@@ -4,14 +4,13 @@
     cd knex
 
     git clone git@github.com:stopsopa/knex-abstract.git .
-    make doc
+    make up
     sleep 15
     cp .env.dist .env
     cp migrations/ormconfig.js.mysql migrations/ormconfig.js
     yarn
     # for some reason first time it will crash - I don't care for development
-    make fixtures
-    make fixtures
+    (cd migrations && make migrate)
     make t
     echo 'done...'
 
