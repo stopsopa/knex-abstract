@@ -11,7 +11,7 @@ env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04 # https://github.com/actions/runner-images#available-images
     strategy:
       fail-fast: false
       matrix:
@@ -70,7 +70,7 @@ jobs:
   release:
     needs: test # https://docs.github.com/en/actions/using-jobs/using-jobs-in-a-workflow#defining-prerequisite-jobs
     if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04 # https://github.com/actions/runner-images#available-images
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
