@@ -8,7 +8,7 @@ on:
       - "**"
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # provided automatically by github itself https://docs.github.com/en/actions/security-guides/automatic-token-authentication
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # search in keepassx
 jobs:
   test:
     runs-on: ubuntu-22.04 # https://github.com/actions/runner-images#available-images
