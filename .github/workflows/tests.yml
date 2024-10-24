@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [14, 15, 16, 17, 18] # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+        version: [14, 15, 16, 17, 18, 20] # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
     timeout-minutes: 60
     services: # https://github.com/actions/example-services/actions/runs/449599975/workflow
       mysql:
@@ -77,7 +77,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           
       - name: Install semantic-release
         run: /bin/bash bash/swap-files-v2.sh package.json package.dev.json -- yarn add semantic-release conventional-changelog-conventionalcommits
