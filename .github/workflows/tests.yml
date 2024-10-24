@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - "**"
+  workflow_dispatch: # Allows manual triggering of the workflow
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # provided automatically by github itself https://docs.github.com/en/actions/security-guides/automatic-token-authentication
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # search in keepassx

@@ -13,6 +13,7 @@
 /bash/
 /comment.txt
 /coverage/
+.tool-versions
 /DEV.md
 jest.config.js
 /dev/
