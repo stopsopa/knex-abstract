@@ -1,8 +1,4 @@
-const log = require("inspc");
-
 const isObject = require("nlab/isObject");
-
-const promiseall = require("nlab/promiseall");
 
 function prototype(knex, table, id) {
   this.knex = knex;
