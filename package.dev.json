@@ -10,34 +10,6 @@
     "style:list": "yarn prettier --list-different .",
     "prepare": "husky install"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/stopsopa/knex-abstract.git"
-  },
-  "keywords": [
-    "knex"
-  ],
-  "author": "Szymon Działowski",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/stopsopa/knex-abstract/issues"
-  },
-  "bin": {
-    "knex-abstract": "./install/install.js"
-  },
-  "homepage": "https://github.com/stopsopa/knex-abstract#readme",
-  "jest": {
-    "verbose": true,
-    "bail": true,
-    "collectCoverage": true,
-    "coverageReporters": [
-      "html",
-      "lcov"
-    ],
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx}"
-    ]
-  },
   "dependencies": {
     "inspc": "^0.0.19",
     "knex": "^2.3.0",

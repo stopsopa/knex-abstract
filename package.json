@@ -1,11 +1,8 @@
 {
   "name": "knex-abstract",
-  "version": "1.0.5",
+  "version": "0.0.1",
   "description": "",
   "main": "src",
-  "engines": {
-    "node": ">=10"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stopsopa/knex-abstract.git"
@@ -13,17 +10,7 @@
   "keywords": [
     "knex"
   ],
-  "author": {
-    "name": "Szymon Działowski",
-    "email": "szymon.dzialowski[at]gmail.com",
-    "url": "https://github.com/stopsopa"
-  },
-  "contributors": [
-    {
-      "name": "Tomek Wlodarczyk",
-      "url": "https://github.com/tomekwlod"
-    }
-  ],
+  "author": "Szymon Działowski",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/stopsopa/knex-abstract/issues"
@@ -34,7 +21,6 @@
     "knex": "^2.3.0",
     "mysql": "^2.18.1",
     "nlab": "^0.0.122",
-    "pg": "^8.8.0"
-  },
-  "devDependencies": {}
+    "pg": "^8.6.0"
+  }
 }
