@@ -4,6 +4,7 @@
 [![NpmLicense](https://img.shields.io/npm/l/knex-abstract.svg)](https://github.com/knex-abstract/blob/master/LICENSE)
 
 [![knex-abstract youtube demo - nested set example](yt.png)](https://youtu.be/d8k98noOR5c)
+[![dependencies](https://depx.co/api/badge/knex-abstract)](https://depx.co/pkg/knex-abstract)
 
 https://github.com/stopsopa/knex-abstract
 
