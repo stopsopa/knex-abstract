@@ -4,6 +4,8 @@
 
 //import configServer from 'server.config';
 
+const knex = require("knex");
+
 let connections = false;
 
 function isObject(a) {
@@ -99,7 +101,8 @@ tool.init = (c) => {
     .reduce((acc, name) => {
       const { models, ...cc } = c[name];
 
-      acc[name] = eval("require")("knex")(cc);
+      // acc[name] = eval("require")("knex")(cc);
+      acc[name] = knex(cc);
 
       acc[name].provider = cc.client;
 
